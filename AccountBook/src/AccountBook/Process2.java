@@ -107,7 +107,7 @@ public class Process2 {
                 this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " 0" + Integer.toString(day);
             else
                 this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " " + Integer.toString(day);
-			System.out.println(DB_date);
+		//System.out.println(DB_date);
             return true;
         } else {
             return false;
