@@ -18,8 +18,8 @@ public class Process2 {
     public Process2() {
         //dao.delete_schedule(1);    // 이런 식으로 데이터베이스에서 사용합니다.
         input_Date();
-        vo = new AccountBookVO(DB_date,DB_inNout,DB_category,DB_amount,DB_details);
-        dao.InsertAccountBook(vo);
+        vo = new AccountBookVO(DB_date, DB_inNout, DB_category, DB_amount, DB_details);
+        //dao.InsertAccountBook(vo);
     }
 
     private void input_Date() {
@@ -28,15 +28,18 @@ public class Process2 {
             System.out.print("\"년+월+일\"을 입력하세요 > ");
             String input = scanner.nextLine();
             System.out.println("---------------------------------------------------");
-            input = input.trim();
-            String validationCheckInput = input.replaceAll("\\s+", " ");
+//          System.out.println("input: " + input);
+            if (input != null && !input.trim().isEmpty() && input.length() <= 15) {
+                input = input.trim();
+                String validationCheckInput = input.replaceAll("\\s+", " ");
 //			System.out.println("validationCheckInput: " + validationCheckInput);
-            if (Is_valid_date(validationCheckInput)) {
-                input_inNout();
-                break;
-            } else {
-                System.out.println("입력 가능한 문자열이 아닙니다.");
-                System.out.println("---------------------------------------------------");
+                if (Is_valid_date(validationCheckInput)) {
+                    input_inNout();
+                    break;
+                } else {
+                    System.out.println("입력 가능한 문자열이 아닙니다.");
+                    System.out.println("---------------------------------------------------");
+                }
             }
         }
     }
@@ -47,13 +50,15 @@ public class Process2 {
             System.out.print("\"수입\" 혹은 \"지출\"을 입력하세요 > ");
             String input = scanner.nextLine();
             System.out.println("---------------------------------------------------");
-            input = input.trim();
-            if (Is_valid_inNout(input)) {
-                input_category(this.DB_inNout);
-                break;
-            } else {
-                System.out.println("입력 가능한 문자열이 아닙니다.");
-                System.out.println("---------------------------------------------------");
+            if (input.length() <= 10) {
+                input = input.trim();
+                if (Is_valid_inNout(input)) {
+                    input_category(this.DB_inNout);
+                    break;
+                } else {
+                    System.out.println("입력 가능한 문자열이 아닙니다.");
+                    System.out.println("---------------------------------------------------");
+                }
             }
         }
 
@@ -68,13 +73,15 @@ public class Process2 {
             }
             String input = scanner.nextLine();
             System.out.println("---------------------------------------------------");
-            input = input.trim();
-            if (Is_valid_category(input, inNout)) {
-                input_amount();
-                break;
-            } else {
-                System.out.println("입력 가능한 문자열이 아닙니다.");
-                System.out.println("---------------------------------------------------");
+            if(input.length() <= 10) {
+                input = input.trim();
+                if (Is_valid_category(input, inNout)) {
+                    input_amount();
+                    break;
+                } else {
+                    System.out.println("입력 가능한 문자열이 아닙니다.");
+                    System.out.println("---------------------------------------------------");
+                }
             }
 
         }
@@ -82,34 +89,40 @@ public class Process2 {
     }
 
     public boolean Is_valid_date(String e) {
+        try {
+            String[] parts = e.split(" ");
+            if (parts[1].length() > 2 || parts[2].length() > 2)
+                return false;
 
-        String[] parts = e.split(" ");
-        if(parts[1].length() >2)
-            return false;
-
-        int year, month, day;
+            int year, month, day;
 //        System.out.println(e);
-        if (parts[0].length() == 4) {
-            year = Integer.parseInt(parts[0]);
-            month = Integer.parseInt(parts[1]);
-            day = Integer.parseInt(parts[2]);
-        } else if (parts[0].length() == 2) {
-            year = Integer.parseInt(parts[0]) + 2000;
-            month = Integer.parseInt(parts[1]);
-            day = Integer.parseInt(parts[2]);
-        } else {
-            return false;
-        }
+            if (parts[0].length() == 4) {
+                year = Integer.parseInt(parts[0]);
+                month = Integer.parseInt(parts[1]);
+                day = Integer.parseInt(parts[2]);
+            } else if (parts[0].length() == 2) {
+                year = Integer.parseInt(parts[0]) + 2000;
+                month = Integer.parseInt(parts[1]);
+                day = Integer.parseInt(parts[2]);
+            } else {
+                return false;
+            }
 
-        // 유효한 날짜인지 검사
-        if (Is_valid_date2(year, month, day)) {
-            if(Integer.toString(day).length() == 1)
-                this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " 0" + Integer.toString(day);
-            else
-                this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " " + Integer.toString(day);
-		//System.out.println(DB_date);
-            return true;
-        } else {
+            // 유효한 날짜인지 검사
+            if (Is_valid_date2(year, month, day)) {
+                if (Integer.toString(day).length() == 1 || Integer.toString(month).length() == 1) {
+                    if (Integer.toString(month).length() == 1)
+                        this.DB_date = Integer.toString(year) + " 0" + Integer.toString(month) + " " + Integer.toString(day);
+                    else
+                        this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " 0" + Integer.toString(day);
+                } else
+                    this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " " + Integer.toString(day);
+                //System.out.println(DB_date);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception ex) {
             return false;
         }
 
@@ -221,52 +234,53 @@ public class Process2 {
         }
         return false;
     }
-    public boolean Is_vaild_empty(String command) {
-		if(command == null || command.trim().isEmpty()) {// string 안에 문자가 있는 경우
-			System.out.println("---------------------------------------------------");
-			return false;
-		}
-		return true;
-	}
-	
-	public void input_amount() {
-		String command;
-		while(true) {
-			try {
-				System.out.print("금액을 입력하세요 > ");
-				command =scanner.nextLine();
-				if(Is_vaild_empty(command)) { //enter만을 입력하는 경우, 공백이 포함된 경우
-					DB_amount = Integer.parseInt(command); //string 안에 문자가 있거나, float 등 다른 자료형일 경우
-					System.out.println("---------------------------------------------------");
-					input_details();
-					break;
-				}
-			}catch(Exception e) {
-				System.out.println("---------------------------------------------------");
-			}
-		}
-	}
-	
-	public void input_details() {
-		while(true) {
-			try {
-				System.out.print("세부내역을 입력하세요 > ");
-				DB_details =scanner.nextLine();
-				if(Is_vaild_empty(DB_details)) { //enter만을 입력하는 경우, 공백이 포함된 경우
-					System.out.println("---------------------------------------------------");
-					System.out.println("등록이 완료되었습니다");
-					System.out.println("DB_date : " + this.DB_date);
-	                System.out.println("DB_inNout : " + this.DB_inNout);
-	                System.out.println("DB_category : " + this.DB_category);
-	                System.out.println("DB_amount : " + this.DB_amount);
-	                System.out.println("DB_details : " + this.DB_details);
-					System.out.println("---------------------------------------------------");
-					break;
-				}
-			}catch(Exception e) {
-				System.out.println("---------------------------------------------------");
-			}
-		}
-	}
-    
+
+    public boolean Is_valid_empty(String command) {
+        if (command == null || command.trim().isEmpty()) {// string 안에 문자가 있는 경우
+            System.out.println("---------------------------------------------------");
+            return false;
+        }
+        return true;
+    }
+
+    public void input_amount() {
+        String command;
+        while (true) {
+            try {
+                System.out.print("금액을 입력하세요 > ");
+                command = scanner.nextLine();
+                if (Is_valid_empty(command)) { //enter만을 입력하는 경우, 공백이 포함된 경우
+                    DB_amount = Integer.parseInt(command); //string 안에 문자가 있거나, float 등 다른 자료형일 경우
+                    System.out.println("---------------------------------------------------");
+                    input_details();
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("---------------------------------------------------");
+            }
+        }
+    }
+
+    public void input_details() {
+        while (true) {
+            try {
+                System.out.print("세부내역을 입력하세요 > ");
+                DB_details = scanner.nextLine();
+                if (Is_valid_empty(DB_details)) { //enter만을 입력하는 경우, 공백이 포함된 경우
+                    System.out.println("---------------------------------------------------");
+                    System.out.println("등록이 완료되었습니다");
+                    System.out.println("DB_date : " + this.DB_date);
+                    System.out.println("DB_inNout : " + this.DB_inNout);
+                    System.out.println("DB_category : " + this.DB_category);
+                    System.out.println("DB_amount : " + this.DB_amount);
+                    System.out.println("DB_details : " + this.DB_details);
+                    System.out.println("---------------------------------------------------");
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("---------------------------------------------------");
+            }
+        }
+    }
+
 }
