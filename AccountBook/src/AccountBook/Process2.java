@@ -29,8 +29,8 @@ public class Process2 {
             String input = scanner.nextLine();
             System.out.println("---------------------------------------------------");
             input = input.trim();
-            String validationCheckInput = input.replaceAll("\\s+", "");
-//			System.out.println(validationCheckInput);
+            String validationCheckInput = input.replaceAll("\\s+", " ");
+//			System.out.println("validationCheckInput: " + validationCheckInput);
             if (Is_valid_date(validationCheckInput)) {
                 input_inNout();
                 break;
@@ -82,26 +82,32 @@ public class Process2 {
     }
 
     public boolean Is_valid_date(String e) {
-        String p1, p2, p3;
 
-        if (e.length() == 8) {
-            p1 = e.substring(0, 4);
-            p2 = e.substring(4, 6);
-            p3 = e.substring(6);
-        } else if (e.length() == 6) {
-            p1 = e.substring(0, 2);
-            p1 = "20" + p1;
-            p2 = e.substring(2, 4);
-            p3 = e.substring(4);
+        String[] parts = e.split(" ");
+        if(parts[1].length() >2)
+            return false;
+
+        int year, month, day;
+//        System.out.println(e);
+        if (parts[0].length() == 4) {
+            year = Integer.parseInt(parts[0]);
+            month = Integer.parseInt(parts[1]);
+            day = Integer.parseInt(parts[2]);
+        } else if (parts[0].length() == 2) {
+            year = Integer.parseInt(parts[0]) + 2000;
+            month = Integer.parseInt(parts[1]);
+            day = Integer.parseInt(parts[2]);
         } else {
             return false;
         }
 
         // 유효한 날짜인지 검사
-        if (Is_valid_date2(p1, p2, p3)) {
-
-            this.DB_date = p1 + " " + p2 + " " + p3;
-//			System.out.println(date_Input);
+        if (Is_valid_date2(year, month, day)) {
+            if(Integer.toString(day).length() == 1)
+                this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " 0" + Integer.toString(day);
+            else
+                this.DB_date = Integer.toString(year) + " " + Integer.toString(month) + " " + Integer.toString(day);
+			System.out.println(DB_date);
             return true;
         } else {
             return false;
@@ -109,12 +115,9 @@ public class Process2 {
 
     }
 
-    public boolean Is_valid_date2(String p1, String p2, String p3) {
+    public boolean Is_valid_date2(int year, int month, int day) {
         try {
-            int year = Integer.parseInt(p1);
-            int month = Integer.parseInt(p2);
-            int day = Integer.parseInt(p3);
-
+            //System.out.println("Is_valid_date2 called");
             // 31일까지 있는 달을 ArrayList로 초기화합니다.
             ArrayList<Integer> monthsWith31Days = new ArrayList<>();
             monthsWith31Days.add(1);
