@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Process2 {
     private AccountBookDao dao = new AccountBookDao();
+    private AccountBookVO vo;
     private String DB_date; // DB로 들어갈 날짜
     private String DB_inNout; // DB로 들어갈 상위 카테고리
     private String DB_category; // DB로 들어갈 하위 카테고리
@@ -17,6 +18,8 @@ public class Process2 {
     public Process2() {
         //dao.delete_schedule(1);    // 이런 식으로 데이터베이스에서 사용합니다.
         input_Date();
+        vo = new AccountBookVO(DB_date,DB_inNout,DB_category,DB_amount,DB_details);
+        dao.InsertAccountBook(vo);
     }
 
     private void input_Date() {
