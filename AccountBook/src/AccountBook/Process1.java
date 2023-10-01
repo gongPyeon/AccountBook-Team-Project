@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
+//전월 밀린거 계산하는부분 + 단위 밀렸을때 다같이 밀리게
 public class Process1 {
 	AccountBookDao dao = new AccountBookDao();
 	Scanner scanner = new Scanner(System.in);
@@ -18,10 +19,9 @@ public class Process1 {
 			System.out.print("입력> ");
 			String str = scanner.nextLine();
 			str = str.trim().replaceAll("\\s+", " ");
-			int num= checkNum(str);
-			if(num==1)
+			if(str.equals("1"))
 				inputDate();
-			else if(num==2)
+			else if(str.equals("2"))
 				break;
 //			else
 //				System.out.println("");
@@ -50,7 +50,29 @@ public class Process1 {
 		if (parts.length == 2) {
 			try {
 				num1 = Integer.parseInt(parts[0]);
+				if(num1>=10) {
+					
+					if (!parts[0].equals(Integer.toString(num1))) {
+						return false;
+					}
+				}
+				else {
+					if (!parts[0].equals("0"+Integer.toString(num1))) {
+						return false;
+					}
+				}
 				num2 = Integer.parseInt(parts[1]);
+				if(num2>=10) {
+					if (!parts[1].equals(Integer.toString(num2))){
+						return false;
+					}
+				}
+				else {
+					if (!parts[1].equals("0" + Integer.toString(num2))){
+						return false;
+					}
+				}
+					
 				if((num1 > 37&&num1 < 1902)||(num1 < 1)||(num1 > 2037))
 					return false;
 				if(num1<37)
@@ -76,8 +98,8 @@ public class Process1 {
 	    int sumOut = 0;
 	    DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-	    System.out.println("--------------------------------------------");
-	    System.out.println(date + "\t\t수입\t수출\t내용\t인덱스");
+	    System.out.println("------------------------------------------------------------");
+	    System.out.println(date + "\t\t수입\t\t수출\t\t내용\t인덱스");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
@@ -87,34 +109,22 @@ public class Process1 {
 	        }
 	    }
 
-	    System.out.println("총계\t\t" + decimalFormat.format(sumIn) + "\t" + decimalFormat.format(sumOut) + "\t\t--\n");
+	    System.out.println("총계\t\t" + decimalFormat.format(sumIn) + "\t\t" + decimalFormat.format(sumOut) + "\t\t--\n");
 
 	    for (int i = 0; i < array.size(); i++) {
 	        System.out.print(array.get(i).getDate().substring(5));
 	        System.out.print("\t" + array.get(i).getCategory());
 
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
-	            System.out.print("\t" + decimalFormat.format(array.get(i).getAmount()) + "\t");
-	            sumIn += array.get(i).getAmount();
+	            System.out.print("\t" + decimalFormat.format(array.get(i).getAmount()) + "\t\t");
 	        } else {
-	            System.out.print("\t\t" + decimalFormat.format(array.get(i).getAmount()));
-	            sumOut += array.get(i).getAmount();
+	            System.out.print("\t\t\t" + decimalFormat.format(array.get(i).getAmount()));
 	        }
-	        System.out.print("\t" + array.get(i).getDetails());
+	        System.out.print("\t\t" + array.get(i).getDetails());
 	        System.out.print("\t" + array.get(i).getIndexNumber());
 	        System.out.println();
 	    }
+	    System.out.println("------------------------------------------------------------");
 
-	    System.out.println("--------------------------------------------");
-	    System.out.println("총계\t\t" + decimalFormat.format(sumIn) + "\t" + decimalFormat.format(sumOut) + "\t\t--\n");
-	}
-	private int checkNum(String str) {
-		try {
-			int num = Integer.parseInt(str);
-			return num;
-		}
-		catch(NumberFormatException e){
-			return 0;				
-		}
 	}
 }
