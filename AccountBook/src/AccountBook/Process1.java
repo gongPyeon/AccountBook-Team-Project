@@ -1,5 +1,6 @@
 package AccountBook;
 import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class Process1 {
@@ -71,30 +72,41 @@ public class Process1 {
 		return true;
 	}
 	private void printAccountBook(ArrayList<AccountBookVO> array) {
-		//총계가 밑에 있어서 기획서랑 형태가 다름
-		int sumIn = 0;
-		int sumOut = 0;
-		System.out.println("--------------------------------------------");
-		System.out.println(date+"\t\t수입\t수출\t내용\t인덱스");
-		for (int i = 0; i<array.size();i++) {
-			System.out.print(array.get(i).getDate().substring(5));
-			System.out.print("\t"+array.get(i).getCategory());
-			
-			if(array.get(i).getInNout().compareTo("수입")==0) {
-				System.out.print("\t"+array.get(i).getAmount()+"\t");
-				sumIn += array.get(i).getAmount();
-			}
-			else {
-				System.out.print("\t\t"+array.get(i).getAmount());
-				sumOut += array.get(i).getAmount();
-			}
-			System.out.print("\t"+array.get(i).getDetails());
-			System.out.print("\t"+array.get(i).getIndexNumber());
-			System.out.println();
-		}
-		System.out.println("--------------------------------------------");
-		System.out.println("총계\t\t"+sumIn+"\t"+sumOut+"\t\t--\n");
-		
+	    int sumIn = 0;
+	    int sumOut = 0;
+	    DecimalFormat decimalFormat = new DecimalFormat("#,###");
+
+	    System.out.println("--------------------------------------------");
+	    System.out.println(date + "\t\t수입\t수출\t내용\t인덱스");
+	    
+	    for (int i = 0; i < array.size(); i++) {
+	        if (array.get(i).getInNout().compareTo("수입") == 0) {
+	            sumIn += array.get(i).getAmount();
+	        } else {
+	            sumOut += array.get(i).getAmount();
+	        }
+	    }
+
+	    System.out.println("총계\t\t" + decimalFormat.format(sumIn) + "\t" + decimalFormat.format(sumOut) + "\t\t--\n");
+
+	    for (int i = 0; i < array.size(); i++) {
+	        System.out.print(array.get(i).getDate().substring(5));
+	        System.out.print("\t" + array.get(i).getCategory());
+
+	        if (array.get(i).getInNout().compareTo("수입") == 0) {
+	            System.out.print("\t" + decimalFormat.format(array.get(i).getAmount()) + "\t");
+	            sumIn += array.get(i).getAmount();
+	        } else {
+	            System.out.print("\t\t" + decimalFormat.format(array.get(i).getAmount()));
+	            sumOut += array.get(i).getAmount();
+	        }
+	        System.out.print("\t" + array.get(i).getDetails());
+	        System.out.print("\t" + array.get(i).getIndexNumber());
+	        System.out.println();
+	    }
+
+	    System.out.println("--------------------------------------------");
+	    System.out.println("총계\t\t" + decimalFormat.format(sumIn) + "\t" + decimalFormat.format(sumOut) + "\t\t--\n");
 	}
 	private int checkNum(String str) {
 		try {
