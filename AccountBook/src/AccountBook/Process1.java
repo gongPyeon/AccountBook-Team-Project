@@ -8,6 +8,7 @@ public class Process1 {
 	AccountBookDao dao = new AccountBookDao();
 	Scanner scanner = new Scanner(System.in);
 	String date = "";
+	String lastDate = "";
 	public Process1() {
 		run();
 	}
@@ -40,8 +41,48 @@ public class Process1 {
 				System.out.println("1902~2037 사이에서 년도를 입력하고, 01~12 사이에서 월을 입력해주세요.");
 			}
 		}
-		ArrayList<AccountBookVO> array = dao.getAccountList(date);
-		printAccountBook(array);
+		ArrayList<AccountBookVO> thisMonthArray = dao.getAccountList(date);
+		ArrayList<AccountBookVO> lastMonthArray = null;
+		String last = lastMonth(date);
+		if (last != "")
+			lastMonthArray = dao.getAccountList(lastDate);
+		printAccountBook(thisMonthArray, lastMonthArray);
+	}
+	private String lastMonth(String thisMonth) {
+		String[] parts = thisMonth.split(" ");
+		int num1 = 0;
+		int num2 = 0;
+		try {
+			num1 = Integer.parseInt(parts[0]);
+			num2 = Integer.parseInt(parts[1]);
+			if(num2==1) {
+				if(num1 == 1902) {
+					return "";
+				}
+				else {
+					num1 = num1 - 1;
+					num2 = 12;
+					this.lastDate = String.valueOf(num1) + " " + String.valueOf(num2);
+					return this.lastDate;
+				}
+				
+			}
+			else {
+				num2 = num2-1;
+				if(num2<10)
+					this.lastDate = String.valueOf(num1) + " 0" + String.valueOf(num2);
+				else
+					this.lastDate = String.valueOf(num1) + " " + String.valueOf(num2);
+				return this.lastDate;
+				
+			}
+
+			
+		}
+		catch(NumberFormatException e){
+			return "";				
+		}
+		
 	}
 	private boolean checkDate(String date) {
 		String[] parts = date.split(" ");
@@ -93,9 +134,9 @@ public class Process1 {
 			this.date = String.valueOf(num1) + " " + String.valueOf(num2);
 		return true;
 	}
-	private void printAccountBook(ArrayList<AccountBookVO> array) {
-	    int sumIn = 0;
-	    int sumOut = 0;
+	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
+	    int thisMonthSumIn = 0;
+	    int thisMonthSumOut = 0;
 	    DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
 	    System.out.println("------------------------------------------------------------");
@@ -103,13 +144,13 @@ public class Process1 {
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
-	            sumIn += array.get(i).getAmount();
+	        	thisMonthSumIn += array.get(i).getAmount();
 	        } else {
-	            sumOut += array.get(i).getAmount();
+	        	thisMonthSumOut += array.get(i).getAmount();
 	        }
 	    }
 
-	    System.out.println("총계\t\t" + decimalFormat.format(sumIn) + "\t\t" + decimalFormat.format(sumOut) + "\t\t--\n");
+	    System.out.println("총계\t\t" + decimalFormat.format(thisMonthSumIn) + "\t\t" + decimalFormat.format(thisMonthSumOut) + "\t\t\t--\n");
 
 	    for (int i = 0; i < array.size(); i++) {
 	        System.out.print(array.get(i).getDate().substring(5));
@@ -123,6 +164,20 @@ public class Process1 {
 	        System.out.print("\t\t" + array.get(i).getDetails());
 	        System.out.print("\t" + array.get(i).getIndexNumber());
 	        System.out.println();
+	    }
+	    if(lastArray != null) {
+	    	int lastMonthSumIn = 0;
+		    int lastMonthSumOut = 0;
+
+		    for (int i = 0; i < lastArray.size(); i++) {
+		        if (lastArray.get(i).getInNout().compareTo("수입") == 0) {
+		        	lastMonthSumIn += array.get(i).getAmount();
+		        } else {
+		        	lastMonthSumOut += array.get(i).getAmount();
+		        }
+		    }
+		    
+		    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + decimalFormat.format(lastMonthSumIn) + "\t\t" + decimalFormat.format(lastMonthSumOut) + "\t\t\t--\n");
 	    }
 	    System.out.println("------------------------------------------------------------");
 
