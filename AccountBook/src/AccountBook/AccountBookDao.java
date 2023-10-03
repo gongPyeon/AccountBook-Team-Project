@@ -67,7 +67,7 @@ public class AccountBookDao{
 			while (rs.next()) {
 				AccountBookVO re = new AccountBookVO();
 				re.setIndexNumber(rs.getInt("indexNumber"));
-				re.setDate(rs.getString("dage"));
+				re.setDate(rs.getString("date"));
 				re.setInNout(rs.getString("inNout"));
 				re.setCategory(rs.getString("category"));
 				re.setAmount(rs.getInt("amount"));
