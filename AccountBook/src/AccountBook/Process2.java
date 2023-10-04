@@ -147,7 +147,7 @@ public class Process2 {
             monthsWith30Days.add(9);
             monthsWith30Days.add(11);
 
-            if (year <= 1901 || year >= 2038) {
+            if (year <= 1999 || year >= 2038) {
                 return false;
             } else {
                 if (year % 4 == 0) { // 윤년
