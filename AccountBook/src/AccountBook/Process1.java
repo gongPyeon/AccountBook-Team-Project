@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 //전월 밀린거 계산하는부분 + 단위 밀렸을때 다같이 밀리게
 public class Process1 {
-	AccountBookDao dao = new AccountBookDao();
-	Scanner scanner = new Scanner(System.in);
+	private AccountBookDao dao = new AccountBookDao();
+	private Scanner scanner = new Scanner(System.in);
 	String date = "";
 	String lastDate = "";
 	public Process1() {
@@ -14,6 +14,9 @@ public class Process1 {
 	}
 	public void run() {
 		inputDate();
+		isEnd();
+	}
+	private void isEnd() {
 		while(true) {
 			System.out.println("1) \"년+월\"다시 입력하기");
 			System.out.println("2)  메인화면으로 돌아가기");
@@ -49,6 +52,7 @@ public class Process1 {
 		printAccountBook(thisMonthArray, lastMonthArray);
 	}
 	private String lastMonth(String thisMonth) {
+		this.lastDate = "";
 		String[] parts = thisMonth.split(" ");
 		int num1 = 0;
 		int num2 = 0;
@@ -85,6 +89,7 @@ public class Process1 {
 		
 	}
 	private boolean checkDate(String date) {
+		this.date = "";
 		String[] parts = date.split(" ");
 		int num1 = 0;
 		int num2 = 0;
@@ -150,8 +155,8 @@ public class Process1 {
 	        }
 	    }
 
-	    System.out.println("총계\t\t" + decimalFormat.format(thisMonthSumIn) + "\t\t" + decimalFormat.format(thisMonthSumOut) + "\t\t\t--\n");
-
+	    System.out.println("총계\t\t" + decimalFormat.format(thisMonthSumIn) + "\t\t" + decimalFormat.format(thisMonthSumOut) + "\t\t\t--");
+	    
 	    for (int i = 0; i < array.size(); i++) {
 	        System.out.print(array.get(i).getDate().substring(5));
 	        System.out.print("\t" + array.get(i).getCategory());
@@ -171,9 +176,9 @@ public class Process1 {
 
 		    for (int i = 0; i < lastArray.size(); i++) {
 		        if (lastArray.get(i).getInNout().compareTo("수입") == 0) {
-		        	lastMonthSumIn += array.get(i).getAmount();
+		        	lastMonthSumIn += lastArray.get(i).getAmount();
 		        } else {
-		        	lastMonthSumOut += array.get(i).getAmount();
+		        	lastMonthSumOut += lastArray.get(i).getAmount();
 		        }
 		    }
 		    
