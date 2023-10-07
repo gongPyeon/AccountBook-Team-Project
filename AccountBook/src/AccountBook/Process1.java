@@ -1,6 +1,5 @@
 package AccountBook;
 import java.util.ArrayList;
-import java.text.DecimalFormat;
 import java.util.Scanner;
 
 //전월 밀린거 계산하는부분 + 단위 밀렸을때 다같이 밀리게
@@ -142,7 +141,6 @@ public class Process1 {
 	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
 	    int thisMonthSumIn = 0;
 	    int thisMonthSumOut = 0;
-	    DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
 	    System.out.println("------------------------------------------------------------");
 	    System.out.println(date + "\t\t수입\t\t수출\t\t내용\t인덱스");
@@ -154,19 +152,19 @@ public class Process1 {
 	        	thisMonthSumOut += array.get(i).getAmount();
 	        }
 	    }
-
-	    System.out.println("총계\t\t" + decimalFormat.format(thisMonthSumIn) + "\t\t" + decimalFormat.format(thisMonthSumOut) + "\t\t\t--");
+	    
+	    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + String.format("%,-10d\t",thisMonthSumIn)+ String.format("%,-10d\t",thisMonthSumOut) + "\t--\n");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	        System.out.print(array.get(i).getDate().substring(5));
 	        System.out.print("\t" + array.get(i).getCategory());
 
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
-	            System.out.print("\t" + decimalFormat.format(array.get(i).getAmount()) + "\t\t");
+	            System.out.print("\t" +String.format("%,-10d\t\t\t",array.get(i).getAmount()));
 	        } else {
-	            System.out.print("\t\t\t" + decimalFormat.format(array.get(i).getAmount()));
+	        	System.out.print("\t\t\t" +String.format("%,-10d\t",array.get(i).getAmount()));
 	        }
-	        System.out.print("\t\t" + array.get(i).getDetails());
+	        System.out.print(array.get(i).getDetails());
 	        System.out.print("\t" + array.get(i).getIndexNumber());
 	        System.out.println();
 	    }
@@ -181,8 +179,8 @@ public class Process1 {
 		        	lastMonthSumOut += lastArray.get(i).getAmount();
 		        }
 		    }
+		    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--\n");
 		    
-		    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + decimalFormat.format(lastMonthSumIn) + "\t\t" + decimalFormat.format(lastMonthSumOut) + "\t\t\t--\n");
 	    }
 	    System.out.println("------------------------------------------------------------");
 
