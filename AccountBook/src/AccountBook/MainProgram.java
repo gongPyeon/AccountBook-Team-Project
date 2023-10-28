@@ -15,7 +15,7 @@ public class MainProgram {
 
 	public MainProgram() {
 		while (true) {
-			System.out.println("> A11 Account book");
+			System.out.println("> A11 Account book1");
 			System.out.println("1. Account book View (가계부보기)");
 			System.out.println("2. Registration (항목 등록)");
 			System.out.println("3. Remove (항목 지우기)"); // 추후 구현 예정
