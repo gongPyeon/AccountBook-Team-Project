@@ -18,7 +18,7 @@ public class AccountBookDao{
 
 	public AccountBookDao() {
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 
 		} catch (Exception e) {
@@ -57,7 +57,7 @@ public class AccountBookDao{
 	}
 
 	public ArrayList<AccountBookVO> getAccountList(String date) {
-		String sql = "select * from AccountBook where date = ?;";
+		String sql = "select * from AccountBook WHERE SUBSTRING(date, 1, 7) = ?;";
 		PreparedStatement pstmt = null;
 		ArrayList<AccountBookVO> result = new ArrayList<>();
 		try {
