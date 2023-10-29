@@ -80,6 +80,53 @@ public class AccountBookDao {// DB를 다루는 클라스
 		}
 		return result;
 	}
+	public ArrayList<AccountBookVO> getAccountMonthList(String date) {
+		String sql = "select * from AccountBook WHERE SUBSTRING(date, 1, 7) = ?;";
+		PreparedStatement pstmt = null;
+		ArrayList<AccountBookVO> result = new ArrayList<>();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, date);// 첫번째 물음표
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				AccountBookVO re = new AccountBookVO();
+				re.setIndexNumber(rs.getInt("indexNumber"));
+				re.setDate(rs.getString("date"));
+				re.setInNout(rs.getString("inNout"));
+				re.setCategory(rs.getString("category"));
+				re.setAmount(rs.getInt("amount"));
+				re.setDetails(rs.getString("details"));
+				result.add(re);
+			}
+		} catch (Exception e) {
+			System.out.println("데이터베이스 작업 중 에러발생");
+		}
+		return result;
+	}
+	public ArrayList<AccountBookVO> getAccountCategoryList(String date, String category) {
+		String sql = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND category = ?;";
+		PreparedStatement pstmt = null;
+		ArrayList<AccountBookVO> result = new ArrayList<>();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, date);// 첫번째 물음표
+			pstmt.setString(2, category);// 두번째 물음표
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				AccountBookVO re = new AccountBookVO();
+				re.setIndexNumber(rs.getInt("indexNumber"));
+				re.setDate(rs.getString("date"));
+				re.setInNout(rs.getString("inNout"));
+				re.setCategory(rs.getString("category"));
+				re.setAmount(rs.getInt("amount"));
+				re.setDetails(rs.getString("details"));
+				result.add(re);
+			}
+		} catch (Exception e) {
+			System.out.println("데이터베이스 작업 중 에러발생");
+		}
+		return result;
+	}
 
 	public void updateAmount(int amount, int indexNumber) {
 		String sql = "update AccountBook set amount=? where indexNumber=?;";
@@ -317,6 +364,40 @@ public class AccountBookDao {// DB를 다루는 클라스
 	public ArrayList<CategoryVO> getCategoriesWithOut() {
 		ArrayList<CategoryVO> categoryList = new ArrayList<>();
 		String sql = "SELECT * FROM savedcategory WHERE inNout = '지출';";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				CategoryVO category = new CategoryVO("", "");
+				category.setInNout(rs.getString("inNout"));
+				category.setCategory(rs.getString("category"));
+				categoryList.add(category);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pstmt != null) {
+					pstmt.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+
+		return categoryList;
+	}
+	public ArrayList<CategoryVO> getCategories() {
+		ArrayList<CategoryVO> categoryList = new ArrayList<>();
+		String sql = "SELECT * FROM savedcategory;";
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
