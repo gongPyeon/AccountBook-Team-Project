@@ -147,7 +147,7 @@ public class Process2 {
             monthsWith30Days.add(9);
             monthsWith30Days.add(11);
 
-            if (year <= 1901 || year >= 2038) {
+            if (year <= 1999 || year >= 2038) {
                 return false;
             } else {
                 if (year % 4 == 0) { // 윤년
@@ -250,7 +250,7 @@ public class Process2 {
                 System.out.print("금액을 입력하세요 > ");
                 command = scanner.nextLine();
                 if (Is_valid_empty(command)) { //enter만을 입력하는 경우, 공백이 포함된 경우
-                    command = command.trim();
+                	command = command.trim();
                     DB_amount = Integer.parseInt(command); //string 안에 문자가 있거나, float 등 다른 자료형일 경우
                     System.out.println("---------------------------------------------------");
                     input_details();
