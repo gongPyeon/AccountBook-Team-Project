@@ -18,10 +18,10 @@ public class MainProgram {
 			System.out.println("> A11 Account book");
 			System.out.println("1. Account book View (가계부보기)");
 			System.out.println("2. Registration (항목 등록)");
-			System.out.println("3. Remove (항목 지우기)"); // 추후 구현 예정
-			System.out.println("4. Update(항목 수정) "); // 추후 구현 예정
-			System.out.println("5. Help(도움말)");
-			System.out.println("6. Quit (종료)");
+			System.out.println("3. Remove (항목 지우기)"); 
+			System.out.println("4. Category edit(카테고리 관리) "); 
+			//System.out.println("5. Help(도움말)");
+			System.out.println("5. Quit (종료)");
 			System.out.println("---------------------------------------------------");
 			System.out.print("A11 Account book : menu > ");
 			@SuppressWarnings("resource")
@@ -47,15 +47,15 @@ public class MainProgram {
 						System.out.println("A11 Account book를 종료합니다.");
 						break;
 					}else {
-						System.out.println("잘못 입력했습니다. 범위(1~6) 안에서 다시 선택해주세요");
+						System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
 						System.out.println("---------------------------------------------------");
 					}
 				}else {
-					System.out.println("잘못 입력했습니다. 범위(1~6) 안에서 다시 선택해주세요");
+					System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
 					System.out.println("---------------------------------------------------");
 				}
 			} catch (Exception e) {
-				System.out.println("잘못 입력했습니다. 범위(1~6) 안에서 다시 선택해주세요");
+				System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
 				System.out.println("---------------------------------------------------");
 
 			}

@@ -43,6 +43,7 @@ public class Process3 {
 					
 					int input;
 					while (true) {
+						
 						System.out.print("삭제할 인덱스를 입력해주세요> ");
 						inputToString = sc.nextLine();
 						if (!isValidIndex(inputToString)) {
