@@ -23,7 +23,7 @@ public class AccountBookDao {// DB를 다루는 클라스
 			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 
 		} catch (Exception e) {
-			System.out.println("DB�뿰寃곗씠 �떎�뙣�뻽�뒿�땲�떎. �삤瑜섎�� �닔�젙 �썑 �떎�떆 �떆�룄�빐二쇱꽭�슂" + e);
+			System.out.println("DB연결이 실패했습니다. 오류를 수정 후 다시 시도해주세요" + e);
 		}
 
 	}
@@ -42,9 +42,9 @@ public class AccountBookDao {// DB를 다루는 클라스
 			pstmt.setString(5, accountBookVO.getDetails());
 
 			pstmt.executeUpdate();
-			System.out.print("");// "�빆紐⑹씠 �벑濡앸릺�뿀�뒿�땲�떎.
+			System.out.print("");//"항목이 등록되었습니다.
 		} catch (Exception e) {
-			System.out.println("�뜲�씠�꽣 �궫�엯 �떎�뙣");
+			System.out.println("데이터 삽입 실패");
 
 		} finally {
 			try {
@@ -76,7 +76,7 @@ public class AccountBookDao {// DB를 다루는 클라스
 				result.add(re);
 			}
 		} catch (Exception e) {
-			System.out.println("�뜲�씠�꽣踰좎씠�뒪 �옉�뾽 以� �뿉�윭諛쒖깮");
+			System.out.println("데이터베이스 작업 중 에러발생");
 		}
 		return result;
 	}
