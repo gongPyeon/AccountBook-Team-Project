@@ -12,6 +12,7 @@ public class MainProgram {
 	private Process4 process4;
 	private Process5 process5;
 	private String process_input;
+	
 
 	public MainProgram() {
 		while (true) {
@@ -40,10 +41,10 @@ public class MainProgram {
 						process3 = new Process3();
 					else if (menu == 4) 
 						process4 = new Process4();
-					else if (menu == 5) { 
-						process5 = new Process5();
-					}
-					else if (menu == 6) {
+					//else if (menu == 5) { 
+						//process5 = new Process5();
+					//}
+					else if (menu == 5) {
 						System.out.println("A11 Account book를 종료합니다.");
 						break;
 					}else {
@@ -63,6 +64,14 @@ public class MainProgram {
 		}
 
 	}
+	/*public boolean Is_valid(String e) {
+	    try {
+	        int analysis = Integer.parseInt(e);
+	        return analysis >= 1 && analysis <= 5;
+	    } catch (NumberFormatException ex) {
+	        return false;
+	    }
+	}*/
 
 	public boolean Is_valid(String e) {
 		if (e.length() != 1) {

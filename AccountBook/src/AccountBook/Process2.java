@@ -19,7 +19,7 @@ public class Process2 {
         //dao.delete_schedule(1);    // 이런 식으로 데이터베이스에서 사용합니다.
         input_Date();
         vo = new AccountBookVO(DB_date, DB_inNout, DB_category, DB_amount, DB_details);
-        //dao.InsertAccountBook(vo);
+        dao.InsertAccountBook(vo);
     }
 
     private void input_Date() {
