@@ -396,7 +396,39 @@ public class AccountBookDao {// DB를 다루는 클라스
 
 		return categoryList;
 	}
-	
+	public ArrayList<String> getCategories1() {//process3에서 카테고리 존재 여부 확인할떄 사용
+	    ArrayList<String> categoryList = new ArrayList<>();
+	    String sql = "SELECT category FROM savedcategory;"; // Select only the category column
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+
+	    try {
+	        pstmt = conn.prepareStatement(sql);
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            String category = rs.getString("category");
+	            categoryList.add(category);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (rs != null) {
+	                rs.close();
+	            }
+	            if (pstmt != null) {
+	                pstmt.close();
+	            }
+	        } catch (Exception e2) {
+	            e2.printStackTrace();
+	        }
+	    }
+
+	    return categoryList;
+	}
+
 	public ArrayList<CategoryVO> getCategories() {
 		ArrayList<CategoryVO> categoryList = new ArrayList<>();
 		String sql = "SELECT * FROM savedcategory;";
@@ -431,5 +463,6 @@ public class AccountBookDao {// DB를 다루는 클라스
 
 		return categoryList;
 	}
+	
 
 }

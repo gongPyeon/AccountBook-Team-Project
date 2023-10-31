@@ -178,7 +178,7 @@ public class Process1 {
 	    int thisMonthSumOut = 0;
 
 	    System.out.println("------------------------------------------------------------");
-	    System.out.println(date + "\t\t수입\t\t수출\t\t내용\t인덱스");
+	    System.out.println(date + "\t\t수입\t\t지출\t\t내용\t인덱스");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
