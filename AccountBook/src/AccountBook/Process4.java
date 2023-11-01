@@ -24,7 +24,11 @@ public class Process4 {
                 System.out.print("입력하세요 > ");
                 String input = scanner.nextLine();
                 System.out.println("---------------------------------------------------");
-                if (Integer.parseInt(input.trim()) == 1) {
+                if(input.trim().length() != 1){
+                    System.out.println("잘못 입력했습니다. 범위(1~4) 안에서 다시 선택해주세요");
+                    System.out.println("---------------------------------------------------");
+                }
+                else if (Integer.parseInt(input.trim()) == 1) {
                     String inNout = input_inNout();
                     add_category(inNout);
                     return;
