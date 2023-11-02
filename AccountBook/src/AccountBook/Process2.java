@@ -11,8 +11,8 @@ public class Process2 {
     private String DB_category; // DB로 들어갈 하위 카테고리
     private int DB_amount;
     private String DB_details;
-    private ArrayList<String> income = new ArrayList<>();;
-    private ArrayList<String> consumption = new ArrayList<>();;
+    private ArrayList<String> income = new ArrayList<>();
+    private ArrayList<String> consumption = new ArrayList<>();
 
     Scanner scanner = new Scanner(System.in);
 
@@ -21,7 +21,7 @@ public class Process2 {
         //dao.delete_schedule(1);    // 이런 식으로 데이터베이스에서 사용합니다.
         input_Date();
         vo = new AccountBookVO(DB_date, DB_inNout, DB_category, DB_amount, DB_details);
-        //dao.InsertAccountBook(vo);
+        dao.InsertAccountBook(vo);
     }
 
     private void input_Date() {
@@ -42,6 +42,10 @@ public class Process2 {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
                     System.out.println("---------------------------------------------------");
                 }
+            }
+            else{
+                System.out.println("입력 가능한 문자열이 아닙니다.");
+                System.out.println("---------------------------------------------------");
             }
         }
     }
@@ -81,28 +85,30 @@ public class Process2 {
         while (true) {
             boolean first = true;
             if (inNout.equals("수입")) {
-                if(income.isEmpty()){
+                if (income.isEmpty()) {
                     System.out.println("등록된 카테고리가 없습니다.");
+                    System.out.println("---------------------------------------------------");
                     return;
-                }else {
+                } else {
                     System.out.print("카테고리를 입력해주세요(");
                     for (String s : income) {
-                        if(first){
+                        if (first) {
                             System.out.print(s);
                             first = false;
-                        }else{
+                        } else {
                             System.out.printf(" | " + s);
                         }
                     }
                     System.out.print(") > ");
                 }
             } else {// inNout.equals("지출"){
-                if(consumption.isEmpty()){
+                if (consumption.isEmpty()) {
                     System.out.println("등록된 카테고리가 없습니다.");
+                    System.out.println("---------------------------------------------------");
                     return;
-                }else{
+                } else {
                     System.out.print("카테고리를 입력해주세요(");
-                    for(String s : consumption) {
+                    for (String s : consumption) {
                         if (first) {
                             System.out.print(s);
                             first = false;
@@ -115,7 +121,7 @@ public class Process2 {
             }
             String input = scanner.nextLine();
             System.out.println("---------------------------------------------------");
-            if(input.length() <= 10) {
+            if (input.length() <= 10) {
                 input = input.trim();
                 if (Is_valid_category(input, inNout)) {
                     input_amount();
@@ -124,6 +130,10 @@ public class Process2 {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
                     System.out.println("---------------------------------------------------");
                 }
+            }
+            else{
+                System.out.println("입력 가능한 문자열이 아닙니다.");
+                System.out.println("---------------------------------------------------");
             }
 
         }
