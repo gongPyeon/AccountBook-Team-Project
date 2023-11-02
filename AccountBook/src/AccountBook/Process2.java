@@ -11,6 +11,8 @@ public class Process2 {
     private String DB_category; // DB로 들어갈 하위 카테고리
     private int DB_amount;
     private String DB_details;
+    private ArrayList<String> income = new ArrayList<>();;
+    private ArrayList<String> consumption = new ArrayList<>();;
 
     Scanner scanner = new Scanner(System.in);
 
@@ -65,11 +67,51 @@ public class Process2 {
     }
 
     private void input_category(String inNout) {
+
+        ArrayList<CategoryVO> categoryInList = dao.getCategoriesWithIn();
+
+        for (CategoryVO categoryVO : categoryInList)
+            income.add(categoryVO.getCategory());
+
+        ArrayList<CategoryVO> categoryOutList = dao.getCategoriesWithOut();
+
+        for (CategoryVO categoryVO : categoryOutList)
+            consumption.add(categoryVO.getCategory());
+
         while (true) {
+            boolean first = true;
             if (inNout.equals("수입")) {
-                System.out.print("카테고리를 입력해주세요(월급 | 부수입 | 용돈 | 상여 | 금융소득 | 기타) >");
+                if(income.isEmpty()){
+                    System.out.println("등록된 카테고리가 없습니다.");
+                    return;
+                }else {
+                    System.out.print("카테고리를 입력해주세요(");
+                    for (String s : income) {
+                        if(first){
+                            System.out.print(s);
+                            first = false;
+                        }else{
+                            System.out.printf(" | " + s);
+                        }
+                    }
+                    System.out.print(") > ");
+                }
             } else {// inNout.equals("지출"){
-                System.out.print("카테고리를 입력해주세요(식비 | 문화생활 | 경조사/회비 | 주거/통신 | 교통/차량 | 기타) >");
+                if(consumption.isEmpty()){
+                    System.out.println("등록된 카테고리가 없습니다.");
+                    return;
+                }else{
+                    System.out.print("카테고리를 입력해주세요(");
+                    for(String s : consumption) {
+                        if (first) {
+                            System.out.print(s);
+                            first = false;
+                        } else {
+                            System.out.printf(" | " + s);
+                        }
+                    }
+                    System.out.print(") > ");
+                }
             }
             String input = scanner.nextLine();
             System.out.println("---------------------------------------------------");
@@ -147,7 +189,7 @@ public class Process2 {
             monthsWith30Days.add(9);
             monthsWith30Days.add(11);
 
-            if (year <= 1901 || year >= 2038) {
+            if (year <= 1999 || year >= 2038) {
                 return false;
             } else {
                 if (year % 4 == 0) { // 윤년
@@ -205,21 +247,6 @@ public class Process2 {
     }
 
     public boolean Is_valid_category(String e, String inNout) {
-        ArrayList<String> income = new ArrayList<>();
-        income.add("월급");
-        income.add("부수입");
-        income.add("용돈");
-        income.add("상여");
-        income.add("금융소득");
-        income.add("기타");
-
-        ArrayList<String> consumption = new ArrayList<>();
-        consumption.add("식비");
-        consumption.add("문화생활");
-        consumption.add("경조사/회비");
-        consumption.add("주거/통신");
-        consumption.add("교통/차량");
-        consumption.add("기타");
 
         if (inNout.equals("수입")) {
             if (income.contains(e)) {

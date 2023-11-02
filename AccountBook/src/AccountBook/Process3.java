@@ -1,9 +1,4 @@
 package AccountBook;
 
 public class Process3 {
-	AccountBookDao dao = new AccountBookDao();
-	
-	public Process3() {
-		dao.delete_schedule(1);    // 이런 식으로 데이터베이스에서 사용합니다.
-	}
 }
