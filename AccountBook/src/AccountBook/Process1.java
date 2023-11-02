@@ -165,8 +165,8 @@ public class Process1 {
 			return 0;
 	}
 	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
-	    int thisMonthSumIn = 0;
-	    int thisMonthSumOut = 0;
+	    long thisMonthSumIn = 0;
+	    long thisMonthSumOut = 0;
 
 	    System.out.println("------------------------------------------------------------");
 	    try {
@@ -183,8 +183,8 @@ public class Process1 {
 	        	thisMonthSumOut += array.get(i).getAmount();
 	        }
 	    }
-	    int lastMonthSumIn = 0;
-	    int lastMonthSumOut = 0;
+	    long lastMonthSumIn = 0;
+	    long lastMonthSumOut = 0;
 	    if(lastArray != null) {
 		    for (int i = 0; i < lastArray.size(); i++) {
 		        if (lastArray.get(i).getInNout().compareTo("수입") == 0) {
@@ -205,7 +205,7 @@ public class Process1 {
 
         // Comparator를 사용하여 ArrayList 정렬
         Collections.sort(array, dateComparator);
-	    System.out.println("총계\t\t" + String.format("%,-10d\t",thisMonthSumIn+lastMonthSumIn)+ String.format("%,-10d\t",thisMonthSumOut+lastMonthSumOut) + "\t--");
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",(long)(thisMonthSumIn+lastMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut+lastMonthSumOut)) + "\t--");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	    	try {
