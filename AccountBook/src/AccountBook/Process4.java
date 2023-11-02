@@ -24,7 +24,11 @@ public class Process4 {
                 System.out.print("입력하세요 > ");
                 String input = scanner.nextLine();
                 System.out.println("---------------------------------------------------");
-                if (Integer.parseInt(input.trim()) == 1) {
+
+                if (input.trim().length() != 1) {
+                    System.out.println("잘못 입력했습니다. 범위(1~4) 안에서 다시 선택해주세요");
+                    System.out.println("---------------------------------------------------");
+                } else if (Integer.parseInt(input.trim()) == 1) {
                     String inNout = input_inNout();
                     add_category(inNout);
                     return;
@@ -55,16 +59,14 @@ public class Process4 {
         System.out.println(" - 카테고리 추가 - ");
         show_categoryList(inNout);
 
-        while(true) {
+
+        while (true) {
             System.out.print("추가할 카테고리를 입력하세요 > ");
             String input = scanner.nextLine();
+            String stringWithoutSpaces = input.trim().replace(" ", "");
 
-            if(inNout.equals("수입")){
-                if(income.contains(input.trim())){
-                    System.out.println("다시 입력해 주세요");
-                    System.out.println("---------------------------------------------------");
-                }
-                else{
+            if (inNout.equals("수입")) {
+                if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !income.contains(input.trim())) {
                     CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
 
                     dao.InsertCategoryInCategorytable(categoryVO);
@@ -72,13 +74,14 @@ public class Process4 {
                     System.out.println("추가가 완료되었습니다.");
                     System.out.println("---------------------------------------------------");
                     return;
+
+                } else {
+                    System.out.println("다시 입력해 주세요");
+                    System.out.println("---------------------------------------------------");
                 }
             } else { // inNout가 지출인 경우
-                if(consumption.contains(input.trim())){
-                    System.out.println("다시 입력해 주세요");
-                    System.out.println("---------------------------------------------------");
-                }
-                else{
+                if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !consumption.contains(input.trim())) {
+
                     CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
 
                     dao.InsertCategoryInCategorytable(categoryVO);
@@ -86,6 +89,9 @@ public class Process4 {
                     System.out.println("추가가 완료되었습니다.");
                     System.out.println("---------------------------------------------------");
                     return;
+                } else {
+                    System.out.println("다시 입력해 주세요");
+                    System.out.println("---------------------------------------------------");
                 }
             }
         }
@@ -102,34 +108,39 @@ public class Process4 {
             return;
         }
 
-        while(true) {
+        while (true) {
             System.out.print("수정할 카테고리를 입력하세요 > ");
             String input = scanner.nextLine();
 
-            String[] parts = input.trim().split(":");
-
-            if (parts.length == 2) {
-                String old_C = parts[0].trim();
-                String new_C = parts[1].trim();
-
-                if(!old_C.equals(new_C)) {
-
-                    CategoryVO oldOne = new CategoryVO(inNout, old_C);
-                    CategoryVO newOne = new CategoryVO(inNout, new_C);
-
-                    dao.updateCategoryInCategorytable(oldOne, newOne);
-
-                    System.out.println("수정이 완료되었습니다.");
-                    System.out.println("---------------------------------------------------");
-
-                    return;
-                }
-                else {
-                    System.out.println("다시 입력해 주세요");
-                    System.out.println("---------------------------------------------------");
-                }
-            } else {
+            if (input.length() > 10 || !input.trim().contains(":")) {
+                System.out.println("다시 입력해 주세요");
                 System.out.println("---------------------------------------------------");
+            } else {
+
+                String[] parts = input.trim().split(":");
+
+                if (parts.length == 2) {
+                    String old_C = parts[0].trim();
+                    String new_C = parts[1].trim();
+
+                    if (!old_C.equals(new_C)) {
+
+                        CategoryVO oldOne = new CategoryVO(inNout, old_C);
+                        CategoryVO newOne = new CategoryVO(inNout, new_C);
+
+                        dao.updateCategoryInCategorytable(oldOne, newOne);
+
+                        System.out.println("수정이 완료되었습니다.");
+                        System.out.println("---------------------------------------------------");
+
+                        return;
+                    } else {
+                        System.out.println("다시 입력해 주세요");
+                        System.out.println("---------------------------------------------------");
+                    }
+                } else {
+                    System.out.println("---------------------------------------------------");
+                }
             }
         }
     }
@@ -145,12 +156,13 @@ public class Process4 {
             return;
         }
 
-        while(true) {
+        while (true) {
             System.out.print("삭제할 카테고리를 입력하세요 > ");
             String input = scanner.nextLine();
+            String stringWithoutSpaces = input.trim().replace(" ", "");
 
-            if(inNout.equals("수입")){
-                if(income.contains(input.trim())){
+            if (inNout.equals("수입")) {
+                if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && income.contains(input.trim())) {
                     CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
 
                     dao.deleteCategoryInCategorytable(categoryVO);
@@ -158,13 +170,14 @@ public class Process4 {
                     System.out.println("삭제가 완료되었습니다.");
                     System.out.println("---------------------------------------------------");
                     return;
-                }
-                else{
+
+                } else {
                     System.out.println("다시 입력해 주세요");
                     System.out.println("---------------------------------------------------");
                 }
             } else { // inNout가 지출인 경우
-                if(consumption.contains(input.trim())){
+                if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && consumption.contains(input.trim())) {
+
                     CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
 
                     dao.deleteCategoryInCategorytable(categoryVO);
@@ -172,8 +185,8 @@ public class Process4 {
                     System.out.println("삭제가 완료되었습니다.");
                     System.out.println("---------------------------------------------------");
                     return;
-                }
-                else{
+                    
+                } else {
                     System.out.println("다시 입력해 주세요");
                     System.out.println("---------------------------------------------------");
                 }

@@ -1,14 +1,16 @@
 package AccountBook;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Collections;
+import java.util.Comparator;
 
 //전월 밀린거 계산하는부분 + 단위 밀렸을때 다같이 밀리게
 public class Process1 {
 	private AccountBookDao dao = new AccountBookDao();
 	private Scanner scanner = new Scanner(System.in);
-	String date = "";
-	String lastDate = "";
-	String category = "";
+	private String date = "";
+	private String lastDate = "";
+	private String category = "";
 	public Process1() {
 		run();
 	}
@@ -34,6 +36,9 @@ public class Process1 {
 	private void inputDate() {
 		int checkDate = 0;
 		while(true) {
+			date = "";
+			lastDate = "";
+			category = "";
 			System.out.print("\"년+월\" 또는 \"년+월+카테고리\"를 입력하세요. > ");
 			date = scanner.nextLine();
 			date = date.trim().replaceAll("\\s+", " ");
@@ -43,10 +48,10 @@ public class Process1 {
 				break;
 			}
 			else if (checkDate == 2) {
-				ArrayList<CategoryVO> categoryArray = dao.getCategories();
+				ArrayList<String> categoryArray = dao.getCategories1();
 				boolean isIn = false;
 				for(int i=0; i<categoryArray.size();i++) {
-					if(categoryArray.get(i).getCategory().compareTo(category)==0) {
+					if(categoryArray.get(i).compareTo(category)==0) {
 						isIn = true;
 						break;
 					}
@@ -61,11 +66,11 @@ public class Process1 {
 			}
 		}
 		if (checkDate == 1) {
-			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountMonthList(date);
+			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountForMonth(date);
 			ArrayList<AccountBookVO> lastMonthArray = null;
 			String last = lastMonth(date);
 			if (last != "")
-				lastMonthArray = dao.getAccountMonthList(lastDate);
+				lastMonthArray = dao.getAccountForMonth(lastDate);
 			printAccountBook(thisMonthArray, lastMonthArray);
 		}
 		else if(checkDate == 2) {
@@ -122,28 +127,14 @@ public class Process1 {
 		if (parts.length == 2 || parts.length == 3) {
 			try {
 				num1 = Integer.parseInt(parts[0]);
-				if(num1>=10) {
-					
-					if (!parts[0].equals(Integer.toString(num1))) {
-						return 0;
-					}
+				
+				if(parts[0].length() != 2&&parts[0].length() != 4) {
+					return 0;
 				}
-				else {
-					if (!parts[0].equals("0"+Integer.toString(num1))) {
-						return 0;
-					}
-				}
+				if(parts[1].length() > 2)
+					return 0;
 				num2 = Integer.parseInt(parts[1]);
-				if(num2>=10) {
-					if (!parts[1].equals(Integer.toString(num2))){
-						return 0;
-					}
-				}
-				else {
-					if (!parts[1].equals("0" + Integer.toString(num2))){
-						return 0;
-					}
-				}
+				
 					
 				if((num1 > 37&&num1 < 1902)||(num1 < 1)||(num1 > 2037))
 					return 0;
@@ -174,11 +165,16 @@ public class Process1 {
 			return 0;
 	}
 	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
-	    int thisMonthSumIn = 0;
-	    int thisMonthSumOut = 0;
+	    long thisMonthSumIn = 0;
+	    long thisMonthSumOut = 0;
 
 	    System.out.println("------------------------------------------------------------");
-	    System.out.println(date + "\t\t수입\t\t지출\t\t내용\t인덱스");
+	    try {
+	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t\t수입\t\t수출\t\t내용\t인덱스");
+		}
+		catch(NumberFormatException e){
+							
+		}
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
@@ -187,8 +183,8 @@ public class Process1 {
 	        	thisMonthSumOut += array.get(i).getAmount();
 	        }
 	    }
-	    int lastMonthSumIn = 0;
-	    int lastMonthSumOut = 0;
+	    long lastMonthSumIn = 0;
+	    long lastMonthSumOut = 0;
 	    if(lastArray != null) {
 		    for (int i = 0; i < lastArray.size(); i++) {
 		        if (lastArray.get(i).getInNout().compareTo("수입") == 0) {
@@ -198,10 +194,33 @@ public class Process1 {
 		        }
 		    }
 	    }
-	    System.out.println("총계\t\t" + String.format("%,-10d\t",thisMonthSumIn+lastMonthSumIn)+ String.format("%,-10d\t",thisMonthSumOut+lastMonthSumOut) + "\t--");
+	    
+	    Comparator<AccountBookVO> dateComparator = new Comparator<AccountBookVO>() {
+            @Override
+            public int compare(AccountBookVO o1, AccountBookVO o2) {
+                // date를 기준으로 비교하여 정렬
+            	try {
+            		return Integer.parseInt(o2.getDate().substring(8)) - Integer.parseInt(o1.getDate().substring(8));
+    			}
+    			catch(NumberFormatException e){
+    				return 0;			
+    			}
+            }
+        };
+
+        // Comparator를 사용하여 ArrayList 정렬
+        Collections.sort(array, dateComparator);
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",(long)(thisMonthSumIn+lastMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut+lastMonthSumOut)) + "\t--");
 	    
 	    for (int i = 0; i < array.size(); i++) {
-	        System.out.print(array.get(i).getDate().substring(5));
+	    	try {
+	    		System.out.print(Integer.parseInt(array.get(i).getDate().substring(5,7)));
+		        System.out.print("."+Integer.parseInt(array.get(i).getDate().substring(8)));
+			}
+			catch(NumberFormatException e){
+				break;				
+			}
+	        
 	        System.out.print("\t" + array.get(i).getCategory());
 
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {

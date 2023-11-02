@@ -429,40 +429,6 @@ public class AccountBookDao {// DB를 다루는 클라스
 	    return categoryList;
 	}
 
-	public ArrayList<CategoryVO> getCategories() {
-		ArrayList<CategoryVO> categoryList = new ArrayList<>();
-		String sql = "SELECT * FROM savedcategory;";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				CategoryVO category = new CategoryVO("", "");
-				category.setInNout(rs.getString("inNout"));
-				category.setCategory(rs.getString("category"));
-				categoryList.add(category);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-
-		return categoryList;
-	}
 	
 
 }
