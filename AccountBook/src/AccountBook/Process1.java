@@ -199,7 +199,12 @@ public class Process1 {
             @Override
             public int compare(AccountBookVO o1, AccountBookVO o2) {
                 // date를 기준으로 비교하여 정렬
-                return o2.getDate().compareTo(o1.getDate());
+            	try {
+            		return Integer.parseInt(o2.getDate().substring(8)) - Integer.parseInt(o1.getDate().substring(8));
+    			}
+    			catch(NumberFormatException e){
+    				return 0;			
+    			}
             }
         };
 
