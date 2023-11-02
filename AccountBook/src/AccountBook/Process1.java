@@ -1,409 +1,238 @@
 package AccountBook;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.Scanner;
+import java.util.Collections;
+import java.util.Comparator;
 
-public class AccountBookDao {// DB를 다루는 클라스
-	private Connection conn;
-	private static final String USERNAME = "root";
-	private static final String PASSWORD = "root";
-
-	private static final String URL = "jdbc:mysql://localhost/AccountBook";
-
-	public AccountBookDao() {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-
-		} catch (Exception e) {
-			System.out.println("DB연결이 실패했습니다. 오류를 수정 후 다시 시도해주세요" + e);
-		}
-
+//전월 밀린거 계산하는부분 + 단위 밀렸을때 다같이 밀리게
+public class Process1 {
+	private AccountBookDao dao = new AccountBookDao();
+	private Scanner scanner = new Scanner(System.in);
+	private String date = "";
+	private String lastDate = "";
+	private String category = "";
+	public Process1() {
+		run();
 	}
-
-	public void InsertAccountBook(AccountBookVO accountBookVO) {
-
-		String sql = "insert into AccountBook(date,inNout,category,amount,details) values (?,?,?,?,?);";
-		PreparedStatement pstmt = null;
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, accountBookVO.getDate());
-			pstmt.setString(2, accountBookVO.getInNout());
-			pstmt.setString(3, accountBookVO.getCategory());
-			pstmt.setInt(4, accountBookVO.getAmount());
-			pstmt.setString(5, accountBookVO.getDetails());
-
-			pstmt.executeUpdate();
-			System.out.print("");//"항목이 등록되었습니다.
-		} catch (Exception e) {
-			System.out.println("데이터 삽입 실패");
-
-		} finally {
-			try {
-				if (pstmt != null && !pstmt.isClosed())
-					pstmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
+	public void run() {
+		inputDate();
+		isEnd();
+	}
+	private void isEnd() {
+		while(true) {
+			System.out.println("1) \"년+월\" 또는 \"년+월+카테고리\"다시 입력하기");
+			System.out.println("2)  메인화면으로 돌아가기");
+			System.out.print("입력> ");
+			String str = scanner.nextLine();
+			str = str.trim().replaceAll("\\s+", " ");
+			if(str.equals("1"))
+				inputDate();
+			else if(str.equals("2"))
+				break;
+//			else
+//				System.out.println("");
+		}
+	}
+	private void inputDate() {
+		int checkDate = 0;
+		while(true) {
+			date = "";
+			lastDate = "";
+			category = "";
+			System.out.print("\"년+월\" 또는 \"년+월+카테고리\"를 입력하세요. > ");
+			date = scanner.nextLine();
+			date = date.trim().replaceAll("\\s+", " ");
+			
+			checkDate = checkDate(date);
+			if (checkDate == 1) {
+				break;
 			}
-
-		}
-	}
-
-	public ArrayList<AccountBookVO> getAccountList(String date) {
-		String sql = "select * from AccountBook where date = ?;";
-		PreparedStatement pstmt = null;
-		ArrayList<AccountBookVO> result = new ArrayList<>();
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, date);// 첫번째 물음표
-			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-				AccountBookVO re = new AccountBookVO();
-				re.setIndexNumber(rs.getInt("indexNumber"));
-				re.setDate(rs.getString("date"));
-				re.setInNout(rs.getString("inNout"));
-				re.setCategory(rs.getString("category"));
-				re.setAmount(rs.getInt("amount"));
-				re.setDetails(rs.getString("details"));
-				result.add(re);
-			}
-		} catch (Exception e) {
-			System.out.println("데이터베이스 작업 중 에러발생");
-		}
-		return result;
-	}
-	
-	public ArrayList<AccountBookVO> getAccountCategoryList(String date, String category) {
-		String sql = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND category = ?;";
-		PreparedStatement pstmt = null;
-		ArrayList<AccountBookVO> result = new ArrayList<>();
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, date);// 첫번째 물음표
-			pstmt.setString(2, category);// 두번째 물음표
-			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-				AccountBookVO re = new AccountBookVO();
-				re.setIndexNumber(rs.getInt("indexNumber"));
-				re.setDate(rs.getString("date"));
-				re.setInNout(rs.getString("inNout"));
-				re.setCategory(rs.getString("category"));
-				re.setAmount(rs.getInt("amount"));
-				re.setDetails(rs.getString("details"));
-				result.add(re);
-			}
-		} catch (Exception e) {
-			System.out.println("데이터베이스 작업 중 에러발생");
-		}
-		return result;
-	}
-
-	public void updateAmount(int amount, int indexNumber) {
-		String sql = "update AccountBook set amount=? where indexNumber=?;";
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, amount);
-			pstmt.setInt(2, indexNumber);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pstmt != null && !pstmt.isClosed())
-					pstmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-	}
-
-	public void updateDetails(String details, int indexNumber) {
-		String sql = "update AccountBook set details=? where indexNumber=?;";
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, details);
-			pstmt.setInt(2, indexNumber);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pstmt != null && !pstmt.isClosed())
-					pstmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-	}
-
-	public void updateInNOut(String inNout, int indexNumber) {
-		String sql = "update AccountBook set inNout=? where indexNumber=?;";
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, inNout);
-			pstmt.setInt(2, indexNumber);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pstmt != null && !pstmt.isClosed())
-					pstmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-	}
-
-	public void deleteAccount(int indexNumber) {
-
-		String sql = "DELETE FROM AccountBook WHERE indexNumber = ?";
-		PreparedStatement pstmt = null;
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, indexNumber);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pstmt != null && !pstmt.isClosed())
-					pstmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-	}
-
-	public ArrayList<AccountBookVO> getAccountForMonth(String date) {
-		String sql = "SELECT * FROM AccountBook WHERE date LIKE ?;";
-		PreparedStatement pstmt = null;
-		ArrayList<AccountBookVO> result = new ArrayList<>();
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, date + "%");// 첫번째 물음표
-
-			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-				AccountBookVO re = new AccountBookVO();
-				re.setIndexNumber(rs.getInt("indexNumber"));
-				re.setDate(rs.getString("date"));
-				re.setInNout(rs.getString("inNout"));
-				re.setCategory(rs.getString("category"));
-				re.setAmount(rs.getInt("amount"));
-				re.setDetails(rs.getString("details"));
-				result.add(re);
-			}
-		} catch (Exception e) {
-			System.out.println("데이터베이스 작업 중 에러발생");
-		}
-		return result;
-	}
-
-	public void InsertCategoryInCategorytable(CategoryVO categoryVO) {
-
-		String sql = "insert into savedcategory(inNout,category) values (?,?);";
-		PreparedStatement pstmt = null;
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, categoryVO.getInNout());
-			pstmt.setString(2, categoryVO.getCategory());
-			pstmt.executeUpdate();
-			//System.out.print("성공");// 데이터 삽입 성공
-		} catch (Exception e) {
-			System.out.println("에러났네...");
-
-		} finally {
-			try {
-				if (pstmt != null && !pstmt.isClosed())
-					pstmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-
-		}
-	}
-
-	public void updateCategoryInCategorytable(CategoryVO oldOne, CategoryVO newOne) { // 기존의 정보를 oldOne에 바꾸고 싶은건 newOne에 넣기
-		String categorySql = "update savedcategory set category=? where category=?;";
-		PreparedStatement categoryPstmt = null;
-
-		String accountBookSql = "update accountbook set category=? where category=? and inNout=?;";
-		PreparedStatement accountBookPstmt = null;
-
-		try {
-			categoryPstmt = conn.prepareStatement(categorySql);
-			categoryPstmt.setString(1, newOne.getCategory());
-			categoryPstmt.setString(2, oldOne.getCategory());
-			categoryPstmt.executeUpdate();
-
-			accountBookPstmt = conn.prepareStatement(accountBookSql);
-			accountBookPstmt.setString(1, newOne.getCategory());
-			accountBookPstmt.setString(2, oldOne.getCategory());
-			accountBookPstmt.setString(3, oldOne.getInNout()); // inNout 값이 일치하는 경우에만 업데이트
-			accountBookPstmt.executeUpdate();
-
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (categoryPstmt != null && !categoryPstmt.isClosed() && accountBookPstmt != null && !accountBookPstmt.isClosed()){
-					categoryPstmt.close();
-					accountBookPstmt.close();
+			else if (checkDate == 2) {
+				ArrayList<String> categoryArray = dao.getCategories1();
+				boolean isIn = false;
+				for(int i=0; i<categoryArray.size();i++) {
+					if(categoryArray.get(i).compareTo(category)==0) {
+						isIn = true;
+						break;
+					}
 				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
+				if(isIn == true)
+					break;
+				else
+					System.out.println("해당 카테고리가 존재하지 않습니다. 카테고리 목록을 확인해주세요.");
+			}
+			else {
+				System.out.println("1902~2037 사이에서 년도를 입력하고, 01~12 사이에서 월을 입력해주세요.");
 			}
 		}
+		if (checkDate == 1) {
+			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountForMonth(date);
+			ArrayList<AccountBookVO> lastMonthArray = null;
+			String last = lastMonth(date);
+			if (last != "")
+				lastMonthArray = dao.getAccountForMonth(lastDate);
+			printAccountBook(thisMonthArray, lastMonthArray);
+		}
+		else if(checkDate == 2) {
+			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountCategoryList(date, category);
+			ArrayList<AccountBookVO> lastMonthArray = null;
+			String last = lastMonth(date);
+			if (last != "")
+				lastMonthArray = dao.getAccountCategoryList(lastDate, category);
+			printAccountBook(thisMonthArray, lastMonthArray);
+		}
 	}
-
-	public void deleteCategoryInCategorytable(CategoryVO categoryVO) {  //지우고 싶은 category를 categoryVO로 만들어서 전달해야 함
-
-		String categorySql = "DELETE FROM savedcategory WHERE category = ?";
-		PreparedStatement categoryPstmt = null;
-
-		String accountBookSql = "update accountbook set category=? where category=? and inNout=?;";
-		PreparedStatement accountBookPstmt = null;
-
+	private String lastMonth(String thisMonth) {
+		this.lastDate = "";
+		String[] parts = thisMonth.split(" ");
+		int num1 = 0;
+		int num2 = 0;
 		try {
-			categoryPstmt = conn.prepareStatement(categorySql);
-			categoryPstmt.setString(1, categoryVO.getCategory());
-			categoryPstmt.executeUpdate();
-
-			accountBookPstmt = conn.prepareStatement(accountBookSql);
-			accountBookPstmt.setString(1, "----");
-			accountBookPstmt.setString(2, categoryVO.getCategory());
-			accountBookPstmt.setString(3, categoryVO.getInNout()); // inNout 값이 일치하는 경우에만 업데이트
-			accountBookPstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (categoryPstmt != null && !categoryPstmt.isClosed() && accountBookPstmt != null && !accountBookPstmt.isClosed()){
-					categoryPstmt.close();
-					accountBookPstmt.close();
+			num1 = Integer.parseInt(parts[0]);
+			num2 = Integer.parseInt(parts[1]);
+			if(num2==1) {
+				if(num1 == 1902) {
+					return "";
 				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
+				else {
+					num1 = num1 - 1;
+					num2 = 12;
+					this.lastDate = String.valueOf(num1) + " " + String.valueOf(num2);
+					return this.lastDate;
+				}
+				
+			}
+			else {
+				num2 = num2-1;
+				if(num2<10)
+					this.lastDate = String.valueOf(num1) + " 0" + String.valueOf(num2);
+				else
+					this.lastDate = String.valueOf(num1) + " " + String.valueOf(num2);
+				return this.lastDate;
+				
+			}
+
+			
+		}
+		catch(NumberFormatException e){
+			return "";				
+		}
+		
+	}
+	private int checkDate(String date) {
+		this.date = "";
+		String[] parts = date.split(" ");
+		int num1 = 0;
+		int num2 = 0;
+		if (parts.length == 2 || parts.length == 3) {
+			try {
+				num1 = Integer.parseInt(parts[0]);
+				
+				if(parts[0].length() != 2&&parts[0].length() != 4) {
+					return 0;
+				}
+				if(parts[1].length() > 2)
+					return 0;
+				num2 = Integer.parseInt(parts[1]);
+				
+					
+				if((num1 > 37&&num1 < 1902)||(num1 < 1)||(num1 > 2037))
+					return 0;
+				if(num1<37)
+					num1 = num1+2000;
+				if(num2 < 1||num2 > 12)
+					return 0;
+			}
+			catch(NumberFormatException e){
+				return 0;				
 			}
 		}
-	}
-
-	public ArrayList<CategoryVO> getCategoriesWithIn() {
-		ArrayList<CategoryVO> categoryList = new ArrayList<>();
-		String sql = "SELECT * FROM savedcategory WHERE inNout = '수입';";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				CategoryVO category = new CategoryVO("", "");
-				category.setInNout(rs.getString("inNout"));
-				category.setCategory(rs.getString("category"));
-				categoryList.add(category);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
+		else {
+			return 0;
 		}
-
-		return categoryList;
-	}
-
-	public ArrayList<CategoryVO> getCategoriesWithOut() {
-		ArrayList<CategoryVO> categoryList = new ArrayList<>();
-		String sql = "SELECT * FROM savedcategory WHERE inNout = '지출';";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				CategoryVO category = new CategoryVO("", "");
-				category.setInNout(rs.getString("inNout"));
-				category.setCategory(rs.getString("category"));
-				categoryList.add(category);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
+		if(num2<10)
+			this.date = String.valueOf(num1) + " 0" + String.valueOf(num2);
+		else
+			this.date = String.valueOf(num1) + " " + String.valueOf(num2);
+		
+		if(parts.length == 2)
+			return 1;
+		else if(parts.length == 3) {
+			category = parts[2];
+			return 2;
 		}
-
-		return categoryList;
+		else
+			return 0;
 	}
-	public ArrayList<String> getCategories1() {//process3에서 카테고리 존재 여부 확인할떄 사용
-		ArrayList<String> categoryList = new ArrayList<>();
-		String sql = "SELECT * FROM savedcategory;";// Select only the category column
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
+	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
+	    int thisMonthSumIn = 0;
+	    int thisMonthSumOut = 0;
 
-		try {
-			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				String category = rs.getString("category");
-				categoryList.add(category);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
+	    System.out.println("------------------------------------------------------------");
+	    try {
+	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t\t수입\t\t수출\t\t내용\t인덱스");
 		}
+		catch(NumberFormatException e){
+							
+		}
+	    
+	    for (int i = 0; i < array.size(); i++) {
+	        if (array.get(i).getInNout().compareTo("수입") == 0) {
+	        	thisMonthSumIn += array.get(i).getAmount();
+	        } else {
+	        	thisMonthSumOut += array.get(i).getAmount();
+	        }
+	    }
+	    int lastMonthSumIn = 0;
+	    int lastMonthSumOut = 0;
+	    if(lastArray != null) {
+		    for (int i = 0; i < lastArray.size(); i++) {
+		        if (lastArray.get(i).getInNout().compareTo("수입") == 0) {
+		        	lastMonthSumIn += lastArray.get(i).getAmount();
+		        } else {
+		        	lastMonthSumOut += lastArray.get(i).getAmount();
+		        }
+		    }
+	    }
+	    
+	    Comparator<AccountBookVO> dateComparator = new Comparator<AccountBookVO>() {
+            @Override
+            public int compare(AccountBookVO o1, AccountBookVO o2) {
+                // date를 기준으로 비교하여 정렬
+                return o2.getDate().compareTo(o1.getDate());
+            }
+        };
 
-		return categoryList;
+        // Comparator를 사용하여 ArrayList 정렬
+        Collections.sort(array, dateComparator);
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",thisMonthSumIn+lastMonthSumIn)+ String.format("%,-10d\t",thisMonthSumOut+lastMonthSumOut) + "\t--");
+	    
+	    for (int i = 0; i < array.size(); i++) {
+	    	try {
+	    		System.out.print(Integer.parseInt(array.get(i).getDate().substring(5,7)));
+		        System.out.print("."+Integer.parseInt(array.get(i).getDate().substring(8)));
+			}
+			catch(NumberFormatException e){
+				break;				
+			}
+	        
+	        System.out.print("\t" + array.get(i).getCategory());
+
+	        if (array.get(i).getInNout().compareTo("수입") == 0) {
+	            System.out.print("\t" +String.format("%,-10d\t\t\t",array.get(i).getAmount()));
+	        } else {
+	        	System.out.print("\t\t\t" +String.format("%,-10d\t",array.get(i).getAmount()));
+	        }
+	        System.out.print(array.get(i).getDetails());
+	        System.out.print("\t" + array.get(i).getIndexNumber());
+	        System.out.println();
+	    }
+	    if(lastArray != null) {
+	    	
+		    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--\n");
+		    
+	    }
+	    System.out.println("------------------------------------------------------------");
+
 	}
-
 }
