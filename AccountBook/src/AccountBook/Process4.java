@@ -23,11 +23,11 @@ public class Process4 {
                 System.out.println("4) 메인화면으로 돌아가기");
                 System.out.print("입력하세요 > ");
                 String input = scanner.nextLine();
-                System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
 
                 if (input.trim().length() != 1) {
                     System.out.println("잘못 입력했습니다. 범위(1~4) 안에서 다시 선택해주세요");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 } else if (Integer.parseInt(input.trim()) == 1) {
                     String inNout = input_inNout();
                     add_category(inNout);
@@ -44,12 +44,12 @@ public class Process4 {
                     return;
                 } else {
                     System.out.println("잘못 입력했습니다. 범위(1~4) 안에서 다시 선택해주세요");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
 
             } catch (Exception e) {
                 System.out.println("잘못 입력했습니다. 범위(1~4) 안에서 다시 선택해주세요");
-                System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
             }
         }
 
@@ -72,12 +72,12 @@ public class Process4 {
                     dao.InsertCategoryInCategorytable(categoryVO);
 
                     System.out.println("추가가 완료되었습니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                     return;
 
                 } else {
                     System.out.println("다시 입력해 주세요");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             } else { // inNout가 지출인 경우
                 if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !consumption.contains(input.trim())) {
@@ -87,11 +87,11 @@ public class Process4 {
                     dao.InsertCategoryInCategorytable(categoryVO);
 
                     System.out.println("추가가 완료되었습니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                     return;
                 } else {
                     System.out.println("다시 입력해 주세요");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             }
         }
@@ -104,7 +104,7 @@ public class Process4 {
 
         if (value == 1) {
             System.out.println("등록된 카테고리가 없습니다.");
-            System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
             return;
         }
 
@@ -114,7 +114,7 @@ public class Process4 {
 
             if (input.length() > 10 || !input.trim().contains(":")) {
                 System.out.println("다시 입력해 주세요");
-                System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
             } else {
 
                 String[] parts = input.trim().split(":");
@@ -131,13 +131,13 @@ public class Process4 {
                             dao.updateCategoryInCategorytable(oldOne, newOne);
 
                             System.out.println("수정이 완료되었습니다.");
-                            System.out.println("---------------------------------------------------");
+            				System.out.println("------------------------------------------------------------");
 
                             return;
                         }
                         else{
                             System.out.println("다시 입력해 주세요");
-                            System.out.println("---------------------------------------------------");
+            				System.out.println("------------------------------------------------------------");
                         }
                     } else if (inNout.equals("지출")) {
                         if (!old_C.equals(new_C) && !consumption.contains(new_C)) {
@@ -148,20 +148,20 @@ public class Process4 {
                             dao.updateCategoryInCategorytable(oldOne, newOne);
 
                             System.out.println("수정이 완료되었습니다.");
-                            System.out.println("---------------------------------------------------");
+            				System.out.println("------------------------------------------------------------");
 
                             return;
                         }
                         else{
                             System.out.println("다시 입력해 주세요");
-                            System.out.println("---------------------------------------------------");
+            				System.out.println("------------------------------------------------------------");
                         }
                     } else {
                         System.out.println("다시 입력해 주세요");
-                        System.out.println("---------------------------------------------------");
+        				System.out.println("------------------------------------------------------------");
                     }
                 } else {
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             }
         }
@@ -174,7 +174,7 @@ public class Process4 {
 
         if (value == 1) {
             System.out.println("등록된 카테고리가 없습니다.");
-            System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
             return;
         }
 
@@ -190,12 +190,12 @@ public class Process4 {
                     dao.deleteCategoryInCategorytable(categoryVO);
 
                     System.out.println("삭제가 완료되었습니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                     return;
 
                 } else {
                     System.out.println("다시 입력해 주세요");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             } else { // inNout가 지출인 경우
                 if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && consumption.contains(input.trim())) {
@@ -205,12 +205,12 @@ public class Process4 {
                     dao.deleteCategoryInCategorytable(categoryVO);
 
                     System.out.println("삭제가 완료되었습니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                     return;
                     
                 } else {
                     System.out.println("다시 입력해 주세요");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             }
         }
@@ -221,14 +221,14 @@ public class Process4 {
         while (true) {
             System.out.print("\"수입\" 혹은 \"지출\"을 입력하세요 > ");
             input = scanner.nextLine();
-            System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
             if (input.length() <= 10) {
                 input = input.trim();
                 if (Is_valid_inNout(input)) {
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             }
         }

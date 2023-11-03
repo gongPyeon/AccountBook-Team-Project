@@ -8,6 +8,9 @@ import java.util.Comparator;
 public class Process1 {
 	private AccountBookDao dao = new AccountBookDao();
 	private Scanner scanner = new Scanner(System.in);
+	private Process2 process2;
+	private int deleteAccount;
+	private ArrayList<AccountBookVO> temp;
 	private String date = "";
 	private String lastDate = "";
 	private String category = "";
@@ -22,18 +25,63 @@ public class Process1 {
 		while(true) {
 			System.out.println("1) \"년+월\" 또는 \"년+월+카테고리\"다시 입력하기");
 			System.out.println("2)  메인화면으로 돌아가기");
+			System.out.println("3) 항목 수정하기");
 			System.out.print("입력> ");
 			String str = scanner.nextLine();
 			str = str.trim().replaceAll("\\s+", " ");
 			System.out.println("------------------------------------------------------------");
+			isValidFor123(str);
 			if(str.equals("1"))
 				inputDate();
 			else if(str.equals("2"))
 				break;
-//			else
-//				System.out.println("");
+			else if(str.equals("3")) {
+            updateAccount();
+            process2 = new Process2();
+            dao.deleteAccount(deleteAccount);
+            break;
+         }
 		}
 	}
+	 private void isValidFor123(String str) {
+	      while(true) {
+	         if(str.equals("1")||str.equals("2")||str.equals("3")) {
+	            break;
+	         }
+				System.out.println("------------------------------------------------------------");
+	          System.out.println(">");
+	      }
+	   }
+	   
+	   private void isValidInDex(int input) {
+	      int flag=0;
+	      int tempNum = input;
+	      
+	      while(true) {
+	         for(AccountBookVO vo : temp) {
+	            if(vo.getIndexNumber()==tempNum) {
+	               flag = 1;
+	               break;
+	            }
+	         }
+	         if(flag==1)
+	            break;
+				System.out.println("------------------------------------------------------------");
+	          System.out.println(">");
+	          scanner = new Scanner(System.in);
+	          tempNum = scanner.nextInt();
+	      }
+	   }
+	   
+	   private void updateAccount() {
+			System.out.println("------------------------------------------------------------");
+	       System.out.println("> 수정할 항목의 인덱스를 입력해주세요");
+			System.out.println("------------------------------------------------------------");
+	       System.out.println(">");
+	       int temp = scanner.nextInt();
+	       isValidInDex(temp);
+	       deleteAccount = temp;
+	   }
 	private void inputDate() {
 		int checkDate = 0;
 		while(true) {
@@ -71,6 +119,7 @@ public class Process1 {
 		}
 		if (checkDate == 1) {
 			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountForMonth(date);
+			temp = thisMonthArray;
 			ArrayList<AccountBookVO> lastMonthArray = null;
 			String last = lastMonth(date);
 			if (last != "")
@@ -79,6 +128,7 @@ public class Process1 {
 		}
 		else if(checkDate == 2) {
 			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountCategoryList(date, category);
+			temp = thisMonthArray;
 			ArrayList<AccountBookVO> lastMonthArray = null;
 			String last = lastMonth(date);
 			if (last != "")
@@ -172,9 +222,9 @@ public class Process1 {
 	    long thisMonthSumIn = 0;
 	    long thisMonthSumOut = 0;
 
-	    System.out.println("------------------------------------------------------------");
+		System.out.println("------------------------------------------------------------");
 	    try {
-	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t\t수입\t\t수출\t\t내용\t인덱스");
+	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t\t수입\t\t지출\t\t내용\t인덱스");
 		}
 		catch(NumberFormatException e){
 							
@@ -238,10 +288,10 @@ public class Process1 {
 	    }
 	    if(lastArray != null) {
 	    	
-		    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--\n");
+		    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
 		    
 	    }
-	    System.out.println("------------------------------------------------------------");
+		System.out.println("------------------------------------------------------------");
 
 	}
 }
