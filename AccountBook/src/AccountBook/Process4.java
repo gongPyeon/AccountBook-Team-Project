@@ -122,18 +122,40 @@ public class Process4 {
                 if (parts.length == 2) {
                     String old_C = parts[0].trim();
                     String new_C = parts[1].trim();
+                    if (inNout.equals("수입")) {
+                        if (!old_C.equals(new_C) && !income.contains(new_C)) {
 
-                    if (!old_C.equals(new_C)) {
+                            CategoryVO oldOne = new CategoryVO(inNout, old_C);
+                            CategoryVO newOne = new CategoryVO(inNout, new_C);
 
-                        CategoryVO oldOne = new CategoryVO(inNout, old_C);
-                        CategoryVO newOne = new CategoryVO(inNout, new_C);
+                            dao.updateCategoryInCategorytable(oldOne, newOne);
 
-                        dao.updateCategoryInCategorytable(oldOne, newOne);
+                            System.out.println("수정이 완료되었습니다.");
+                            System.out.println("---------------------------------------------------");
 
-                        System.out.println("수정이 완료되었습니다.");
-                        System.out.println("---------------------------------------------------");
+                            return;
+                        }
+                        else{
+                            System.out.println("다시 입력해 주세요");
+                            System.out.println("---------------------------------------------------");
+                        }
+                    } else if (inNout.equals("지출")) {
+                        if (!old_C.equals(new_C) && !consumption.contains(new_C)) {
 
-                        return;
+                            CategoryVO oldOne = new CategoryVO(inNout, old_C);
+                            CategoryVO newOne = new CategoryVO(inNout, new_C);
+
+                            dao.updateCategoryInCategorytable(oldOne, newOne);
+
+                            System.out.println("수정이 완료되었습니다.");
+                            System.out.println("---------------------------------------------------");
+
+                            return;
+                        }
+                        else{
+                            System.out.println("다시 입력해 주세요");
+                            System.out.println("---------------------------------------------------");
+                        }
                     } else {
                         System.out.println("다시 입력해 주세요");
                         System.out.println("---------------------------------------------------");
