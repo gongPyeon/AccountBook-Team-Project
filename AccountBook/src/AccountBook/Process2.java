@@ -308,12 +308,13 @@ public class Process2 {
                 DB_details = scanner.nextLine();
                 if (Is_valid_empty(DB_details)) { //enter만을 입력하는 경우, 공백이 포함된 경우
                     System.out.println("---------------------------------------------------");
-                    System.out.println("등록이 완료되었습니다");
+                    /*System.out.println("등록이 완료되었습니다");
                     System.out.println("DB_date : " + this.DB_date);
                     System.out.println("DB_inNout : " + this.DB_inNout);
                     System.out.println("DB_category : " + this.DB_category);
                     System.out.println("DB_amount : " + this.DB_amount);
-                    System.out.println("DB_details : " + this.DB_details);
+                    System.out.println("DB_details : " + this.DB_details);*/
+                	System.out.println("등록이 완료되었습니다.");
                     System.out.println("---------------------------------------------------");
                     break;
                 }
