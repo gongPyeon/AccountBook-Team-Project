@@ -24,7 +24,7 @@ public class MainProgram {
 			//System.out.println("5. Help(도움말)");
 			System.out.println("5. Quit (종료)");
 			System.out.println("------------------------------------------------------------");
-			System.out.print("A11 Account book : menu > ");
+			System.out.print("> A11 Account book : menu > ");
 			@SuppressWarnings("resource")
 			Scanner sc = new Scanner(System.in);
 
@@ -45,7 +45,7 @@ public class MainProgram {
 						//process5 = new Process5();
 					//}
 					else if (menu == 5) {
-						System.out.println("A11 Account book를 종료합니다.");
+						System.out.println("> A11 Account book를 종료합니다.");
 						break;
 					}else {
 						System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
