@@ -30,7 +30,7 @@ public class Process2 {
         while (true) {
             System.out.print("\"년+월+일\"을 입력하세요 > ");
             String input = scanner.nextLine();
-            System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
 //          System.out.println("input: " + input);
             if (input != null && !input.trim().isEmpty() && input.length() <= 15) {
                 input = input.trim();
@@ -41,12 +41,12 @@ public class Process2 {
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             }
             else{
                 System.out.println("입력 가능한 문자열이 아닙니다.");
-                System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
             }
         }
     }
@@ -56,7 +56,7 @@ public class Process2 {
         while (true) {
             System.out.print("\"수입\" 혹은 \"지출\"을 입력하세요 > ");
             String input = scanner.nextLine();
-            System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
             if (input.length() <= 10) {
                 input = input.trim();
                 if (Is_valid_inNout(input)) {
@@ -64,7 +64,7 @@ public class Process2 {
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             }
         }
@@ -88,7 +88,7 @@ public class Process2 {
             if (inNout.equals("수입")) {
                 if (income.isEmpty()) {
                     System.out.println("등록된 카테고리가 없습니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                     return;
                 } else {
                     System.out.print("카테고리를 입력해주세요(");
@@ -105,7 +105,7 @@ public class Process2 {
             } else {// inNout.equals("지출"){
                 if (consumption.isEmpty()) {
                     System.out.println("등록된 카테고리가 없습니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                     return;
                 } else {
                     System.out.print("카테고리를 입력해주세요(");
@@ -121,7 +121,7 @@ public class Process2 {
                 }
             }
             String input = scanner.nextLine();
-            System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
             if (input.length() <= 10) {
                 input = input.trim();
                 if (Is_valid_category(input, inNout)) {
@@ -129,12 +129,12 @@ public class Process2 {
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-                    System.out.println("---------------------------------------------------");
+    				System.out.println("------------------------------------------------------------");
                 }
             }
             else{
                 System.out.println("입력 가능한 문자열이 아닙니다.");
-                System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
             }
 
         }

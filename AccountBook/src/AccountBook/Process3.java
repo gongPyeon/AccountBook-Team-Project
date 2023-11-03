@@ -77,16 +77,16 @@ public class Process3 {
 							inputToString = sc.nextLine();
 							if (!isValidIndex(inputToString)) {
 								System.out.println("유효하지 않은 인덱스입니다");
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 							} else {
 								break;
 							}
 						}
 						input = Integer.parseInt(inputToString);
 						dao.deleteAccount(input);
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 						System.out.println("삭제가 완료되었습니다");
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 						
 						int temp = 0;
 						String tempInput;
@@ -97,7 +97,7 @@ public class Process3 {
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							tempInput = sc.nextLine();
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 							
 							if(validFor1or2(tempInput)) {
 								temp = Integer.parseInt(tempInput.trim());
@@ -105,7 +105,7 @@ public class Process3 {
 								}
 							
 							System.out.println("유효하지 않은 숫자를 입력하셨습니다");
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 							
 							if (temp == 1) {
 								//addtionalDelete = true;
@@ -123,7 +123,7 @@ public class Process3 {
 						else { // 아무것도 가져온게 없을 때
 						showCurrentAccount(modifiedDate);
 						System.out.println("삭제 가능한 항목이 없습니다.");
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 
 						int temp2;
 						String input;
@@ -134,7 +134,7 @@ public class Process3 {
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							input = sc.nextLine();
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 
 							//System.out.println("---------------------------------------------------");
 
@@ -145,15 +145,15 @@ public class Process3 {
 							}
 							if (temp2 == 1) {
 								addtionalDelete = true;
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 								break;
 							}
 							else if (temp2 == 2) {
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 								break;
 
 							}
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 						}
 						if (temp2 == 2) // 메인화면으로 돌아가기
 							break;
@@ -193,16 +193,16 @@ public class Process3 {
 							inputToString = sc.nextLine();
 							if (!isValidIndex(inputToString)) {
 								System.out.println("유효하지 않은 인덱스입니다");
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 							} else {
 								break;
 							}
 						}
 						input = Integer.parseInt(inputToString);
 						dao.deleteAccount(input);
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 						System.out.println("삭제가 완료되었습니다");
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 						
 						int temp = 0;
 						String tempInput;
@@ -226,7 +226,7 @@ public class Process3 {
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							tempInput = sc.nextLine();
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 							
 							if(validFor1or2(tempInput)) {
 								temp = Integer.parseInt(tempInput.trim());
@@ -234,7 +234,7 @@ public class Process3 {
 								}
 							
 							System.out.println("유효하지 않은 숫자를 입력하셨습니다");
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 							
 							if (temp == 1) {
 								//addtionalDelete = true;
@@ -259,7 +259,7 @@ public class Process3 {
 
 							}
 						System.out.println("삭제 가능한 항목이 없습니다.");
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 
 						int temp2;
 						String input;
@@ -270,7 +270,7 @@ public class Process3 {
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							input = sc.nextLine();
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 
 							//System.out.println("---------------------------------------------------");
 
@@ -281,15 +281,15 @@ public class Process3 {
 							}
 							if (temp2 == 1) {
 								addtionalDelete = true;
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 								break;
 							}
 							else if (temp2 == 2) {
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 								break;
 
 							}
-							System.out.println("---------------------------------------------------");
+							System.out.println("------------------------------------------------------------");
 						}
 						if (temp2 == 2) // 메인화면으로 돌아가기
 							break;
@@ -714,7 +714,7 @@ public class Process3 {
 	    	print = lastdateyearmonth.substring(5,7);
 	    }
 		System.out.println(print+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
-	    System.out.println("---------------------------------------------------");
+		System.out.println("------------------------------------------------------------");
 	}
 	
 	public void showCurrentAccount2(String date, String category) {
@@ -806,7 +806,7 @@ public class Process3 {
 	    	print = lastdateyearmonth.substring(5,7);
 	    }
 		System.out.println(print+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
-	    System.out.println("---------------------------------------------------");
+		System.out.println("------------------------------------------------------------");
 
 	}
 	
@@ -828,11 +828,11 @@ public class Process3 {
 	        
 	      
 	        if (isDateValid(date)) {
-	        	System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
 	            break;
 	        }
 	       //if (!isDateValid(date))
-	        System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
 	    }
 	}
 	public boolean validFor1or2(String input) {
