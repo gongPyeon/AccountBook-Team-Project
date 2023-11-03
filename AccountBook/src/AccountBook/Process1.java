@@ -58,8 +58,10 @@ public class Process1 {
 				}
 				if(isIn == true)
 					break;
-				else
+				else {
 					System.out.println("해당 카테고리가 존재하지 않습니다. 카테고리 목록을 확인해주세요.");
+					System.out.println("------------------------------------------------------------");
+				}
 			}
 			else {
 				System.out.println("1902~2037중에서 년도를 입력하고, 01~12중에서 월을 입력해주세요.");
