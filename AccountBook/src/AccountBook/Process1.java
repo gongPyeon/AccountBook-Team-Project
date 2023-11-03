@@ -25,6 +25,7 @@ public class Process1 {
 			System.out.print("입력> ");
 			String str = scanner.nextLine();
 			str = str.trim().replaceAll("\\s+", " ");
+			System.out.println("------------------------------------------------------------");
 			if(str.equals("1"))
 				inputDate();
 			else if(str.equals("2"))
