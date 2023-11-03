@@ -63,6 +63,7 @@ public class Process1 {
 			}
 			else {
 				System.out.println("1902~2037중에서 년도를 입력하고, 01~12중에서 월을 입력해주세요.");
+				System.out.println("------------------------------------------------------------");
 			}
 		}
 		if (checkDate == 1) {
