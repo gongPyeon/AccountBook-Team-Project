@@ -30,7 +30,7 @@ public class Process1 {
 			String str = scanner.nextLine();
 			str = str.trim().replaceAll("\\s+", " ");
 			System.out.println("------------------------------------------------------------");
-			isValidFor123(str);
+			//isValidFor123(str);
 			if(str.equals("1"))
 				inputDate();
 			else if(str.equals("2"))
@@ -43,6 +43,7 @@ public class Process1 {
          }
 		}
 	}
+	/*
 	 private void isValidFor123(String str) {
 	      while(true) {
 	         if(str.equals("1")||str.equals("2")||str.equals("3")) {
@@ -52,6 +53,7 @@ public class Process1 {
 	          System.out.println(">");
 	      }
 	   }
+	   */
 	   
 	   private void isValidInDex(int input) {
 	      int flag=0;
@@ -74,10 +76,9 @@ public class Process1 {
 	   }
 	   
 	   private void updateAccount() {
-			System.out.println("------------------------------------------------------------");
 	       System.out.println("> 수정할 항목의 인덱스를 입력해주세요");
 			System.out.println("------------------------------------------------------------");
-	       System.out.println(">");
+	       System.out.print("> ");
 	       int temp = scanner.nextInt();
 	       isValidInDex(temp);
 	       deleteAccount = temp;
