@@ -109,7 +109,7 @@ public class Process4 {
         }
 
         while (true) {
-            System.out.print("수정할 카테고리를 입력하세요 > ");
+            System.out.print("수정할 카테고리를 입력하세요(기존 카테고리 : 바꿀 카테고리) > ");
             String input = scanner.nextLine();
 
             if (input.length() > 10 || !input.trim().contains(":")) {
