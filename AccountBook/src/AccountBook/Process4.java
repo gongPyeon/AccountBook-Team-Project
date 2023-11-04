@@ -91,7 +91,7 @@ public class Process4 {
         }
 
         while (true) {
-            System.out.print("수정할 카테고리를 입력하세요 > ");
+            System.out.print("수정할 카테고리를 입력하세요(기존 카테고리 : 바꿀 카테고리) > ");
             String input = scanner.nextLine();
 
             if (input.length() > 10 || !input.trim().contains(":")) {
@@ -222,15 +222,21 @@ public class Process4 {
         return e.equals("수입") || e.equals("지출");
     }
 
-    private int show_categoryList(String inNout) {
+   private int show_categoryList(String inNout) {
         boolean first = true;
         System.out.print(inNout + " 카테고리 목록 (");
+
+        ArrayList<CategoryVO> categoryInList = dao.getCategoriesWithIn();
+
+        for (CategoryVO categoryVO : categoryInList)
+            income.add(categoryVO.getCategory());
+
+        ArrayList<CategoryVO> categoryOutList = dao.getCategoriesWithOut();
+
+        for (CategoryVO categoryVO : categoryOutList)
+            consumption.add(categoryVO.getCategory());
+
         if (inNout.equals("수입")) {
-            ArrayList<CategoryVO> categoryInList = dao.getCategoriesWithIn();
-
-            for (CategoryVO categoryVO : categoryInList)
-                income.add(categoryVO.getCategory());
-
             if (income.isEmpty()) {
                 System.out.println(")");
                 return 1;
@@ -248,11 +254,6 @@ public class Process4 {
             }
 
         } else {// inNout.equals("지출"){
-            ArrayList<CategoryVO> categoryOutList = dao.getCategoriesWithOut();
-
-            for (CategoryVO categoryVO : categoryOutList)
-                consumption.add(categoryVO.getCategory());
-
             if (consumption.isEmpty()) {
                 System.out.println(")");
                 return 1;

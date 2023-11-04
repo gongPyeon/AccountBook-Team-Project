@@ -83,9 +83,20 @@ public class Process1 {
 	   
 	   private void updateAccount() {
 	       System.out.println("> 수정할 항목의 인덱스를 입력해주세요");
-			System.out.println("------------------------------------------------------------");
+	       System.out.println("------------------------------------------------------------");
 	       System.out.print("> ");
-	       int temp = scanner.nextInt();
+	       int temp=0;
+	       while(true) {
+	    	   try {
+	    		   Scanner scanner = new Scanner(System.in);
+	    		   temp = scanner.nextInt();
+	    		   break;
+			} catch (Exception e) {
+				System.out.println("------------------------------------------------------------");
+			    System.out.print("> ");
+			}
+	    	   
+	       }
 	       isValidInDex(temp);
 	       deleteAccount = temp;
 	   }

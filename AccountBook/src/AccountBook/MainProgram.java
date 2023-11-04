@@ -10,7 +10,6 @@ public class MainProgram {
 	private Process2 process2;
 	private Process3 process3;
 	private Process4 process4;
-	private Process5 process5;
 	private String process_input;
 	
 
@@ -41,11 +40,8 @@ public class MainProgram {
 						process3 = new Process3();
 					else if (menu == 4) 
 						process4 = new Process4();
-					//else if (menu == 5) { 
-						//process5 = new Process5();
-					//}
 					else if (menu == 5) {
-						System.out.println("> A11 Account book를 종료합니다.");
+						System.out.println("> A11 Account book을 종료합니다.");
 						break;
 					}else {
 						System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
