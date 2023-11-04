@@ -29,12 +29,15 @@ public class Process1 {
 			System.out.print("입력> ");
 			String str = scanner.nextLine();
 			str = str.trim().replaceAll("\\s+", " ");
-			System.out.println("------------------------------------------------------------");
-			//isValidFor123(str);
-			if(str.equals("1"))
+			str=isValidFor123(str);
+			if(str.equals("1")) {
+				System.out.println("------------------------------------------------------------");
 				inputDate();
-			else if(str.equals("2"))
+			}
+			else if(str.equals("2")) {
+				System.out.println("------------------------------------------------------------");
 				break;
+			}
 			else if(str.equals("3")) {
             updateAccount();
             process2 = new Process2();
@@ -43,17 +46,20 @@ public class Process1 {
          }
 		}
 	}
-	/*
-	 private void isValidFor123(String str) {
+
+	 private String isValidFor123(String str) {
+		 String temp = str;
 	      while(true) {
-	         if(str.equals("1")||str.equals("2")||str.equals("3")) {
-	            break;
+	         if(temp.equals("1")||temp.equals("2")||temp.equals("3")) {
+	            return temp;
 	         }
 				System.out.println("------------------------------------------------------------");
 	          System.out.println(">");
+	          scanner = new Scanner(System.in);
+	          temp = scanner.next();
 	      }
 	   }
-	   */
+	 
 	   
 	   private void isValidInDex(int input) {
 	      int flag=0;
@@ -69,7 +75,7 @@ public class Process1 {
 	         if(flag==1)
 	            break;
 				System.out.println("------------------------------------------------------------");
-	          System.out.println(">");
+	          System.out.print("> ");
 	          scanner = new Scanner(System.in);
 	          tempNum = scanner.nextInt();
 	      }
