@@ -337,6 +337,9 @@ public class Process3 {
 		            int temp = Integer.parseInt(year);
 		            
 		            temp = 2000 + temp ;
+		            if (temp < 1902 || temp > 2037) {
+		                return false;
+		            }
 		            year = Integer.toString(temp);
 		        } catch (NumberFormatException e) {
 		            return false; // Non-numeric year
@@ -404,6 +407,9 @@ public class Process3 {
 		            int temp = Integer.parseInt(year);
 		            
 		            temp = 2000 + temp ;
+		            if (temp < 1902 || temp > 2037) {
+		                return false;
+		            }
 		            year = Integer.toString(temp);
 
 		        } catch (NumberFormatException e) {
