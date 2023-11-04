@@ -9,6 +9,9 @@ public class Process3 {
 	AccountBookDao dao = new AccountBookDao();
 	ArrayList<String> availableCategories = dao.getCategories1();//저장된 카테고리 항목들
 	ArrayList<AccountBookVO> accountList;
+	ArrayList<AccountBookVO> LASTaccountList;
+	ArrayList<AccountBookVO> filteredList;
+	ArrayList<AccountBookVO> filteredList2;
 	String abbreviationMonth;
 	String year;
 	String month;
@@ -21,6 +24,8 @@ public class Process3 {
 	String previous; // 00 이월분 표시의 00
 	String inputToString;
 	String date;
+	String lastDate = "";
+	String modifiedDate;
 	Scanner sc = new Scanner(System.in);
 	boolean addtionalDelete = false;
 	public Process3() {
@@ -42,7 +47,7 @@ public class Process3 {
 
 		insertYearMonth();
 			while (true) {
-				if(addtionalDelete==true) {
+				if (addtionalDelete == true) {
 					insertYearMonth();
 					addtionalDelete = false;
 				}
@@ -51,11 +56,13 @@ public class Process3 {
 					String[] arr = date.split(" ");
 					year = arr[0];
 					month = arr[1];
+					if (month.length() == 1)
+						month = "0" + month;
 					abbreviationMonth = monthAbbreviation(month); // 09월이면 그냥 9로 바꾸고 12월이면 그냥 12로 유지하는 함수
 					if (year.length() == 2) {
 						year = "20" + year;
 					}
-					String modifiedDate = year + " " + month;// 반드시 2023 04 형태임
+					modifiedDate = year + " " + month;// 반드시 2023 04 형태임
 					previousMonth = previousMonthMoney(modifiedDate);
 				
 					totalIncome = getTotalIncome(modifiedDate);
@@ -66,79 +73,91 @@ public class Process3 {
 						
 						int input;
 						while (true) {
-							
 							System.out.print("삭제할 인덱스를 입력해주세요> ");
 							inputToString = sc.nextLine();
 							if (!isValidIndex(inputToString)) {
 								System.out.println("유효하지 않은 인덱스입니다");
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 							} else {
 								break;
 							}
 						}
 						input = Integer.parseInt(inputToString);
 						dao.deleteAccount(input);
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 						System.out.println("삭제가 완료되었습니다");
-						System.out.println("---------------------------------------------------");
-						showCurrentAccount(date);
-						int temp;
+						System.out.println("------------------------------------------------------------");
+						
+						int temp = 0;
 						String tempInput;
-						while (true) {
+						if (accountList.size() != 0) {
 							while(true) {
+							showCurrentAccount(modifiedDate);
 							System.out.println("1) 추가 삭제 ");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							tempInput = sc.nextLine();
+							System.out.println("------------------------------------------------------------");
+							
 							if(validFor1or2(tempInput)) {
 								temp = Integer.parseInt(tempInput.trim());
 								break;
 								}
-							System.out.println("---------------------------------------------------");
+							
 							System.out.println("유효하지 않은 숫자를 입력하셨습니다");
-							}
+							System.out.println("------------------------------------------------------------");
+							
 							if (temp == 1) {
-								sc.nextLine();
+								//addtionalDelete = true;
+								
 								break;
+							
 							} else if (temp == 2)
 								break;
 						}
 						if (temp == 2) // 메인화면으로 돌아가기
 							break;
 
-					} else { // 아무것도 가져온게 없을 때
+					
+					}}
+						else { // 아무것도 가져온게 없을 때
 						showCurrentAccount(modifiedDate);
 						System.out.println("삭제 가능한 항목이 없습니다.");
-						int temp;
+						System.out.println("------------------------------------------------------------");
+
+						int temp2;
 						String input;
 						while (true) {
 							while(true) {
-							System.out.println("---------------------------------------------------");
+							//System.out.println("---------------------------------------------------");
 							System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							input = sc.nextLine();
+							System.out.println("------------------------------------------------------------");
+
+							//System.out.println("---------------------------------------------------");
+
 							if(validFor1or2(input)) {
-								temp = Integer.parseInt(input.trim());
+								temp2 = Integer.parseInt(input.trim());
 								break;
 								}
 							}
-							if (temp == 1) {
+							if (temp2 == 1) {
 								addtionalDelete = true;
-								System.out.println("---------------------------------------------------");
+								//System.out.println("------------------------------------------------------------");
 								break;
 							}
-							else if (temp == 2)
+							else if (temp2 == 2) {
+								//System.out.println("------------------------------------------------------------");
 								break;
 
-							System.out.println("---------------------------------------------------");
+							}
+							System.out.println("------------------------------------------------------------");
 						}
-						if (temp == 2) // 메인화면으로 돌아가기
+						if (temp2 == 2) // 메인화면으로 돌아가기
 							break;
-					}
-				
-
-				}
+					}}
 				
 				else {//카테고리 입력 받은 경우 (유효한 카테고리 여부와 관계 없음)
 					
@@ -146,6 +165,8 @@ public class Process3 {
 					String[] arr = date.split(" ");
 					year = arr[0];
 					month = arr[1];
+					if (month.length() ==1)
+						month = "0"+month;
 					category = arr[2];//카테고리 
 					abbreviationMonth = monthAbbreviation(month); // 09월이면 그냥 9로 바꾸고 12월이면 그냥 12로 유지하는 함수
 					if (year.length() == 2) {
@@ -157,86 +178,123 @@ public class Process3 {
 					totalIncome = getTotalIncome(modifiedDate);
 					totalOutflow = getTotalOutflow(modifiedDate);
 					previous = getPrevious(modifiedDate);
-					if (accountList.size() != 0) { // 가져온 내역이 있을 때
-						//특정 카테고리만 가져오도록 수정해야함
+					int categorysize = 0;
+					for (AccountBookVO e : accountList) {
+				        if (e.getCategory().equals(category)) {
+				        	categorysize++;
+				        }
+				    }
+					if (categorysize != 0) { // 가져온 내역이 있을 때
 						showCurrentAccount2(modifiedDate,category);
+						
 						int input;
 						while (true) {
-							
 							System.out.print("삭제할 인덱스를 입력해주세요> ");
 							inputToString = sc.nextLine();
 							if (!isValidIndex(inputToString)) {
 								System.out.println("유효하지 않은 인덱스입니다");
-								System.out.println("---------------------------------------------------");
+								System.out.println("------------------------------------------------------------");
 							} else {
 								break;
 							}
 						}
 						input = Integer.parseInt(inputToString);
 						dao.deleteAccount(input);
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 						System.out.println("삭제가 완료되었습니다");
-						System.out.println("---------------------------------------------------");
-						showCurrentAccount(date);
-						int temp;
+						System.out.println("------------------------------------------------------------");
+						
+						int temp = 0;
 						String tempInput;
-						while (true) {
+						categorysize = 0;
+						for (AccountBookVO e : accountList) {
+					        if (e.getCategory().equals(category)) {
+					        	categorysize++;
+					        }
+					    }
+						if (categorysize != 0) {
 							while(true) {
+								try {
+									showCurrentAccount2(modifiedDate,category);
+								}
+								catch(Exception e)
+								{ 
+									showCurrentAccount(modifiedDate);
+
+								}
 							System.out.println("1) 추가 삭제 ");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							tempInput = sc.nextLine();
+							System.out.println("------------------------------------------------------------");
+							
 							if(validFor1or2(tempInput)) {
 								temp = Integer.parseInt(tempInput.trim());
 								break;
 								}
-							System.out.println("---------------------------------------------------");
+							
 							System.out.println("유효하지 않은 숫자를 입력하셨습니다");
-							}
+							System.out.println("------------------------------------------------------------");
+							
 							if (temp == 1) {
-								sc.nextLine();
+								//addtionalDelete = true;
+								
 								break;
+							
 							} else if (temp == 2)
 								break;
 						}
 						if (temp == 2) // 메인화면으로 돌아가기
 							break;
 
-					} else { // 아무것도 가져온게 없을 때
-						showCurrentAccount(modifiedDate);
+					
+					}}
+						else { // 아무것도 가져온게 없을 때
+							try {
+								showCurrentAccount2(modifiedDate,category);
+							}
+							catch(Exception e)
+							{
+								showCurrentAccount(modifiedDate);
+
+							}
 						System.out.println("삭제 가능한 항목이 없습니다.");
-						int temp;
+						System.out.println("------------------------------------------------------------");
+
+						int temp2;
 						String input;
 						while (true) {
 							while(true) {
-							System.out.println("---------------------------------------------------");
+							//System.out.println("---------------------------------------------------");
 							System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							input = sc.nextLine();
+							System.out.println("------------------------------------------------------------");
+
+							//System.out.println("---------------------------------------------------");
+
 							if(validFor1or2(input)) {
-								temp = Integer.parseInt(input.trim());
+								temp2 = Integer.parseInt(input.trim());
 								break;
 								}
 							}
-							if (temp == 1) {
+							if (temp2 == 1) {
 								addtionalDelete = true;
-								System.out.println("---------------------------------------------------");
+								//System.out.println("------------------------------------------------------------");
 								break;
 							}
-							else if (temp == 2)
+							else if (temp2 == 2) {
+								//System.out.println("------------------------------------------------------------");
 								break;
 
-							System.out.println("---------------------------------------------------");
+							}
+							System.out.println("------------------------------------------------------------");
 						}
-						if (temp == 2) // 메인화면으로 돌아가기
+						if (temp2 == 2) // 메인화면으로 돌아가기
 							break;
-					}
-				
-				}
-			
-
-		}
+					}}
+			}
 	}
 
 	public boolean isDateValid(String date) {
@@ -274,6 +332,7 @@ public class Process3 {
 		            int temp = Integer.parseInt(year);
 		            
 		            temp = 2000 + temp ;
+		            year = Integer.toString(temp);
 		        } catch (NumberFormatException e) {
 		            return false; // Non-numeric year
 		        }
@@ -285,6 +344,8 @@ public class Process3 {
 		            if (temp < 1902 || temp > 2037) {
 		                return false;
 		            }
+		            year = Integer.toString(temp);
+
 		        } catch (NumberFormatException e) {
 		            return false; // Non-numeric year
 		        }
@@ -338,6 +399,8 @@ public class Process3 {
 		            int temp = Integer.parseInt(year);
 		            
 		            temp = 2000 + temp ;
+		            year = Integer.toString(temp);
+
 		        } catch (NumberFormatException e) {
 		            return false; // Non-numeric year
 		        }
@@ -347,6 +410,8 @@ public class Process3 {
 		            if (temp < 1902 || temp > 2037) {
 		                return false;
 		            }
+		            year = Integer.toString(temp);
+
 		        } catch (NumberFormatException e) {
 		            return false; // Non-numeric year
 		        }
@@ -569,47 +634,94 @@ public class Process3 {
 		}	
 		return flag;
 	}
-	
+	public int findIndexOfFirstDigit(String s, char c) {
+	    for (int i = 0; i < s.length(); i++) {
+	        if (s.charAt(i) == c) {
+	            return i; // 문자 c를 찾았을 때 해당 인덱스를 반환
+	        }
+	    }
+	    return -1; // 문자 c를 찾을 수 없는 경우 -1을 반환
+	}
+
+
 	public void showCurrentAccount(String date) {
 	    accountList = dao.getAccountForMonth(date);
-	    totalIncome = getTotalIncome(date);
-	    totalOutflow = getTotalOutflow(date);
-
-	    System.out.println(year + " " + abbreviationMonth + "\t\t수입\t\t지출\t\t내용\t\t인덱스");
-	    System.out.print("총계   \t" + totalIncome);
-	    for (int i = 0; i < numberOfSpaces(totalIncome); i++) {
-	        System.out.print(" ");
+	    totalIncome = getTotalIncome(date);//총수입
+	    totalOutflow = getTotalOutflow(date);//총지출
+	    lastDate = getPrevious(date);//지난달 예)2
+	    //System.out.println(lastDate);
+	    String lastdateyearmonth;
+	    if (Integer.parseInt(lastDate) != 12) {
+	    	lastdateyearmonth = date.substring(0,4);
+	    	if (lastDate.length() == 1) {
+	    		lastdateyearmonth += " 0";
+	    		lastdateyearmonth += lastDate;
+	    	}
+	    	else
+	    	{
+	    		lastdateyearmonth += " "+lastDate;
+	    	}
+	    		
 	    }
-	    System.out.print(totalOutflow);
-	    for (int i = 0; i < numberOfSpaces(totalOutflow); i++) {
-	        System.out.print(" ");
-	    }
-	    System.out.println("                 --");
-
-	    int index = 1;
-
-	    for (AccountBookVO e : accountList) {
-	        if (e.getInNout().equals("수입")) {
-	            System.out.print(abbreviationMonth + "." + (index < 10 ? "0" + index : index) + "\t" + e.getCategory() + "\t\t" + e.getAmount() + "\t\t--");
-	        } else {
-	            System.out.print(abbreviationMonth + "." + (index < 10 ? "0" + index : index) + "\t" + e.getCategory() + "\t\t--\t\t" + e.getAmount());
-	        }
-
-	        System.out.println("\t\t" + e.getIndexNumber());
-
-	        index++;
+	    else
+	    {
+	    	lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0,4))-1);
+	    	lastdateyearmonth += " 12";
 	    }
 
-	    if (previousMonth == 0 && accountList.size() == 0) {
-	        System.out.println(previous + "월 이월분\t" + previousMonth + "\t\t0\t\t--\t\t--");
-	    } else {
-	        System.out.println(previous + "월 이월분\t" + previousMonth + "\t\t--\t\t--\t\t--");
-	    }
+	    System.out.println(date + "\t\t수입\t\t지출\t\t내용\t인덱스");
+	    
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",+totalIncome)+ String.format("%,-10d\t",totalOutflow) + "\t--");
+	    
+	    if (accountList != null) {
+	    	for (int i = 0; i < accountList.size(); i++) {
+		        System.out.print(accountList.get(i).getDate().substring(5));
+		        System.out.print("\t" + accountList.get(i).getCategory());
 
-	    System.out.println("---------------------------------------------------");
+		        if (accountList.get(i).getInNout().compareTo("수입") == 0) {
+		            System.out.print("\t" +String.format("%,-10d\t\t\t",accountList.get(i).getAmount()));
+		        } else {
+		        	System.out.print("\t\t\t" +String.format("%,-10d\t",accountList.get(i).getAmount()));
+		        }
+		        System.out.print(accountList.get(i).getDetails());
+		        System.out.print("\t" + accountList.get(i).getIndexNumber());
+		        System.out.println();
+		    }
+	    }
+	    
+	   
+	    	
+	    LASTaccountList = dao.getAccountForMonth(lastdateyearmonth);
+	    int lastMonthSumIn = 0;
+	    int lastMonthSumOut = 0;
+	    
+	    if(LASTaccountList != null) {
+		    for (int i = 0; i < LASTaccountList.size(); i++) {
+		        if (LASTaccountList.get(i).getInNout().compareTo("수입") == 0) {
+		        	lastMonthSumIn += LASTaccountList.get(i).getAmount();
+		        } else {
+		        	lastMonthSumOut += LASTaccountList.get(i).getAmount();
+		        }
+		    }
+	    }
+	    String print;
+	    if (lastdateyearmonth.substring(5,6).equals("0"))
+	    {
+	    	print = " " + lastdateyearmonth.substring(6,7);
+	    }
+	    else
+	    {
+	    	print = lastdateyearmonth.substring(5,7);
+	    }
+		System.out.println(print+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
+		System.out.println("------------------------------------------------------------");
 	}
+	
 	public void showCurrentAccount2(String date, String category) {
-	    List<AccountBookVO> filteredList = new ArrayList<>();
+		//System.out.println(date);
+		//System.out.println(category);
+		accountList = dao.getAccountForMonth(date);
+	    filteredList = new ArrayList<>();
 	    int totalIncome = 0;
 	    int totalOutflow = 0;
 
@@ -623,83 +735,80 @@ public class Process3 {
 	            }
 	        }
 	    }
-
-	   // System.out.println("------------------------------------------------------------");
+	    lastDate = getPrevious(date);//지난달 예)2
+	    //System.out.println(lastDate);
+	    String lastdateyearmonth;
+	    if (Integer.parseInt(lastDate) != 12) {
+	    	lastdateyearmonth = date.substring(0,4);
+	    	if (lastDate.length() == 1) {
+	    		lastdateyearmonth += " 0";
+	    		lastdateyearmonth += lastDate;
+	    	}
+	    	else
+	    	{
+	    		lastdateyearmonth += " "+lastDate;
+	    	}
+	    		
+	    }
+	    else
+	    {
+	    	lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0,4))-1);
+	    	lastdateyearmonth += " 12";
+	    }
+	    //System.out.println(lastdateyearmonth);
 	    System.out.println(date + "\t\t수입\t\t지출\t\t내용\t인덱스");
-	    System.out.println("총계\t\t" + String.format("%,-10d\t", totalIncome) + String.format("%,-10d\t", totalOutflow) + "\t--");
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",+totalIncome)+ String.format("%,-10d\t",totalOutflow) + "\t--");
+	    
+	    if (filteredList != null) {
+	    	for (int i = 0; i < filteredList.size(); i++) {
+		        System.out.print(filteredList.get(i).getDate().substring(5));
+		        System.out.print("\t" + filteredList.get(i).getCategory());
 
-	    int index = 1;
-
-	    for (AccountBookVO e : filteredList) {
-	        System.out.print(e.getDate().substring(5));
-	        System.out.print("\t" + e.getCategory());
-
-	        if (e.getInNout().equals("수입")) {
-	            System.out.print("\t" + String.format("%,-10d\t\t\t", e.getAmount()));
-	        } else {
-	            System.out.print("\t\t\t" + String.format("%,-10d\t", e.getAmount()));
-	        }
-
-	        System.out.print("--");
-	        System.out.print("\t" + e.getIndexNumber());
-	        System.out.println();
-
-	        index++;
+		        if (accountList.get(i).getInNout().compareTo("수입") == 0) {
+		            System.out.print("\t" +String.format("%,-10d\t\t\t",filteredList.get(i).getAmount()));
+		        } else {
+		        	System.out.print("\t\t\t" +String.format("%,-10d\t",filteredList.get(i).getAmount()));
+		        }
+		        System.out.print(filteredList.get(i).getDetails());
+		        System.out.print("\t" + filteredList.get(i).getIndexNumber());
+		        System.out.println();
+		    }
 	    }
-
-	    if (previousMonth == 0 && filteredList.isEmpty()) {
-	        System.out.println(previous + "월 이월분\t" + String.format("%,-10d\t", previousMonth) + String.format("%,-10d\t", 0) + "\t--");
-	    } else {
-	        System.out.println(previous + "월 이월분\t" + String.format("%,-10d\t", previousMonth) + String.format("%,-10d\t", 0) + "\t--");
-	    }
-
-	    System.out.println("---------------------------------------------------");
-	}
-
-	/*public void showCurrentAccount2(String date, String category) {
-	    List<AccountBookVO> filteredList = new ArrayList<>();
-	    for (AccountBookVO e : accountList) {
+	   
+	    LASTaccountList = dao.getAccountForMonth(lastdateyearmonth);//지난달
+	    filteredList2 = new ArrayList<>();//지난달+카테고리
+	    int lastMonthSumIn = 0;
+	    int lastMonthSumOut = 0;
+	    for (AccountBookVO e : LASTaccountList) {
 	        if (e.getCategory().equals(category)) {
-	            filteredList.add(e);
+	        	filteredList2.add(e);
 	        }
 	    }
-
-	    System.out.println(year + " " + abbreviationMonth + "\t\t수입\t\t지출\t\t내용\t\t인덱스");
-	    System.out.print("총계   \t" + totalIncome);
-	    for (int i = 0; i < numberOfSpaces(totalIncome); i++) {
-	        System.out.print(" ");
+	    
+	    if(filteredList2 != null) {
+	    	
+		    for (int i = 0; i < filteredList2.size(); i++) {
+		        if (filteredList2.get(i).getInNout().compareTo("수입") == 0) {
+		        	lastMonthSumIn += filteredList2.get(i).getAmount();
+		        } else {
+		        	lastMonthSumOut += filteredList2.get(i).getAmount();
+		        }
+		    }
 	    }
-	    System.out.print(totalOutflow);
-	    for (int i = 0; i < numberOfSpaces(totalOutflow); i++) {
-	        System.out.print(" ");
+	   
+	    String print;
+	    if (lastdateyearmonth.substring(5,6).equals("0"))
+	    {
+	    	print = " " + lastdateyearmonth.substring(6,7);
 	    }
-	    System.out.println("                 --");
-
-	    int index = 1;
-
-	    for (AccountBookVO e : filteredList) {
-	        if (e.getInNout().equals("수입")) {
-	            System.out.print(abbreviationMonth + "." + (index < 10 ? "0" + index : index) + "\t" + e.getCategory() + "\t\t" + e.getAmount() + "\t\t--");
-	        } else {
-	            System.out.print(abbreviationMonth + "." + (index < 10 ? "0" + index : index) + "\t" + e.getCategory() + "\t\t--\t\t" + e.getAmount());
-	        }
-
-	        System.out.println("\t\t" + e.getIndexNumber());
-
-	        index++;
+	    else
+	    {
+	    	print = lastdateyearmonth.substring(5,7);
 	    }
+		System.out.println(print+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
+		System.out.println("------------------------------------------------------------");
 
-	    if (previousMonth == 0 && filteredList.isEmpty()) {
-	        System.out.println(previous + "월 이월분\t" + previousMonth + "\t\t0\t\t--\t\t--");
-	    } else {
-	        System.out.println(previous + "월 이월분\t" + previousMonth + "\t\t--\t\t--\t\t--");
-	    }
-
-	    System.out.println("---------------------------------------------------");
-	}*/
-
-	
-
+	}
 	
 
 	public int numberOfSpaces(int number) {
@@ -717,13 +826,13 @@ public class Process3 {
 	        Scanner sc2 = new Scanner(System.in);
 	        date = sc2.nextLine().trim();
 	        
-
+	      
 	        if (isDateValid(date)) {
-	        	System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
 	            break;
 	        }
 	       //if (!isDateValid(date))
-	        System.out.println("---------------------------------------------------");
+			System.out.println("------------------------------------------------------------");
 	    }
 	}
 	public boolean validFor1or2(String input) {

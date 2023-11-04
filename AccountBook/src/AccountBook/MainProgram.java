@@ -23,14 +23,14 @@ public class MainProgram {
 			System.out.println("4. Category edit(카테고리 관리) "); 
 			//System.out.println("5. Help(도움말)");
 			System.out.println("5. Quit (종료)");
-			System.out.println("---------------------------------------------------");
-			System.out.print("A11 Account book : menu > ");
+			System.out.println("------------------------------------------------------------");
+			System.out.print("> A11 Account book : menu > ");
 			@SuppressWarnings("resource")
 			Scanner sc = new Scanner(System.in);
 
 			try {
 				process_input = sc.nextLine();
-				System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
 				if (Is_valid(process_input)) {
 					menu = Integer.parseInt(process_input);
 					if (menu == 1) 
@@ -45,19 +45,19 @@ public class MainProgram {
 						//process5 = new Process5();
 					//}
 					else if (menu == 5) {
-						System.out.println("A11 Account book를 종료합니다.");
+						System.out.println("> A11 Account book를 종료합니다.");
 						break;
 					}else {
 						System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
-						System.out.println("---------------------------------------------------");
+						System.out.println("------------------------------------------------------------");
 					}
 				}else {
 					System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
-					System.out.println("---------------------------------------------------");
+					System.out.println("------------------------------------------------------------");
 				}
 			} catch (Exception e) {
 				System.out.println("잘못 입력했습니다. 범위(1~5) 안에서 다시 선택해주세요");
-				System.out.println("---------------------------------------------------");
+				System.out.println("------------------------------------------------------------");
 
 			}
 
