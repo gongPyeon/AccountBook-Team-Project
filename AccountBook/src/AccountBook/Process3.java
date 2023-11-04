@@ -168,6 +168,7 @@ public class Process3 {
 					if (month.length() ==1)
 						month = "0"+month;
 					category = arr[2];//카테고리 
+				
 					abbreviationMonth = monthAbbreviation(month); // 09월이면 그냥 9로 바꾸고 12월이면 그냥 12로 유지하는 함수
 					if (year.length() == 2) {
 						year = "20" + year;
@@ -237,13 +238,15 @@ public class Process3 {
 							System.out.println("------------------------------------------------------------");
 							
 							if (temp == 1) {
-								//addtionalDelete = true;
+								addtionalDelete = true;
 								
 								break;
 							
 							} else if (temp == 2)
 								break;
 						}
+						if (temp == 1)
+							break;
 						if (temp == 2) // 메인화면으로 돌아가기
 							break;
 
@@ -291,6 +294,8 @@ public class Process3 {
 							}
 							System.out.println("------------------------------------------------------------");
 						}
+						if (temp2 ==1)
+							break;
 						if (temp2 == 2) // 메인화면으로 돌아가기
 							break;
 					}}
@@ -824,7 +829,7 @@ public class Process3 {
 	    while (true) {
 	        System.out.print("“년+월” 또는 “년+월+카테고리”를 입력하세요 >");
 	        Scanner sc2 = new Scanner(System.in);
-	        date = sc2.nextLine().trim();
+	        date = sc2.nextLine().trim().replaceAll("\\s+", " ");;
 	        
 	      
 	        if (isDateValid(date)) {
