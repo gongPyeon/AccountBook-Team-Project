@@ -10,18 +10,23 @@ public class MainProgram {
 	private Process2 process2;
 	private Process3 process3;
 	private Process4 process4;
+	private Process5 process5;
 	private String process_input;
 	
 
 	public MainProgram() {
+		int a = 0;
 		while (true) {
+			if (a == 0)
+			    System.out.println("------------------------------------------------------------");
+			a++;
 			System.out.println("> A11 Account book");
-			System.out.println("1. Account book View (가계부보기)");
-			System.out.println("2. Registration (항목 등록)");
-			System.out.println("3. Remove (항목 지우기)"); 
-			System.out.println("4. Category edit(카테고리 관리) "); 
+			System.out.println("1) Account book View (가계부보기)");
+			System.out.println("2) Registration (항목 등록)");
+			System.out.println("3) Remove (항목 지우기)"); 
+			System.out.println("4) Category edit(카테고리 관리) "); 
 			//System.out.println("5. Help(도움말)");
-			System.out.println("5. Quit (종료)");
+			System.out.println("5) Quit (종료)");
 			System.out.println("------------------------------------------------------------");
 			System.out.print("> A11 Account book : menu > ");
 			@SuppressWarnings("resource")
@@ -29,7 +34,8 @@ public class MainProgram {
 
 			try {
 				process_input = sc.nextLine();
-				System.out.println("------------------------------------------------------------");
+				if (Integer.parseInt(process_input)!= 5)
+				    System.out.println("------------------------------------------------------------");
 				if (Is_valid(process_input)) {
 					menu = Integer.parseInt(process_input);
 					if (menu == 1) 
@@ -40,6 +46,9 @@ public class MainProgram {
 						process3 = new Process3();
 					else if (menu == 4) 
 						process4 = new Process4();
+					//else if (menu == 5) { 
+						//process5 = new Process5();
+					//}
 					else if (menu == 5) {
 						System.out.println("> A11 Account book을 종료합니다.");
 						break;
