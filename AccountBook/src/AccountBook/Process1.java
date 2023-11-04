@@ -75,7 +75,7 @@ public class Process1 {
 	         if(flag==1)
 	            break;
 				System.out.println("------------------------------------------------------------");
-	          System.out.println(">");
+	          System.out.print("> ");
 	          scanner = new Scanner(System.in);
 	          tempNum = scanner.nextInt();
 	      }
