@@ -12,9 +12,6 @@ public class Process2 {
     private int DB_amount;
     private String DB_details;
 
-    private ArrayList<String> income = new ArrayList<>();
-    private ArrayList<String> consumption = new ArrayList<>();
-
     Scanner scanner = new Scanner(System.in);
 
 
@@ -30,7 +27,7 @@ public class Process2 {
         while (true) {
             System.out.print("\"년+월+일\"을 입력하세요 > ");
             String input = scanner.nextLine();
-			System.out.println("------------------------------------------------------------");
+            System.out.println("---------------------------------------------------");
 //          System.out.println("input: " + input);
             if (input != null && !input.trim().isEmpty() && input.length() <= 15) {
                 input = input.trim();
@@ -41,12 +38,8 @@ public class Process2 {
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-    				System.out.println("------------------------------------------------------------");
+                    System.out.println("---------------------------------------------------");
                 }
-            }
-            else{
-                System.out.println("입력 가능한 문자열이 아닙니다.");
-				System.out.println("------------------------------------------------------------");
             }
         }
     }
@@ -56,7 +49,7 @@ public class Process2 {
         while (true) {
             System.out.print("\"수입\" 혹은 \"지출\"을 입력하세요 > ");
             String input = scanner.nextLine();
-			System.out.println("------------------------------------------------------------");
+            System.out.println("---------------------------------------------------");
             if (input.length() <= 10) {
                 input = input.trim();
                 if (Is_valid_inNout(input)) {
@@ -64,7 +57,7 @@ public class Process2 {
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-    				System.out.println("------------------------------------------------------------");
+                    System.out.println("---------------------------------------------------");
                 }
             }
         }
@@ -72,69 +65,23 @@ public class Process2 {
     }
 
     private void input_category(String inNout) {
-
-        ArrayList<CategoryVO> categoryInList = dao.getCategoriesWithIn();
-
-        for (CategoryVO categoryVO : categoryInList)
-            income.add(categoryVO.getCategory());
-
-        ArrayList<CategoryVO> categoryOutList = dao.getCategoriesWithOut();
-
-        for (CategoryVO categoryVO : categoryOutList)
-            consumption.add(categoryVO.getCategory());
-
         while (true) {
-            boolean first = true;
             if (inNout.equals("수입")) {
-                if (income.isEmpty()) {
-                    System.out.println("등록된 카테고리가 없습니다.");
-    				System.out.println("------------------------------------------------------------");
-                    return;
-                } else {
-                    System.out.print("카테고리를 입력해주세요(");
-                    for (String s : income) {
-                        if (first) {
-                            System.out.print(s);
-                            first = false;
-                        } else {
-                            System.out.printf(" | " + s);
-                        }
-                    }
-                    System.out.print(") > ");
-                }
+                System.out.print("카테고리를 입력해주세요(월급 | 부수입 | 용돈 | 상여 | 금융소득 | 기타) >");
             } else {// inNout.equals("지출"){
-                if (consumption.isEmpty()) {
-                    System.out.println("등록된 카테고리가 없습니다.");
-    				System.out.println("------------------------------------------------------------");
-                    return;
-                } else {
-                    System.out.print("카테고리를 입력해주세요(");
-                    for (String s : consumption) {
-                        if (first) {
-                            System.out.print(s);
-                            first = false;
-                        } else {
-                            System.out.printf(" | " + s);
-                        }
-                    }
-                    System.out.print(") > ");
-                }
+                System.out.print("카테고리를 입력해주세요(식비 | 문화생활 | 경조사/회비 | 주거/통신 | 교통/차량 | 기타) >");
             }
             String input = scanner.nextLine();
-			System.out.println("------------------------------------------------------------");
-            if (input.length() <= 10) {
+            System.out.println("---------------------------------------------------");
+            if(input.length() <= 10) {
                 input = input.trim();
                 if (Is_valid_category(input, inNout)) {
                     input_amount();
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-    				System.out.println("------------------------------------------------------------");
+                    System.out.println("---------------------------------------------------");
                 }
-            }
-            else{
-                System.out.println("입력 가능한 문자열이 아닙니다.");
-				System.out.println("------------------------------------------------------------");
             }
 
         }
@@ -258,6 +205,21 @@ public class Process2 {
     }
 
     public boolean Is_valid_category(String e, String inNout) {
+        ArrayList<String> income = new ArrayList<>();
+        income.add("월급");
+        income.add("부수입");
+        income.add("용돈");
+        income.add("상여");
+        income.add("금융소득");
+        income.add("기타");
+
+        ArrayList<String> consumption = new ArrayList<>();
+        consumption.add("식비");
+        consumption.add("문화생활");
+        consumption.add("경조사/회비");
+        consumption.add("주거/통신");
+        consumption.add("교통/차량");
+        consumption.add("기타");
 
         if (inNout.equals("수입")) {
             if (income.contains(e)) {
@@ -288,8 +250,7 @@ public class Process2 {
                 System.out.print("금액을 입력하세요 > ");
                 command = scanner.nextLine();
                 if (Is_valid_empty(command)) { //enter만을 입력하는 경우, 공백이 포함된 경우
-
-                    command = command.trim();
+                	command = command.trim();
                     DB_amount = Integer.parseInt(command); //string 안에 문자가 있거나, float 등 다른 자료형일 경우
                     System.out.println("---------------------------------------------------");
                     input_details();
@@ -308,13 +269,12 @@ public class Process2 {
                 DB_details = scanner.nextLine();
                 if (Is_valid_empty(DB_details)) { //enter만을 입력하는 경우, 공백이 포함된 경우
                     System.out.println("---------------------------------------------------");
-                    /*System.out.println("등록이 완료되었습니다");
+                    System.out.println("등록이 완료되었습니다");
                     System.out.println("DB_date : " + this.DB_date);
                     System.out.println("DB_inNout : " + this.DB_inNout);
                     System.out.println("DB_category : " + this.DB_category);
                     System.out.println("DB_amount : " + this.DB_amount);
-                    System.out.println("DB_details : " + this.DB_details);*/
-                	System.out.println("등록이 완료되었습니다.");
+                    System.out.println("DB_details : " + this.DB_details);
                     System.out.println("---------------------------------------------------");
                     break;
                 }
