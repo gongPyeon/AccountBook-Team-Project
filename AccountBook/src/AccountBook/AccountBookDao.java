@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AccountBookDao {// DB를 다루는 클라스
+public class AccountBookDao {// DB를 다루는 클래스
 	private Connection conn;
 	private static final String USERNAME = "root";
 	private static final String PASSWORD = "root";
