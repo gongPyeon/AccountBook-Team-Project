@@ -59,40 +59,22 @@ public class Process4 {
         System.out.println(" - 카테고리 추가 - ");
         show_categoryList(inNout);
 
-
         while (true) {
             System.out.print("추가할 카테고리를 입력하세요 > ");
             String input = scanner.nextLine();
             String stringWithoutSpaces = input.trim().replace(" ", "");
 
-            if (inNout.equals("수입")) {
-                if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !income.contains(input.trim())) {
-                    CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
+            if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !income.contains(input.trim()) && !consumption.contains(input.trim())) {
+                CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
 
-                    dao.InsertCategoryInCategorytable(categoryVO);
+                dao.InsertCategoryInCategorytable(categoryVO);
 
-                    System.out.println("추가가 완료되었습니다.");
-    				System.out.println("------------------------------------------------------------");
-                    return;
-
-                } else {
-                    System.out.println("다시 입력해 주세요");
-    				System.out.println("------------------------------------------------------------");
-                }
-            } else { // inNout가 지출인 경우
-                if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !consumption.contains(input.trim())) {
-
-                    CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
-
-                    dao.InsertCategoryInCategorytable(categoryVO);
-
-                    System.out.println("추가가 완료되었습니다.");
-    				System.out.println("------------------------------------------------------------");
-                    return;
-                } else {
-                    System.out.println("다시 입력해 주세요");
-    				System.out.println("------------------------------------------------------------");
-                }
+                System.out.println("추가가 완료되었습니다.");
+                System.out.println("---------------------------------------------------");
+                return;
+            } else {
+                System.out.println("다시 입력해 주세요");
+                System.out.println("---------------------------------------------------");
             }
         }
     }
