@@ -279,10 +279,17 @@ public class Process1 {
     			}
             }
         };
-
+        long lastSum = lastMonthSumIn-lastMonthSumOut;
+        if(lastSum < 0) {
+        	thisMonthSumOut +=lastSum;
+        	
+        }
+        else {
+        	thisMonthSumIn +=lastSum;
+        }
         // Comparator를 사용하여 ArrayList 정렬
         Collections.sort(array, dateComparator);
-	    System.out.println("총계\t\t" + String.format("%,-10d\t",(long)(thisMonthSumIn+lastMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut+lastMonthSumOut)) + "\t--");
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",(long)(thisMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut)) + "\t--");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	    	try {
