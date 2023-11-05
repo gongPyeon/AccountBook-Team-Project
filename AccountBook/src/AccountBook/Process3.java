@@ -693,8 +693,8 @@ public class Process3 {
 		}
 
 		LASTaccountList = dao.getAccountForMonth(lastdateyearmonth);
-		int lastMonthSumIn = 0;
-		int lastMonthSumOut = 0;
+		long lastMonthSumIn = 0;
+		long lastMonthSumOut = 0;
 
 		if (LASTaccountList != null) {
 			for (int i = 0; i < LASTaccountList.size(); i++) {
@@ -711,8 +711,8 @@ public class Process3 {
 		} else {
 			print = lastdateyearmonth.substring(5, 7);
 		}
-		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", lastMonthSumIn)
-				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
+		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", (long) lastMonthSumIn)
+				+ String.format("%,-10d\t",  (long) lastMonthSumOut) + "\t--");
 		System.out.println("------------------------------------------------------------");
 	}
 
@@ -786,8 +786,8 @@ public class Process3 {
 
 		LASTaccountList = dao.getAccountForMonth(lastdateyearmonth);// 지난달
 		filteredList2 = new ArrayList<>();// 지난달+카테고리
-		int lastMonthSumIn = 0;
-		int lastMonthSumOut = 0;
+		long lastMonthSumIn = 0;
+		long lastMonthSumOut = 0;
 		for (AccountBookVO e : LASTaccountList) {
 			if (e.getCategory().equals(category)) {
 				filteredList2.add(e);
