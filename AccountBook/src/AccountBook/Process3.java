@@ -22,7 +22,6 @@ public class Process3 {
 	int previousMonth;
 	long totalIncome;
 	long totalOutflow;
-	long total;
 	String previous; // 00 이월분 표시의 00
 	String inputToString;
 	String date;
@@ -525,33 +524,20 @@ public class Process3 {
 				result += e.getAmount();
 			}
 		}
-		for (AccountBookVO e : accountList) {
-			if (e.getInNout().equals("지출")) {
-				result -= e.getAmount();
-			}
-		}
-		// System.out.println(result);//3번 결과
-		total = result;
-		if (result < 0)
-			result = 0;
 		return result;
 
 	}
 
 	public long getTotalOutflow(String date) {
-		// int result = 0; // 리턴하는 값
-		// // 이제 현월 (date)에 대한 총 수입 가져오기
-		// accountList = dao.getAccountForMonth(date);
-		// for (AccountBookVO e : accountList) {
-		// if (e.getInNout().equals("지출")) {
-		// result += e.getAmount();
-		// }
-		// }
-		// return result;
-		if (getTotalIncome(date) == 0)
-			return total * -1;
-		else
-			return 0;
+		int result = 0; // 리턴하는 값
+		// 이제 현월 (date)에 대한 총 수입 가져오기
+		accountList = dao.getAccountForMonth(date);
+		for (AccountBookVO e : accountList) {
+		if (e.getInNout().equals("지출")) {
+		result += e.getAmount();
+		}
+		}
+		return result;
 	}
 
 	public int previousMonthMoney(String date) { // dao에 함수를 만들고 이걸 작성해보세요
