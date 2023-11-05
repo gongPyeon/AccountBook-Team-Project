@@ -39,11 +39,12 @@ public class Process1 {
 				break;
 			}
 			else if(str.equals("3")) {
-            updateAccount();
-            process2 = new Process2();
-            dao.deleteAccount(deleteAccount);
-            break;
-         }
+				System.out.println("------------------------------------------------------------");
+				updateAccount();
+				process2 = new Process2();
+				dao.deleteAccount(deleteAccount);
+				break;
+			}
 		}
 	}
 
@@ -199,7 +200,7 @@ public class Process1 {
 		if (parts.length == 2 || parts.length == 3) {
 			try {
 				num1 = Integer.parseInt(parts[0]);
-				
+
 				if(parts[0].length() != 2&&parts[0].length() != 4) {
 					return 0;
 				}
@@ -207,8 +208,7 @@ public class Process1 {
 					return 0;
 				num2 = Integer.parseInt(parts[1]);
 				
-					
-				if((num1 > 37&&num1 < 1902)||(num1 < 1)||(num1 > 2037))
+				if((num1 > 37&&num1 < 1902)||(num1 < 0)||(num1 > 2037))
 					return 0;
 				if(num1<37)
 					num1 = num1+2000;
@@ -305,8 +305,12 @@ public class Process1 {
 	        System.out.println();
 	    }
 	    if(lastArray != null) {
-	    	
-		    System.out.println(lastDate.substring(5,7)+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
+	    	try {
+	    		System.out.println(String.format("%2d",Integer.parseInt(lastDate.substring(5,7)))+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
+			}
+			catch(NumberFormatException e){
+							
+			}
 		    
 	    }
 		System.out.println("------------------------------------------------------------");
