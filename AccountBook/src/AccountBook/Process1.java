@@ -55,7 +55,7 @@ public class Process1 {
 	            return temp;
 	         }
 				System.out.println("------------------------------------------------------------");
-	          System.out.println(">");
+	          System.out.print("> ");
 	          scanner = new Scanner(System.in);
 	          temp = scanner.next();
 	      }
