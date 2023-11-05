@@ -21,8 +21,6 @@ public class Process2 {
     public Process2() {
         //dao.delete_schedule(1);    // 이런 식으로 데이터베이스에서 사용합니다.
         input_Date();
-        vo = new AccountBookVO(DB_date, DB_inNout, DB_category, DB_amount, DB_details);
-        dao.InsertAccountBook(vo);
     }
 
     private void input_Date() {
@@ -308,9 +306,10 @@ public class Process2 {
                 DB_details = scanner.nextLine();
                 if (Is_valid_empty(DB_details)) { //enter만을 입력하는 경우, 공백이 포함된 경우
                     System.out.println("---------------------------------------------------");
-
-                	System.out.println("등록이 완료되었습니다.");
+                    System.out.println("등록이 완료되었습니다");
                     System.out.println("---------------------------------------------------");
+                    vo = new AccountBookVO(DB_date, DB_inNout, DB_category, DB_amount, DB_details);
+                    dao.InsertAccountBook(vo);
                     break;
                 }
             } catch (Exception e) {
