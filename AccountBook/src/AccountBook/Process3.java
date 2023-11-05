@@ -2,6 +2,8 @@ package AccountBook;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,9 +20,9 @@ public class Process3 {
 	String category;
 	boolean categoryIn = false; //카테고리도 입력으로 넣은 경우
 	int previousMonth;
-	int totalIncome;
-	int totalOutflow;
-	int total;
+	long totalIncome;
+	long totalOutflow;
+	long total;
 	String previous; // 00 이월분 표시의 00
 	String inputToString;
 	String date;
@@ -477,7 +479,7 @@ public class Process3 {
 		}
 	}
 
-	public int getTotalIncome(String date) {// date = 2023 03
+	public long getTotalIncome(String date) {// date = 2023 03
 		// 총계에서 수입 구하는 함수
 		// 전월에 대한 월과 년도 정하기
 		int currentMonthNum = Integer.parseInt(date.substring(5, date.length()));
@@ -485,7 +487,7 @@ public class Process3 {
 		int previousMonthNum = 0;
 		int previousYearNum = currentYearNum;
 		String previousDate = "";
-		int result = 0;// return 하는 값
+		long result = 0;// return 하는 값
 
 		if (currentMonthNum > 1)
 			previousMonthNum = currentMonthNum - 1;
@@ -536,7 +538,7 @@ public class Process3 {
 
 	}
 
-	public int getTotalOutflow(String date) {
+	public long getTotalOutflow(String date) {
 		// int result = 0; // 리턴하는 값
 		// // 이제 현월 (date)에 대한 총 수입 가져오기
 		// accountList = dao.getAccountForMonth(date);
@@ -682,11 +684,33 @@ public class Process3 {
 
 	    System.out.println(date + "\t\t수입\t\t지출\t\t내용\t인덱스");
 	    
-	    System.out.println("총계\t\t" + String.format("%,-10d\t",+totalIncome)+ String.format("%,-10d\t",totalOutflow) + "\t--");
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",+(long) totalIncome)+ String.format("%,-10d\t",(long) totalOutflow) + "\t--");
+	    
+	    Comparator<AccountBookVO> dateComparator = new Comparator<AccountBookVO>() {
+            @Override
+            public int compare(AccountBookVO o1, AccountBookVO o2) {
+                // date를 기준으로 비교하여 정렬
+            	try {
+            		return Integer.parseInt(o2.getDate().substring(8)) - Integer.parseInt(o1.getDate().substring(8));
+    			}
+    			catch(NumberFormatException e){
+    				return 0;			
+    			}
+            }
+        };
+
+        // Comparator를 사용하여 ArrayList 정렬
+        Collections.sort(accountList, dateComparator);
 	    
 	    if (accountList != null) {
 	    	for (int i = 0; i < accountList.size(); i++) {
-		        System.out.print(accountList.get(i).getDate().substring(5));
+	    		try {
+		    		System.out.print(Integer.parseInt(accountList.get(i).getDate().substring(5,7)));
+			        System.out.print("."+Integer.parseInt(accountList.get(i).getDate().substring(8)));
+				}
+				catch(NumberFormatException e){
+					break;				
+				}
 		        System.out.print("\t" + accountList.get(i).getCategory());
 
 		        if (accountList.get(i).getInNout().compareTo("수입") == 0) {
@@ -733,8 +757,8 @@ public class Process3 {
 		//System.out.println(category);
 		accountList = dao.getAccountForMonth(date);
 	    filteredList = new ArrayList<>();
-	    int totalIncome = 0;
-	    int totalOutflow = 0;
+	    long totalIncome = 0;
+	    long totalOutflow = 0;
 
 	    for (AccountBookVO e : accountList) {
 	        if (e.getCategory().equals(category)) {
@@ -746,6 +770,7 @@ public class Process3 {
 	            }
 	        }
 	    }
+	    
 	    lastDate = getPrevious(date);//지난달 예)2
 	    //System.out.println(lastDate);
 	    String lastdateyearmonth;
@@ -767,8 +792,9 @@ public class Process3 {
 	    	lastdateyearmonth += " 12";
 	    }
 	    //System.out.println(lastdateyearmonth);
+	    System.out.println(totalIncome);
 	    System.out.println(date + "\t\t수입\t\t지출\t\t내용\t인덱스");
-	    System.out.println("총계\t\t" + String.format("%,-10d\t",+totalIncome)+ String.format("%,-10d\t",totalOutflow) + "\t--");
+	    System.out.println("총계\t\t" + String.format("%,-10d\t",+(long) totalIncome)+ String.format("%,-10d\t",(long) totalOutflow) + "\t--");
 	    
 	    if (filteredList != null) {
 	    	for (int i = 0; i < filteredList.size(); i++) {
