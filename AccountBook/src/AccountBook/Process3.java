@@ -529,7 +529,7 @@ public class Process3 {
 	}
 
 	public long getTotalOutflow(String date) {
-		int result = 0; // 리턴하는 값
+		long result = 0; // 리턴하는 값
 		// 이제 현월 (date)에 대한 총 수입 가져오기
 		accountList = dao.getAccountForMonth(date);
 		for (AccountBookVO e : accountList) {
