@@ -33,7 +33,7 @@ public class Process3 {
 	public Process3() {
 		// 기본 카테고리 + 사용자가 등록한 카테고리 "저장된 카테고리 항목들"에 추가
 
-		// Add default categories for "수입" (Income)
+		/*// Add default categories for "수입" (Income)
 		String[] defaultIncomeCategories = { "월급", "부수입", "용돈", "상여", "금융소득" };
 		availableCategories.addAll(Arrays.asList(defaultIncomeCategories));
 
@@ -42,7 +42,7 @@ public class Process3 {
 		availableCategories.addAll(Arrays.asList(defaultExpenseCategories));
 
 		// Fetch and add user-added categories from the database using
-		// dao.getCategories1()
+		// dao.getCategories1()*/
 		ArrayList<String> userCategories = dao.getCategories1();
 		availableCategories.addAll(userCategories);
 
