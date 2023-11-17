@@ -69,7 +69,7 @@ public class Process2 {
 
     }
 
-    private void input_category(String inNout) {
+    private void input_category(String inNout) { //2차 요구사항으로 인한 수정 부분
 
         ArrayList<CategoryVO> categoryInList = dao.getCategoriesWithIn();
 
@@ -120,7 +120,7 @@ public class Process2 {
             }
             String input = scanner.nextLine();
 			System.out.println("------------------------------------------------------------");
-            if (input.length() <= 10) {
+            //if (input.length() <= 10) {
                 input = input.trim();
                 if (Is_valid_category(input, inNout)) {
                     input_amount();
@@ -129,11 +129,11 @@ public class Process2 {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
     				System.out.println("------------------------------------------------------------");
                 }
-            }
-            else{
-                System.out.println("입력 가능한 문자열이 아닙니다.");
-				System.out.println("------------------------------------------------------------");
-            }
+            //}
+//            else{
+//                System.out.println("입력 가능한 문자열이 아닙니다.");
+//				System.out.println("------------------------------------------------------------");
+//            }
 
         }
 
@@ -256,19 +256,42 @@ public class Process2 {
     }
 
     public boolean Is_valid_category(String e, String inNout) {
+        String[] parts = e.split("\\|");
+        int num = parts.length;
+        for(int i = 0; i < num; i++) {
+            parts[i] = parts[i].trim();
+            //System.out.println(parts[i] + " | ");
+        }
 
         if (inNout.equals("수입")) {
-            if (income.contains(e)) {
-                this.DB_category = e;
-                return true;
+            for(String cate : parts) {
+                if (income.contains(cate)) {
+                    continue;
+                } else {
+                    return false;
+                }
             }
         } else if (inNout.equals("지출")) {
-            if (consumption.contains(e)) {
-                this.DB_category = e;
-                return true;
+            for(String cate : parts) {
+                if (consumption.contains(cate)) {
+                    continue;
+                } else {
+                    return false;
+                }
             }
         }
-        return false;
+
+        String result = "";
+
+        for(int i = 0; i < num; i++) {
+            if(i == num-1)
+                result = result + parts[i];
+            else
+                result = result + parts[i] + " ";
+        }
+
+        this.DB_category = result;
+        return true;
     }
 
     public boolean Is_valid_empty(String command) {
