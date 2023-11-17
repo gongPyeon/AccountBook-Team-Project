@@ -265,7 +265,7 @@ public class AccountBookDao {// DB를 다루는 클래스
 		String categorySql = "update savedcategory set category=? where category=?;";
 		PreparedStatement categoryPstmt = null;
 
-		String accountBookSql = "update accountbook set category=? where category=? and inNout=?;";
+		String accountBookSql = "update accountbook set category = replace(category, ?, ?) where category like ? and inNout = ?;";
 		PreparedStatement accountBookPstmt = null;
 
 		try {
@@ -275,11 +275,11 @@ public class AccountBookDao {// DB를 다루는 클래스
 			categoryPstmt.executeUpdate();
 
 			accountBookPstmt = conn.prepareStatement(accountBookSql);
-			accountBookPstmt.setString(1, newOne.getCategory());
-			accountBookPstmt.setString(2, oldOne.getCategory());
-			accountBookPstmt.setString(3, oldOne.getInNout()); // inNout 값이 일치하는 경우에만 업데이트
+			accountBookPstmt.setString(1, oldOne.getCategory());
+			accountBookPstmt.setString(2, newOne.getCategory());
+			accountBookPstmt.setString(3, "%" + oldOne.getCategory() + "%"); // 원본 문자열을 포함하는 경우만 대체
+			accountBookPstmt.setString(4, oldOne.getInNout());
 			accountBookPstmt.executeUpdate();
-
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -300,7 +300,16 @@ public class AccountBookDao {// DB를 다루는 클래스
 		String categorySql = "DELETE FROM savedcategory WHERE category = ?";
 		PreparedStatement categoryPstmt = null;
 
-		String accountBookSql = "update accountbook set category=? where category=? and inNout=?;";
+		String accountBookSql = "UPDATE accountbook " +
+				"SET category = " +
+				"CASE " +
+				"WHEN category = ? THEN '----' " +
+				"WHEN category LIKE ? THEN REPLACE(category, ? ' ', '') " +
+				"WHEN category LIKE ? THEN REPLACE(category, ? ' ', '') " +
+				"WHEN category LIKE ? THEN REPLACE(category, ' ' ?, '') " +
+				"ELSE category " +
+				"END;";
+
 		PreparedStatement accountBookPstmt = null;
 
 		try {
@@ -309,9 +318,13 @@ public class AccountBookDao {// DB를 다루는 클래스
 			categoryPstmt.executeUpdate();
 
 			accountBookPstmt = conn.prepareStatement(accountBookSql);
-			accountBookPstmt.setString(1, "----");
-			accountBookPstmt.setString(2, categoryVO.getCategory());
-			accountBookPstmt.setString(3, categoryVO.getInNout()); // inNout 값이 일치하는 경우에만 업데이트
+			accountBookPstmt.setString(1, categoryVO.getCategory());
+			accountBookPstmt.setString(2, categoryVO.getCategory() + " %");
+			accountBookPstmt.setString(3, categoryVO.getCategory());
+			accountBookPstmt.setString(4, "% " + categoryVO.getCategory() + " %");
+			accountBookPstmt.setString(5, categoryVO.getCategory());
+			accountBookPstmt.setString(6, "% " + categoryVO.getCategory());
+			accountBookPstmt.setString(7, categoryVO.getCategory());
 			accountBookPstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
