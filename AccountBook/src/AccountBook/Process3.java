@@ -4,20 +4,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Process3 {
 	AccountBookDao dao = new AccountBookDao();
 	ArrayList<String> availableCategories = dao.getCategories1();// 저장된 카테고리 항목들
 	ArrayList<AccountBookVO> accountList;
+	ArrayList<AccountBookVO> accountList2;
 	ArrayList<AccountBookVO> LASTaccountList;
 	ArrayList<AccountBookVO> filteredList;
 	ArrayList<AccountBookVO> filteredList2;
+	ArrayList<String> categoryList = new ArrayList<>();
 	String abbreviationMonth;
 	String year;
 	String month;
-	String category;
+	String category ="";
 	boolean categoryIn = false; // 카테고리도 입력으로 넣은 경우
 	int previousMonth;
 	long totalIncome;
@@ -45,14 +49,18 @@ public class Process3 {
 		// dao.getCategories1()*/
 		ArrayList<String> userCategories = dao.getCategories1();
 		availableCategories.addAll(userCategories);
-
+		categoryList.clear();
+		
+		
 		insertYearMonth();
 		while (true) {
+			
 			if (addtionalDelete == true) {
 				insertYearMonth();
 				addtionalDelete = false;
 			}
 			if (!categoryIn) {// 카테고리가 입력되지 않은 경우
+				
 				accountList = dao.getAccountForMonth(date);
 				String[] arr = date.split(" ");
 				year = arr[0];
@@ -159,7 +167,7 @@ public class Process3 {
 				}
 			}
 
-			else {// 카테고리 입력 받은 경우 (유효한 카테고리 여부와 관계 없음)
+			else {// 카테고리 입력 받은 경우 (카테고리 유효성 이미 검사함)
 
 				accountList = dao.getAccountForMonth(date);
 				String[] arr = date.split(" ");
@@ -167,8 +175,6 @@ public class Process3 {
 				month = arr[1];
 				if (month.length() == 1)
 					month = "0" + month;
-				category = arr[2];// 카테고리
-
 				abbreviationMonth = monthAbbreviation(month); // 09월이면 그냥 9로 바꾸고 12월이면 그냥 12로 유지하는 함수
 				if (year.length() == 2) {
 					year = "20" + year;
@@ -179,13 +185,35 @@ public class Process3 {
 				totalIncome = getTotalIncome(modifiedDate);
 				totalOutflow = getTotalOutflow(modifiedDate);
 				previous = getPrevious(modifiedDate);
+				// 카테고리
+				ArrayList<String> arr2n = new ArrayList<>(Arrays.asList(arr).subList(2, arr.length));
 				int categorysize = 0;
-				for (AccountBookVO e : accountList) {
-					if (e.getCategory().equals(category)) {
-						categorysize++;
+				if (arr2n.size() > 1) {
+					ConsiderCategoryAndOrNot(arr2n,modifiedDate);
+					categorysize = filteredList.size();
+				}
+				else if (arr2n.size() == 1)
+				{
+					for (int i = 2 ; i < arr.length; i++) {
+						category += arr[i];
+						category += " ";
+					}
+					category = category.trim();
+					//System.out.println(category);
+					for (AccountBookVO e : accountList) {
+						if (e.getCategory().equals(category)) {
+							categorysize++;
+						}
 					}
 				}
-				if (categorysize != 0) { // 가져온 내역이 있을 때
+				else
+					break;
+				
+				arr2n = new ArrayList<>(Arrays.asList(arr).subList(2, arr.length));
+				boolean a = !arr2n.contains("Or") && !arr2n.contains("And") && !arr2n.contains("Not");
+				
+				
+				if (categorysize != 0 && a) { // 가져온 내역이 있을 때 + "Or, Not, And" 포함x
 					showCurrentAccount2(modifiedDate, category);
 
 					int input;
@@ -249,9 +277,123 @@ public class Process3 {
 							break;
 
 					}
-				} else { // 아무것도 가져온게 없을 때
+					else if (categorysize == 0 && a)
+					{
+						showCurrentAccount(modifiedDate);
+						System.out.println("삭제 가능한 항목이 없습니다.");
+						System.out.println("------------------------------------------------------------");
+
+						int temp2;
+						String input1;
+						while (true) {
+							while (true) {
+								// System.out.println("---------------------------------------------------");
+								System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
+								System.out.println("2) 메인화면으로 돌아가기");
+								System.out.print("입력> ");
+								input1 = sc.nextLine();
+								System.out.println("------------------------------------------------------------");
+
+								// System.out.println("---------------------------------------------------");
+
+								if (validFor1or2(input1)) {
+									temp2 = Integer.parseInt(input1.trim());
+									break;
+								}
+							}
+							if (temp2 == 1) {
+								addtionalDelete = true;
+								// System.out.println("------------------------------------------------------------");
+								break;
+							} else if (temp2 == 2) {
+								// System.out.println("------------------------------------------------------------");
+								break;
+
+							}
+							System.out.println("------------------------------------------------------------");
+						}
+						if (temp2 == 2) // 메인화면으로 돌아가기
+							break;
+					}
+				}
+			
+					else if (categorysize != 0 && !a)//"Not, and , or"입력받고 가져온게 있을떄
+					{
+						arr2n = new ArrayList<>(Arrays.asList(arr).subList(2, arr.length));	
+						showCurrentAccount3(modifiedDate, arr2n);
+
+						int input3;
+						while (true) {
+							System.out.print("삭제할 인덱스를 입력해주세요> ");
+							inputToString = sc.nextLine();
+							//System.out.println("------------------------------------------------------------");
+
+							if (!isValidIndex2(inputToString)) {
+								System.out.println("유효하지 않은 인덱스입니다");
+								System.out.println("------------------------------------------------------------");
+							} else {
+								break;
+							}
+						}
+						
+						input3 = Integer.parseInt(inputToString);
+						dao.deleteAccount(input3);
+						//System.out.println("------------------------------------------------------------");
+						System.out.println("삭제가 완료되었습니다");
+						System.out.println("------------------------------------------------------------");
+
+						int temp3 = 0;
+						String tempInput3;
+						categorysize = 0;
+						
+						arr2n = new ArrayList<>(Arrays.asList(arr).subList(2, arr.length));
+					    ConsiderCategoryAndOrNot(arr2n,modifiedDate);
+						categorysize = filteredList.size();
+						arr2n = new ArrayList<>(Arrays.asList(arr).subList(2, arr.length));
+					
+						if (categorysize != 0) {
+							while (true) {
+								
+								try {
+									arr2n = new ArrayList<>(Arrays.asList(arr).subList(2, arr.length));
+									showCurrentAccount3(modifiedDate, arr2n);
+								} catch (Exception e) {
+									showCurrentAccount(modifiedDate);
+
+								}
+								System.out.println("1) 추가 삭제 ");
+								System.out.println("2) 메인화면으로 돌아가기");
+								System.out.print("입력> ");
+								tempInput3 = sc.nextLine();
+								System.out.println("------------------------------------------------------------");
+
+								if (validFor1or2(tempInput3)) {
+									temp3 = Integer.parseInt(tempInput3.trim());
+									break;
+								}
+
+								System.out.println("유효하지 않은 숫자를 입력하셨습니다");
+								System.out.println("------------------------------------------------------------");
+
+								if (temp3 == 1) {
+									addtionalDelete = true;
+
+									break;
+
+								} else if (temp3 == 2)
+									break;
+							}
+							
+							if (temp3 == 2) // 메인화면으로 돌아가기
+								break;
+
+					}
+				
+				} else if (categorysize == 0 && !a){ // 아무것도 가져온게 없을 때
+					
 					try {
-						showCurrentAccount2(modifiedDate, category);
+						arr2n = new ArrayList<>(Arrays.asList(arr).subList(2, arr.length));
+						showCurrentAccount3(modifiedDate, arr2n);
 					} catch (Exception e) {
 						showCurrentAccount(modifiedDate);
 
@@ -260,20 +402,20 @@ public class Process3 {
 					System.out.println("------------------------------------------------------------");
 
 					int temp2;
-					String input;
+					String input3;
 					while (true) {
 						while (true) {
 							// System.out.println("---------------------------------------------------");
 							System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
-							input = sc.nextLine();
+							input3 = sc.nextLine();
 							System.out.println("------------------------------------------------------------");
 
 							// System.out.println("---------------------------------------------------");
 
-							if (validFor1or2(input)) {
-								temp2 = Integer.parseInt(input.trim());
+							if (validFor1or2(input3)) {
+								temp2 = Integer.parseInt(input3.trim());
 								break;
 							}
 						}
@@ -288,15 +430,540 @@ public class Process3 {
 						}
 						System.out.println("------------------------------------------------------------");
 					}
-					if (temp2 == 1)
-						break;
+					
 					if (temp2 == 2) // 메인화면으로 돌아가기
 						break;
 				}
 			}
 		}
+		}
+	
+
+	private void showCurrentAccount3(String modifiedDate, ArrayList<String> arr2n) {
+		
+		long totalIncome = 0;
+		long totalOutflow = 0;
+		//arr2n "AND / NOT / OR"고려해서 filteredList,filteredList2 채우기
+		ConsiderCategoryAndOrNot(arr2n,modifiedDate);
+		
+		for (AccountBookVO e : filteredList) {
+			
+			if (e.getInNout().equals("수입")) {
+				totalIncome += e.getAmount();
+			} else {
+				totalOutflow += e.getAmount();
+			}
+			
+		}
+	
+		System.out.println(modifiedDate + "\t\t수입\t\t지출\t\t내용\t인덱스");
+		System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
+				+ String.format("%,-10d\t", (long) totalOutflow) + "\t--");
+
+		if (filteredList != null) {
+			Collections.sort(filteredList, new Comparator<AccountBookVO>() {
+				@Override
+				public int compare(AccountBookVO o1, AccountBookVO o2) {
+					try {
+						return Integer.parseInt(o2.getDate().substring(8))
+								- Integer.parseInt(o1.getDate().substring(8));
+					} catch (NumberFormatException e) {
+						return 0;
+					}
+				}
+			});
+			for (int i = 0; i < filteredList.size(); i++) {
+				System.out.print(filteredList.get(i).getDate().substring(5));
+				System.out.print("\t" + filteredList.get(i).getCategory().replace(" ", "|"));
+
+				if (filteredList.get(i).getInNout().compareTo("수입") == 0) {
+					System.out.print("\t" + String.format("%,-10d\t\t\t", filteredList.get(i).getAmount()));
+				} else {
+					System.out.print("\t\t\t" + String.format("%,-10d\t", filteredList.get(i).getAmount()));
+				}
+				System.out.print(filteredList.get(i).getDetails());
+				System.out.print("\t" + filteredList.get(i).getIndexNumber());
+				System.out.println();
+			}
+		}
+		
+		long lastMonthSumIn = 0;
+		long lastMonthSumOut = 0;
+		for (AccountBookVO e : filteredList2) {
+				
+			if (e.getInNout().equals("수입")) {
+				lastMonthSumIn += e.getAmount();
+			} else {
+				lastMonthSumOut += e.getAmount();
+			}
+				
+		}
+	
+
+		if (filteredList2 != null) {
+
+			for (int i = 0; i < filteredList2.size(); i++) {
+				if (filteredList2.get(i).getInNout().compareTo("수입") == 0) {
+					lastMonthSumIn += filteredList2.get(i).getAmount();
+				} else {
+					lastMonthSumOut += filteredList2.get(i).getAmount();
+				}
+			}
+		}
+		//다음 부분을 위한 부분
+		lastDate = getPrevious(modifiedDate);// 지난달 예)2
+		String lastdateyearmonth;
+		if (Integer.parseInt(lastDate) != 12) {
+			lastdateyearmonth = date.substring(0, 4);
+			if (lastDate.length() == 1) {
+				lastdateyearmonth += " 0";
+				lastdateyearmonth += lastDate;
+			} else {
+				lastdateyearmonth += " " + lastDate;
+			}
+
+		} else {
+			lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0, 4)) - 1);
+			lastdateyearmonth += " 12";
+		}
+		
+		String print;
+		if (lastdateyearmonth.substring(5, 6).equals("0")) {
+			print = " " + lastdateyearmonth.substring(6, 7);
+		} else {
+			print = lastdateyearmonth.substring(5, 7);
+		}
+		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", lastMonthSumIn)
+				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
+		System.out.println("------------------------------------------------------------");
+
+		
 	}
 
+	private void ConsiderCategoryAndOrNot(ArrayList<String> arr2n, String modifiedDate) {
+		//불리기
+		if (!arr2n.contains("Not"))
+		{
+			int i = 0;
+			for (; i<arr2n.size();) {
+				
+			    if (! arr2n.get(i).equals("Or") && arr2n.get(i).equals("And")) {
+			    	
+			    	//arr2n.add(i, arr2n.get(i));
+			    	i +=1;
+			    }
+			    else if (! arr2n.get(i).equals("And") && arr2n.get(i).equals("Or") )
+			    {
+			    	//arr2n.add(i, arr2n.get(i));
+			    	i += 1;
+			    }
+			    else if (! arr2n.get(i).equals("And") && ! arr2n.get(i).equals("Or"))
+			    {
+			    	arr2n.add(i, arr2n.get(i));
+			    	i += 2;
+			    }
+			    
+			}
+			
+			arr2n.remove(0);
+			arr2n.remove(arr2n.size() - 1);
+
+		}
+		else if (arr2n.contains("Not")) {
+			int i = 0;
+			for (; i<arr2n.size();) {
+				
+			    if (! arr2n.get(i).equals("Or") && arr2n.get(i).equals("And")) {
+			    	
+			    	//arr2n.add(i, arr2n.get(i));
+			    	i +=1;
+			    }
+			    else if (! arr2n.get(i).equals("And") && arr2n.get(i).equals("Or") )
+			    {
+			    	//arr2n.add(i, arr2n.get(i));
+			    	i += 1;
+			    }
+			    else if (arr2n.get(i).equals("Not") )
+			    {
+			    	arr2n.add(i+2, arr2n.get(i));
+			    	arr2n.add(i+3, arr2n.get(i+1));
+			    	i += 4;
+			    }
+			    else if (! arr2n.get(i).equals("And") && ! arr2n.get(i).equals("Or"))
+			    {
+			    	arr2n.add(i, arr2n.get(i));
+			    	i += 2;
+			    }
+			    
+			}
+			if (arr2n.get(0).equals("Not"))
+				;
+			else
+				arr2n.remove(0);
+			arr2n.remove(arr2n.size() - 1);
+
+		}
+
+		
+		lastDate = getPrevious(modifiedDate);// 지난달 예)2
+		String lastdateyearmonth;
+		if (Integer.parseInt(lastDate) != 12) {
+			lastdateyearmonth = date.substring(0, 4);
+			if (lastDate.length() == 1) {
+				lastdateyearmonth += " 0";
+				lastdateyearmonth += lastDate;
+			} else {
+				lastdateyearmonth += " " + lastDate;
+			}
+
+		} else {
+			lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0, 4)) - 1);
+			lastdateyearmonth += " 12";
+		}
+		accountList = dao.getAccountForMonth(modifiedDate);//요번달 모든 항목들
+		LASTaccountList = dao.getAccountForMonth(lastdateyearmonth);// 지난달 모든 항목들
+		filteredList = new ArrayList<>();
+		filteredList2 = new ArrayList<>();
+		
+		
+		if (!arr2n.contains("Not")) {//Not이 포함되지 않은 arr2n일때
+			while(arr2n.contains("And")) {//and가 있을때만
+				if (arr2n.contains("And"))
+				{
+					int indexOfAnd = arr2n.indexOf("And");
+					
+					for (AccountBookVO e : accountList)//요번달
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+						if (categoryList.contains(arr2n.get(indexOfAnd -1)))
+						{
+							if (categoryList.contains(arr2n.get(indexOfAnd +1)))
+								filteredList.add(e);		
+						}
+					}
+					
+					
+					for (AccountBookVO e : LASTaccountList)//저번달
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+						if (categoryList.contains(arr2n.get(indexOfAnd -1)))
+						{
+							if (categoryList.contains(arr2n.get(indexOfAnd +1)))
+								filteredList2.add(e);		
+						}
+					}
+					arr2n.remove(indexOfAnd-1);
+					arr2n.remove(indexOfAnd-1);
+					arr2n.remove(indexOfAnd-1);
+
+				}
+				
+			}
+			
+			while(arr2n.contains("Or")) {//ㅁ Or ㄹ
+				if (arr2n.contains("Or"))
+				{
+					int indexOfOr = arr2n.indexOf("Or");
+					
+					if (indexOfOr- 1 >= 0 && indexOfOr+1 <= arr2n.size() -1) {//ㅁ Or ㄹ
+						for (AccountBookVO e : accountList)//요번달 
+						{
+							ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+							if (categoryList.contains(arr2n.get(indexOfOr -1)) || categoryList.contains(arr2n.get(indexOfOr +1)))
+							{
+								filteredList.add(e);		
+							}
+						}
+						for (AccountBookVO e : LASTaccountList)//저번달
+						{
+							ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+							if (categoryList.contains(arr2n.get(indexOfOr -1)) || categoryList.contains(arr2n.get(indexOfOr +1)))
+							{
+								filteredList2.add(e);		
+							}
+						}
+						arr2n.remove(indexOfOr-1);
+						arr2n.remove(indexOfOr-1);
+						arr2n.remove(indexOfOr-1);
+
+					}
+				
+					
+				}
+			}
+		}else //Not이 포함될때.
+		{
+			while(arr2n.contains("And")) {//and가 있을때만
+				if (arr2n.contains("And"))
+				{
+					int indexOfAnd = arr2n.indexOf("And");
+					
+					for (AccountBookVO e : accountList)//요번달
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+						if (indexOfAnd -2 >= 0)
+						{
+							if (arr2n.get(indexOfAnd -2).equals("Not"))
+							{
+								if (arr2n.get(indexOfAnd+1).equals("Not")) {//Not ㅁ And Not ㄹ 
+									if (categoryList.contains(arr2n.get(indexOfAnd -1)))
+										filteredList.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfAnd+2)))
+										filteredList.remove(e);
+
+								}
+								else if (! arr2n.get(indexOfAnd+1).equals("Not")) {//Not ㅁ And ㄹ 
+									if (categoryList.contains(arr2n.get(indexOfAnd -1))) 
+										filteredList.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfAnd+1)) && !categoryList.contains(arr2n.get(indexOfAnd -1)))
+										filteredList.add(e);
+						
+								}
+								
+							}
+							else {// ㅁ And Not ㄹ
+								if (arr2n.get(indexOfAnd+1).equals("Not")) {
+									if (categoryList.contains(arr2n.get(indexOfAnd+2))) 
+										filteredList.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd +2)))
+										filteredList.add(e);
+									
+
+								}
+								
+							}
+						
+						}
+						
+					}
+					
+					
+					for (AccountBookVO e : LASTaccountList)//저번달
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+						if (indexOfAnd -2 >= 0)
+						{
+							if (arr2n.get(indexOfAnd -2).equals("Not"))
+							{
+								if (arr2n.get(indexOfAnd+1).equals("Not")) {//Not ㅁ And Not ㄹ 
+									if (categoryList.contains(arr2n.get(indexOfAnd -1)))
+										filteredList2.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfAnd+2)))
+										filteredList2.remove(e);
+
+								}
+								else if (! arr2n.get(indexOfAnd+1).equals("Not")) {//Not ㅁ And ㄹ 
+									if (categoryList.contains(arr2n.get(indexOfAnd -1))) 
+										filteredList2.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfAnd+1)) && !categoryList.contains(arr2n.get(indexOfAnd -1)))
+										filteredList2.add(e);
+						
+								}
+								
+							}
+							else {// ㅁ And Not ㄹ
+								if (arr2n.get(indexOfAnd+1).equals("Not")) {
+									if (categoryList.contains(arr2n.get(indexOfAnd+2))) 
+										filteredList2.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd +2)))
+										filteredList2.add(e);
+									
+
+								}
+								
+							}
+						
+						}
+					}
+						if (indexOfAnd -2 >= 0) {//왼쪽에 Not이 들어간 경우
+						
+						if (arr2n.get(indexOfAnd-2).equals("Not")) {
+							arr2n.remove(indexOfAnd-2);
+							arr2n.remove(indexOfAnd-2);
+						}
+						
+						arr2n.remove(indexOfAnd-2);//연산자 제거
+					
+						if (arr2n.get(indexOfAnd-2).equals("Not")) {
+							arr2n.remove(indexOfAnd-2);
+							arr2n.remove(indexOfAnd-2);
+						}
+						else
+						{
+							arr2n.remove(indexOfAnd-2);
+
+						}
+						
+					}
+					else//처음에 Not이 들어가지 않은 경우
+					{
+						arr2n.remove(indexOfAnd-1);
+						arr2n.remove(indexOfAnd-1);//연산자 제거
+						
+						if (arr2n.get(indexOfAnd-1).equals("Not")) {
+							arr2n.remove(indexOfAnd-1);
+							arr2n.remove(indexOfAnd-1);
+						}
+						else
+						{
+							arr2n.remove(indexOfAnd-1);
+
+						}
+					}
+
+				}
+				
+			}
+			
+			while(arr2n.contains("Or")) {
+				if (arr2n.contains("Or"))
+				{
+					int indexOfOr = arr2n.indexOf("Or");
+					
+					for (AccountBookVO e : accountList)//요번달
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+						if (indexOfOr -2 >= 0)
+						{
+							if (arr2n.get(indexOfOr -2).equals("Not"))//Not ㅁ Or Not ㄹ 
+							{
+								if (arr2n.get(indexOfOr+1).equals("Not")) {
+									if (categoryList.contains(arr2n.get(indexOfOr -1)) || categoryList.contains(arr2n.get(indexOfOr+2)))
+										filteredList.remove(e);
+		
+								}
+								else if (! arr2n.get(indexOfOr+1).equals("Not")) {//Not ㅁ or ㅎ
+									if (categoryList.contains(arr2n.get(indexOfOr -1))) 
+										filteredList.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfOr+1)))
+										filteredList.add(e);
+						
+								}
+								
+							}
+							else {
+								if (arr2n.get(indexOfOr+1).equals("Not")) {//ㅁ Or Not ㄹ 
+									if (categoryList.contains(arr2n.get(indexOfOr+2))) 
+										filteredList.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfOr-1)) )
+										filteredList.add(e);
+									
+
+								}
+								
+							}
+						
+						}
+						
+					}
+					
+				
+					for (AccountBookVO e : LASTaccountList)//저번달
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+						if (indexOfOr -2 >= 0)
+						{
+							if (arr2n.get(indexOfOr -2).equals("Not"))//Not ㅁ Or Not ㄹ
+							{
+								if (arr2n.get(indexOfOr+1).equals("Not")) {
+									if (categoryList.contains(arr2n.get(indexOfOr -1)) || categoryList.contains(arr2n.get(indexOfOr+2)))
+										filteredList2.remove(e);
+		
+								}
+								else if (! arr2n.get(indexOfOr+1).equals("Not")) {//not ㅁ or ㅎ
+									if (categoryList.contains(arr2n.get(indexOfOr -1))) 
+										filteredList2.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfOr+1)))
+										filteredList2.add(e);
+						
+								}
+								
+							}
+							else {// ㅁ Or Not ㄹ
+								if (arr2n.get(indexOfOr+1).equals("Not")) {
+									if (categoryList.contains(arr2n.get(indexOfOr+2))) 
+										filteredList2.remove(e);
+									if (categoryList.contains(arr2n.get(indexOfOr-1)) )
+										filteredList2.add(e);
+									
+
+								}
+								
+							}
+						
+						}
+						
+					}
+					if (indexOfOr -2 >= 0) {//왼쪽에 Not이 들어간 경우
+						
+						if (arr2n.get(indexOfOr-2).equals("Not")) {
+							arr2n.remove(indexOfOr-2);
+							arr2n.remove(indexOfOr-2);
+						}
+						
+						arr2n.remove(indexOfOr-2);//연산자 제거
+					
+						if (arr2n.get(indexOfOr-2).equals("Not")) {
+							arr2n.remove(indexOfOr-2);
+							arr2n.remove(indexOfOr-2);
+						}
+						else
+						{
+							arr2n.remove(indexOfOr-2);
+
+						}
+						
+					}
+					else//처음에 Not이 들어가지 않은 경우
+					{
+						arr2n.remove(indexOfOr-1);
+						arr2n.remove(indexOfOr-1);//연산자 제거
+						
+						if (arr2n.get(indexOfOr-1).equals("Not")) {
+							arr2n.remove(indexOfOr-1);
+							arr2n.remove(indexOfOr-1);
+						}
+						else
+						{
+							arr2n.remove(indexOfOr-1);
+
+						}
+					}
+				
+						
+				}
+			}
+					
+
+		}
+				
+					
+
+
+		
+		Set<Integer> seenIndexes = new HashSet<>();
+
+		// filteredList 중복 제거
+		Iterator<AccountBookVO> iterator = filteredList.iterator();
+		while (iterator.hasNext()) {
+		    AccountBookVO item = iterator.next();
+		    if (!seenIndexes.add(item.getIndexNumber())) {
+		        iterator.remove(); // 중복된 항목이면 제거
+		    }
+		}
+
+		// filteredList2 중복 제거
+		seenIndexes.clear(); // seenIndexes 초기화
+		iterator = filteredList2.iterator();
+		while (iterator.hasNext()) {
+		    AccountBookVO item = iterator.next();
+		    if (!seenIndexes.add(item.getIndexNumber())) {
+		        iterator.remove(); // 중복된 항목이면 제거
+		    }
+		}
+
+		}
+	
 	public boolean isDateValid(String date) {
 		int spaceCount = 0;
 		int space = 0;// 공백(년도와 월을 구분해주는)의 인덱스
@@ -434,11 +1101,98 @@ public class Process3 {
 				return false;
 			else
 				return true;
-		} else // 공백 개수가 1,2도 아닌 경우들
+		} else if ( (date.contains("Or") || date.contains("And") || date.contains("Not")))
 		{
+			ArrayList<String> dateList = new ArrayList<>(Arrays.asList(date.split(" ")));
+			//year month 
+			// 년도 범위 valid 체크
+			String year = dateList.get(0);
+			if (year.length() == 2)
+			{
+				try {
+					int temp = Integer.parseInt(year);
+	
+					temp = 2000 + temp;
+					if (temp < 1902 || temp > 2037) {
+						return false;
+					}
+					year = Integer.toString(temp);
+	
+				} catch (NumberFormatException e) {
+					return false; // Non-numeric year
+				}
+			} else if (year.length() == 4) {
+				try {
+					int temp = Integer.parseInt(year);
+					if (temp < 1902 || temp > 2037) {
+						return false;
+					}
+					year = Integer.toString(temp);
+	
+				} catch (NumberFormatException e) {
+					return false; // Non-numeric year
+				}
+			} else
+				return false;
+			// 월 범위 valid 체크
+			String month = dateList.get(1);
+			char[] monthChar = month.toCharArray();
+			if (monthChar.length > 2) {
+				return false;
+			}
+			if (monthChar.length == 2 && monthChar[0] == '0')
+				month = String.valueOf(monthChar[1]);
+			else if (monthChar.length == 2 && monthChar[0] != '0')
+				month = "" + month;
+			if (!monthIsInRange(month))
+				return false;
+
+			//카테고리 부분
+			categoryIn = true;
+		
+			if (AndOrNot(dateList))//유효한 카테고리인지 검사
+				return true;
+		
+			
+		}
+		else {
+			System.out.println("올바른 논리연산자가 아닙니다. 알맞은 And, Or, Not을 사용해주세요.");
 			return false;
 		}
+		return false;
+		
+		
+			
 	}
+
+	private boolean isValidOperator(String operator) {
+	    return operator.equals("Or") || operator.equals("And") || operator.equals("Not");
+	}
+
+	private boolean isValidCategory(String category) {
+	    return availableCategories.contains(category);
+	}
+
+	private boolean AndOrNot(ArrayList<String> dateList) {
+		dateList.remove(0);
+		dateList.remove(0);
+		
+	    for (String element : dateList) {
+	        if (isValidOperator(element)) {
+	            // Skip operators
+	            continue;
+	        } else if (isValidCategory(element)) {
+	            // Valid category
+	            continue;
+	        } else {
+	            // Invalid category
+	        	System.out.println("해당 카테고리가 존재하지 않습니다. 등록된 카테고리명을 입력해주세요.");
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+
 
 	public boolean monthIsInRange(String month)// isDateValid함수 내에서 월의 범위가 유효한지 검사하는 함수
 	{
@@ -610,6 +1364,25 @@ public class Process3 {
 		try {
 			int inputToInt = Integer.parseInt(input2);
 			for (AccountBookVO e : accountList) {
+				if (e.getIndexNumber() == inputToInt) {
+					flag = true;
+					inputToString = Integer.toString(inputToInt);
+				}
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return flag;
+	}
+	public boolean isValidIndex2(String input) {
+		String input2 = input.trim();
+		boolean flag = false;
+		if (input2.length() == 0) {
+			return false;
+		}
+		try {
+			int inputToInt = Integer.parseInt(input2);
+			for (AccountBookVO e : filteredList) {
 				if (e.getIndexNumber() == inputToInt) {
 					flag = true;
 					inputToString = Integer.toString(inputToInt);
@@ -832,7 +1605,6 @@ public class Process3 {
 			System.out.print("“년+월” 또는 “년+월+카테고리”를 입력하세요 >");
 			Scanner sc2 = new Scanner(System.in);
 			date = sc2.nextLine().trim().replaceAll("\\s+", " ");
-			;
 
 			if (isDateValid(date)) {
 				System.out.println("------------------------------------------------------------");
