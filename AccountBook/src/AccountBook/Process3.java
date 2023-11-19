@@ -810,8 +810,10 @@ public class Process3 {
 
 						}
 					}
+					
+					}
 
-				}
+				
 				
 			}
 			
@@ -929,6 +931,61 @@ public class Process3 {
 
 						}
 					}
+					//Or가 없는 경우
+					if (!arr2n.contains(("Or")))
+					{
+						if (arr2n.contains("Not")) {
+							int indexOfNot = arr2n.indexOf("Not");
+							for (AccountBookVO e : accountList)//요번달
+							{
+								ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+								if (! categoryList.contains(arr2n.get(indexOfNot+1)))
+									filteredList.add(e);
+							
+							}
+							
+
+						}
+						else
+						{
+							
+							for (AccountBookVO e : accountList)//요번달
+							{
+								ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+								if (categoryList.contains(arr2n.get(0)))
+									filteredList.add(e);
+							
+							}
+
+						}
+						
+						if (arr2n.contains("Not")) {
+							int indexOfNot = arr2n.indexOf("Not");
+							for (AccountBookVO e : LASTaccountList)//저번달
+							{
+								ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+								if (! categoryList.contains(arr2n.get(indexOfNot+1)))
+									filteredList2.add(e);
+							
+							}
+							arr2n.remove(0);
+							arr2n.remove(0);
+						}
+						else
+						{
+							
+							for (AccountBookVO e : LASTaccountList)//요번달
+							{
+								ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+								if (categoryList.contains(arr2n.get(0)))
+									filteredList2.add(e);
+							
+							}
+							arr2n.remove(0);
+						}
+						
+					}
+							
 				
 						
 				}
