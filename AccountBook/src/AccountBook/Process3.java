@@ -1509,7 +1509,7 @@ public class Process3 {
 				} catch (NumberFormatException e) {
 					break;
 				}
-				System.out.print("\t" + accountList.get(i).getCategory());
+				System.out.print("\t" + accountList.get(i).getCategory().replace(" ", "|"));
 
 				if (accountList.get(i).getInNout().compareTo("수입") == 0) {
 					System.out.print("\t" + String.format("%,-10d\t\t\t", accountList.get(i).getAmount()));
@@ -1601,7 +1601,7 @@ public class Process3 {
 			});
 			for (int i = 0; i < filteredList.size(); i++) {
 				System.out.print(filteredList.get(i).getDate().substring(5));
-				System.out.print("\t" + filteredList.get(i).getCategory());
+				System.out.print("\t" + filteredList.get(i).getCategory().replace(" ", "|"));
 
 				if (filteredList.get(i).getInNout().compareTo("수입") == 0) {
 					System.out.print("\t" + String.format("%,-10d\t\t\t", filteredList.get(i).getAmount()));
