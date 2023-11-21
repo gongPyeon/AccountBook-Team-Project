@@ -14,6 +14,8 @@ public class Process1 {
 	private String date = "";
 	private String lastDate = "";
 	private String category = "";
+	private String sqlString = "";
+	private ArrayList<String> categoryList = new ArrayList<String>();
 	public Process1() {
 		run();
 	}
@@ -131,6 +133,24 @@ public class Process1 {
 					System.out.println("------------------------------------------------------------");
 				}
 			}
+			else if(checkDate == 3) {
+				System.out.println("올바른 논리연산자가 아닙니다. 알맞은 And, Or, Not을 사용해주세요.");
+				System.out.println("------------------------------------------------------------");
+			}
+			else if(checkDate == 4) {
+				System.out.println("해당 카테고리가 존재하지 않습니다. 카테고리 목록을 확인해주세요.");
+				System.out.println("------------------------------------------------------------");
+			}
+			else if(checkDate == 5) {
+				ArrayList<String> categoryArray = dao.getCategories1();
+				boolean isIn = categoryArray.containsAll(categoryList);
+				if(isIn == true)
+					break;
+				else {
+					System.out.println("해당 카테고리가 존재하지 않습니다. 카테고리 목록을 확인해주세요.");
+					System.out.println("------------------------------------------------------------");
+				}
+			}
 			else {
 				System.out.println("1902~2037중에서 년도를 입력하고, 01~12중에서 월을 입력해주세요.");
 				System.out.println("------------------------------------------------------------");
@@ -147,6 +167,15 @@ public class Process1 {
 		}
 		else if(checkDate == 2) {
 			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountCategoryList(date, category);
+			temp = thisMonthArray;
+			ArrayList<AccountBookVO> lastMonthArray = null;
+			String last = lastMonth(date);
+			if (last != "")
+				lastMonthArray = dao.getAccountCategoryList(lastDate, category);
+			printAccountBook(thisMonthArray, lastMonthArray);
+		}
+		else if(checkDate == 5) {
+			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountLogicalCategoryList(date, sqlString);
 			temp = thisMonthArray;
 			ArrayList<AccountBookVO> lastMonthArray = null;
 			String last = lastMonth(date);
@@ -197,30 +226,26 @@ public class Process1 {
 		String[] parts = date.split(" ");
 		int num1 = 0;
 		int num2 = 0;
-		if (parts.length == 2 || parts.length == 3) {
-			try {
-				num1 = Integer.parseInt(parts[0]);
+		categoryList.clear();
+		try {
+			num1 = Integer.parseInt(parts[0]);
 
-				if(parts[0].length() != 2&&parts[0].length() != 4) {
-					return 0;
-				}
-				if(parts[1].length() > 2)
-					return 0;
-				num2 = Integer.parseInt(parts[1]);
-				
-				if((num1 > 37&&num1 < 1902)||(num1 < 0)||(num1 > 2037))
-					return 0;
-				if(num1<37)
-					num1 = num1+2000;
-				if(num2 < 1||num2 > 12)
-					return 0;
+			if(parts[0].length() != 2&&parts[0].length() != 4) {
+				return 0;
 			}
-			catch(NumberFormatException e){
-				return 0;				
-			}
+			if(parts[1].length() > 2)
+				return 0;
+			num2 = Integer.parseInt(parts[1]);
+			
+			if((num1 > 37&&num1 < 1902)||(num1 < 0)||(num1 > 2037))
+				return 0;
+			if(num1<37)
+				num1 = num1+2000;
+			if(num2 < 1||num2 > 12)
+				return 0;
 		}
-		else {
-			return 0;
+		catch(NumberFormatException e){
+			return 0;				
 		}
 		if(num2<10)
 			this.date = String.valueOf(num1) + " 0" + String.valueOf(num2);
@@ -233,9 +258,102 @@ public class Process1 {
 			category = parts[2];
 			return 2;
 		}
-		else
-			return 0;
+		else {
+			sqlString = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND ( ";
+			int index = 2;
+			if(parts[index].equals("Not")) {
+				if(parts.length<index+1)
+					return 4;
+				if(parts[index+1].equals("수입")||parts[index+1].equals("지출")) {
+					sqlString = sqlString + "inNout " + "<> '"+ parts[index+1] + "'";
+					index = index + 2;
+				}
+				else {
+					sqlString = sqlString + "category " + "<> '"+ parts[index+1] + "'";
+					categoryList.add(parts[index+1]);
+					index = index + 2;
+				}
+			}
+			else {
+				if(parts[index].equals("수입")||parts[index].equals("지출")) {
+					sqlString = sqlString + "inNout " + "= '"+ parts[index] + "'";
+					index = index + 1;
+				}
+				else {
+					sqlString = sqlString + "category " + "= '"+ parts[index] + "'";
+					categoryList.add(parts[index]);
+					index = index + 1;
+				}
+			}
+			while(parts.length>index) {
+				if(parts[index].equals("And")) {
+					sqlString = sqlString + " And ";
+					index = index + 1;
+					if(parts.length<index+1)
+						return 4;
+					if(parts[index].equals("Not")) {
+						if(parts.length<index+1)
+							return 4;
+						if(parts[index+1].equals("수입")||parts[index+1].equals("지출")) {
+							sqlString = sqlString + "inNout " + "<> '"+ parts[index+1] + "'";
+							index = index + 2;
+						}
+						else {
+							sqlString = sqlString + "category " + "<> '"+ parts[index+1] + "'";
+							categoryList.add(parts[index+1]);
+							index = index + 2;
+						}
+					}
+					else {
+						if(parts[index].equals("수입")||parts[index].equals("지출")) {
+							sqlString = sqlString + "inNout " + "= '"+ parts[index] + "'";
+							index = index + 1;
+						}
+						else {
+							sqlString = sqlString + "category " + "= '"+ parts[index] + "'";
+							categoryList.add(parts[index]);
+							index = index + 1;
+						}
+					}
+				}
+				else if(parts[index].equals("Or")) {
+					sqlString = sqlString + " Or ";
+					index = index + 1;
+					if(parts.length<index+1)
+						return 4;
+					if(parts[index].equals("Not")) {
+						if(parts.length<index+1)
+							return 4;
+						if(parts[index+1].equals("수입")||parts[index+1].equals("지출")) {
+							sqlString = sqlString + "inNout " + "<> '"+ parts[index+1] + "'";
+							index = index + 2;
+						}
+						else {
+							sqlString = sqlString + "category " + "<> '"+ parts[index+1] + "'";
+							categoryList.add(parts[index+1]);
+							index = index + 2;
+						}
+					}
+					else {
+						if(parts[index].equals("수입")||parts[index].equals("지출")) {
+							sqlString = sqlString + "inNout " + "= '"+ parts[index] + "'";
+							index = index + 1;
+						}
+						else {
+							sqlString = sqlString + "category " + "= '"+ parts[index] + "'";
+							categoryList.add(parts[index]);
+							index = index + 1;
+						}
+					}
+				}
+				else
+					return 3;
+			}
+			sqlString = sqlString + ")";
+			return 5;
+		}
 	}
+	
 	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
 	    long thisMonthSumIn = 0;
 	    long thisMonthSumOut = 0;

@@ -442,6 +442,28 @@ public class AccountBookDao {// DB를 다루는 클래스
 	    return categoryList;
 	}
 
-	
+	public ArrayList<AccountBookVO> getAccountLogicalCategoryList(String date, String sqlStr) {
+		String sql = sqlStr;
+		PreparedStatement pstmt = null;
+		ArrayList<AccountBookVO> result = new ArrayList<>();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, date);// 첫번째 물음표
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				AccountBookVO re = new AccountBookVO();
+				re.setIndexNumber(rs.getInt("indexNumber"));
+				re.setDate(rs.getString("date"));
+				re.setInNout(rs.getString("inNout"));
+				re.setCategory(rs.getString("category"));
+				re.setAmount(rs.getInt("amount"));
+				re.setDetails(rs.getString("details"));
+				result.add(re);
+			}
+		} catch (Exception e) {
+			System.out.println("데이터베이스 작업 중 에러발생");
+		}
+		return result;
+	}
 
 }
