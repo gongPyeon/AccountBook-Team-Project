@@ -277,44 +277,45 @@ public class Process3 {
 							break;
 
 					}
-					else if (categorysize == 0 && a)
-					{
-						showCurrentAccount(modifiedDate);
-						System.out.println("삭제 가능한 항목이 없습니다.");
-						System.out.println("------------------------------------------------------------");
+					
+				}
+				else if (categorysize == 0 && a)
+				{
+					showCurrentAccount(modifiedDate);
+					System.out.println("삭제 가능한 항목이 없습니다.");
+					System.out.println("------------------------------------------------------------");
 
-						int temp2;
-						String input1;
+					int temp2;
+					String input1;
+					while (true) {
 						while (true) {
-							while (true) {
-								// System.out.println("---------------------------------------------------");
-								System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
-								System.out.println("2) 메인화면으로 돌아가기");
-								System.out.print("입력> ");
-								input1 = sc.nextLine();
-								System.out.println("------------------------------------------------------------");
-
-								// System.out.println("---------------------------------------------------");
-
-								if (validFor1or2(input1)) {
-									temp2 = Integer.parseInt(input1.trim());
-									break;
-								}
-							}
-							if (temp2 == 1) {
-								addtionalDelete = true;
-								// System.out.println("------------------------------------------------------------");
-								break;
-							} else if (temp2 == 2) {
-								// System.out.println("------------------------------------------------------------");
-								break;
-
-							}
+							// System.out.println("---------------------------------------------------");
+							System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
+							System.out.println("2) 메인화면으로 돌아가기");
+							System.out.print("입력> ");
+							input1 = sc.nextLine();
 							System.out.println("------------------------------------------------------------");
+
+							// System.out.println("---------------------------------------------------");
+
+							if (validFor1or2(input1)) {
+								temp2 = Integer.parseInt(input1.trim());
+								break;
+							}
 						}
-						if (temp2 == 2) // 메인화면으로 돌아가기
+						if (temp2 == 1) {
+							addtionalDelete = true;
+							// System.out.println("------------------------------------------------------------");
 							break;
+						} else if (temp2 == 2) {
+							// System.out.println("------------------------------------------------------------");
+							break;
+
+						}
+						System.out.println("------------------------------------------------------------");
 					}
+					if (temp2 == 2) // 메인화면으로 돌아가기
+						break;
 				}
 			
 					else if (categorysize != 0 && !a)//"Not, and , or"입력받고 가져온게 있을떄
@@ -1509,7 +1510,10 @@ public class Process3 {
 				} catch (NumberFormatException e) {
 					break;
 				}
-				System.out.print("\t" + accountList.get(i).getCategory().replace(" ", "|"));
+				if (accountList.get(i).getCategory().contains(" "))
+					System.out.print("\t" + accountList.get(i).getCategory().replace(" ", "|"));
+				else
+					System.out.print("\t" + accountList.get(i).getCategory());
 
 				if (accountList.get(i).getInNout().compareTo("수입") == 0) {
 					System.out.print("\t" + String.format("%,-10d\t\t\t", accountList.get(i).getAmount()));
