@@ -106,13 +106,13 @@ public class AccountBookDao {// DB를 다루는 클래스
 	}
 	
 	public ArrayList<AccountBookVO> getAccountCategoryList(String date, String category) {
-		String sql = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND category = ?;";
+		String sql = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND CONCAT(' ', category, ' ') Like ?;";
 		PreparedStatement pstmt = null;
 		ArrayList<AccountBookVO> result = new ArrayList<>();
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, date);// 첫번째 물음표
-			pstmt.setString(2, category);// 두번째 물음표
+			pstmt.setString(2, "% " +category+" %");// 두번째 물음표
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				AccountBookVO re = new AccountBookVO();
