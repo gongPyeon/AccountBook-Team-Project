@@ -269,7 +269,7 @@ public class Process1 {
 					index = index + 2;
 				}
 				else {
-					sqlString = sqlString + "category " + "<> '"+ parts[index+1] + "'";
+					sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Not Like '% "+ parts[index+1] + " %'";
 					categoryList.add(parts[index+1]);
 					index = index + 2;
 				}
@@ -280,7 +280,7 @@ public class Process1 {
 					index = index + 1;
 				}
 				else {
-					sqlString = sqlString + "category " + "= '"+ parts[index] + "'";
+					sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Like '% "+ parts[index] + " %'";
 					categoryList.add(parts[index]);
 					index = index + 1;
 				}
@@ -299,7 +299,7 @@ public class Process1 {
 							index = index + 2;
 						}
 						else {
-							sqlString = sqlString + "category " + "<> '"+ parts[index+1] + "'";
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Not Like '% "+ parts[index+1] + " %'";
 							categoryList.add(parts[index+1]);
 							index = index + 2;
 						}
@@ -310,7 +310,7 @@ public class Process1 {
 							index = index + 1;
 						}
 						else {
-							sqlString = sqlString + "category " + "= '"+ parts[index] + "'";
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Like '% "+ parts[index] + " %'";
 							categoryList.add(parts[index]);
 							index = index + 1;
 						}
@@ -329,7 +329,7 @@ public class Process1 {
 							index = index + 2;
 						}
 						else {
-							sqlString = sqlString + "category " + "<> '"+ parts[index+1] + "'";
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Not Like '% "+ parts[index+1] + " %'";
 							categoryList.add(parts[index+1]);
 							index = index + 2;
 						}
@@ -340,7 +340,7 @@ public class Process1 {
 							index = index + 1;
 						}
 						else {
-							sqlString = sqlString + "category " + "= '"+ parts[index] + "'";
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Like '% "+ parts[index] + " %'";
 							categoryList.add(parts[index]);
 							index = index + 1;
 						}
@@ -350,6 +350,7 @@ public class Process1 {
 					return 3;
 			}
 			sqlString = sqlString + ")";
+			System.out.println(sqlString);
 			return 5;
 		}
 	}
