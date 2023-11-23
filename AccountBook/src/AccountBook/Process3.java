@@ -1427,7 +1427,7 @@ public class Process3 {
 		long totalOutflow = 0;
 
 		for (AccountBookVO e : accountList) {
-			if (e.getCategory().equals(category)) {
+			if (e.getCategory().contains(category)) {
 				filteredList.add(e);
 				if (e.getInNout().equals("수입")) {
 					totalIncome += e.getAmount();
@@ -1455,8 +1455,22 @@ public class Process3 {
 		}
 		// System.out.println(lastdateyearmonth);
 //		System.out.println(totalIncome);
-		System.out.println(date + "\t\t수입\t\t지출\t\t내용\t인덱스");
-		System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
+//	    카테고리 출력 길이에 따른 출력 열 공백 계산 (공백 길이 카운트)
+	    String categorySpace = ""; // 카테고리 출력 길이에 해당하는 공백
+	    int NumofLongest = 0;	// 카테고리 갯수가 가장 많은 내역의 출력 순서 번호를 저장하는 변수
+	    ArrayList<String> over6 = new ArrayList<String>(); //카테고리 이름이 6을 넘을 떄마다 기록
+	    for (int i = 0; i < filteredList.size(); i++) {
+	        String categories[] = filteredList.get(i).getCategory().split(" "); // 한 내역의 모든 카테고리를 저장한 배열
+	        if (categories.length > NumofLongest)
+	        	NumofLongest = i; // 내역마다 카테고리 갯수를 비교해 가장 많은 카테고리를 가진 내역의 출력 순서 번호를 저장
+	        for (String c : categories)
+	        	if (c.length() >= 6 && !over6.contains(c))
+	        		over6.add(c);
+	    }
+	    categorySpace += "\t".repeat(filteredList.get(NumofLongest).getCategory().split(" ").length);
+
+		System.out.println(date + categorySpace + "\t\t수입\t\t지출\t\t내용\t인덱스");
+		System.out.println("총계\t\t" + categorySpace + String.format("%,-10d\t", +(long) totalIncome)
 				+ String.format("%,-10d\t", (long) totalOutflow) + "\t--");
 
 		if (filteredList != null) {
@@ -1475,6 +1489,31 @@ public class Process3 {
 				System.out.print(filteredList.get(i).getDate().substring(5));
 				System.out.print("\t" + filteredList.get(i).getCategory().replace(" ", "|"));
 
+//		    	카테고리 출력 + 공백 계산
+		    	boolean hasOver6 = false;
+		        String categories[] = filteredList.get(i).getCategory().split(" ");
+		        String printCategory = "";
+		        printCategory += categories[0];
+		        for (String c : categories) {
+		        	if (over6.contains(c))	hasOver6 = true;
+		        	if (c.equals(categories[0])) continue;
+		        	printCategory += "|" + c;
+		        }
+		        if (hasOver6 && categories.length == 1)
+		        	System.out.print("\t".repeat(categorySpace.length()-1));
+		        else if (printCategory.length() % 6 == 1) {
+		        	if (categories.length < 4)
+		        		System.out.print("\t".repeat(categorySpace.length()-1));
+		        	else
+		        		System.out.print("\t".repeat(categorySpace.length()-categories.length+2));
+		        	}
+		        else {
+		        	if (categories.length < 4)
+		        		System.out.print(categorySpace);
+		        	else
+		        		System.out.print("\t".repeat(categorySpace.length()-categories.length+3));
+		        }
+				
 				if (filteredList.get(i).getInNout().compareTo("수입") == 0) {
 					System.out.print("\t" + String.format("%,-10d\t\t\t", filteredList.get(i).getAmount()));
 				} else {
@@ -1491,7 +1530,7 @@ public class Process3 {
 		long lastMonthSumIn = 0;
 		long lastMonthSumOut = 0;
 		for (AccountBookVO e : LASTaccountList) {
-			if (e.getCategory().equals(category)) {
+			if (e.getCategory().contains(category)) {
 				filteredList2.add(e);
 			}
 		}
@@ -1513,7 +1552,7 @@ public class Process3 {
 		} else {
 			print = lastdateyearmonth.substring(5, 7);
 		}
-		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", lastMonthSumIn)
+		System.out.println(print + "월 이월분\t" + categorySpace + String.format("%,-10d\t", lastMonthSumIn)
 				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
 		System.out.println("------------------------------------------------------------");
 
