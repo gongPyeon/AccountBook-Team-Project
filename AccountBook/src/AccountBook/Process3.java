@@ -434,105 +434,6 @@ public class Process3 {
 		}
 	}
 
-	private void showCurrentAccount3(String modifiedDate, ArrayList<String> arr2n) {
-
-		long totalIncome = 0;
-		long totalOutflow = 0;
-		// arr2n "AND / NOT / OR"고려해서 filteredList,filteredList2 채우기
-		ConsiderCategoryAndOrNot(arr2n, modifiedDate);
-
-		for (AccountBookVO e : filteredList) {
-
-			if (e.getInNout().equals("수입")) {
-				totalIncome += e.getAmount();
-			} else {
-				totalOutflow += e.getAmount();
-			}
-
-		}
-
-		System.out.println(modifiedDate + "\t\t수입\t\t지출\t\t내용\t인덱스");
-		System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
-				+ String.format("%,-10d\t", (long) totalOutflow) + "\t--");
-
-		if (filteredList != null) {
-			Collections.sort(filteredList, new Comparator<AccountBookVO>() {
-				@Override
-				public int compare(AccountBookVO o1, AccountBookVO o2) {
-					try {
-						return Integer.parseInt(o2.getDate().substring(8))
-								- Integer.parseInt(o1.getDate().substring(8));
-					} catch (NumberFormatException e) {
-						return 0;
-					}
-				}
-			});
-			for (int i = 0; i < filteredList.size(); i++) {
-				System.out.print(filteredList.get(i).getDate().substring(5));
-				System.out.print("\t" + filteredList.get(i).getCategory().replace(" ", "|"));
-
-				if (filteredList.get(i).getInNout().compareTo("수입") == 0) {
-					System.out.print("\t" + String.format("%,-10d\t\t\t", filteredList.get(i).getAmount()));
-				} else {
-					System.out.print("\t\t\t" + String.format("%,-10d\t", filteredList.get(i).getAmount()));
-				}
-				System.out.print(filteredList.get(i).getDetails());
-				System.out.print("\t" + filteredList.get(i).getIndexNumber());
-				System.out.println();
-			}
-		}
-
-		long lastMonthSumIn = 0;
-		long lastMonthSumOut = 0;
-		for (AccountBookVO e : filteredList2) {
-
-			if (e.getInNout().equals("수입")) {
-				lastMonthSumIn += e.getAmount();
-			} else {
-				lastMonthSumOut += e.getAmount();
-			}
-
-		}
-
-		if (filteredList2 != null) {
-
-			for (int i = 0; i < filteredList2.size(); i++) {
-				if (filteredList2.get(i).getInNout().compareTo("수입") == 0) {
-					lastMonthSumIn += filteredList2.get(i).getAmount();
-				} else {
-					lastMonthSumOut += filteredList2.get(i).getAmount();
-				}
-			}
-		}
-		// 다음 부분을 위한 부분
-		lastDate = getPrevious(modifiedDate);// 지난달 예)2
-		String lastdateyearmonth;
-		if (Integer.parseInt(lastDate) != 12) {
-			lastdateyearmonth = date.substring(0, 4);
-			if (lastDate.length() == 1) {
-				lastdateyearmonth += " 0";
-				lastdateyearmonth += lastDate;
-			} else {
-				lastdateyearmonth += " " + lastDate;
-			}
-
-		} else {
-			lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0, 4)) - 1);
-			lastdateyearmonth += " 12";
-		}
-
-		String print;
-		if (lastdateyearmonth.substring(5, 6).equals("0")) {
-			print = " " + lastdateyearmonth.substring(6, 7);
-		} else {
-			print = lastdateyearmonth.substring(5, 7);
-		}
-		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", lastMonthSumIn)
-				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
-		System.out.println("------------------------------------------------------------");
-
-	}
-
 	private void ConsiderCategoryAndOrNot(ArrayList<String> arr2n, String modifiedDate) {
 		// 불리기
 		if (!arr2n.contains("Not")) {
@@ -1578,6 +1479,106 @@ public class Process3 {
 
 	}
 
+	private void showCurrentAccount3(String modifiedDate, ArrayList<String> arr2n) {
+
+		long totalIncome = 0;
+		long totalOutflow = 0;
+		// arr2n "AND / NOT / OR"고려해서 filteredList,filteredList2 채우기
+		ConsiderCategoryAndOrNot(arr2n, modifiedDate);
+
+		for (AccountBookVO e : filteredList) {
+
+			if (e.getInNout().equals("수입")) {
+				totalIncome += e.getAmount();
+			} else {
+				totalOutflow += e.getAmount();
+			}
+
+		}
+
+		System.out.println(modifiedDate + "\t\t수입\t\t지출\t\t내용\t인덱스");
+		System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
+				+ String.format("%,-10d\t", (long) totalOutflow) + "\t--");
+
+		if (filteredList != null) {
+			Collections.sort(filteredList, new Comparator<AccountBookVO>() {
+				@Override
+				public int compare(AccountBookVO o1, AccountBookVO o2) {
+					try {
+						return Integer.parseInt(o2.getDate().substring(8))
+								- Integer.parseInt(o1.getDate().substring(8));
+					} catch (NumberFormatException e) {
+						return 0;
+					}
+				}
+			});
+			for (int i = 0; i < filteredList.size(); i++) {
+				System.out.print(filteredList.get(i).getDate().substring(5));
+				System.out.print("\t" + filteredList.get(i).getCategory().replace(" ", "|"));
+
+				if (filteredList.get(i).getInNout().compareTo("수입") == 0) {
+					System.out.print("\t" + String.format("%,-10d\t\t\t", filteredList.get(i).getAmount()));
+				} else {
+					System.out.print("\t\t\t" + String.format("%,-10d\t", filteredList.get(i).getAmount()));
+				}
+				System.out.print(filteredList.get(i).getDetails());
+				System.out.print("\t" + filteredList.get(i).getIndexNumber());
+				System.out.println();
+			}
+		}
+
+		long lastMonthSumIn = 0;
+		long lastMonthSumOut = 0;
+		for (AccountBookVO e : filteredList2) {
+
+			if (e.getInNout().equals("수입")) {
+				lastMonthSumIn += e.getAmount();
+			} else {
+				lastMonthSumOut += e.getAmount();
+			}
+
+		}
+
+		if (filteredList2 != null) {
+
+			for (int i = 0; i < filteredList2.size(); i++) {
+				if (filteredList2.get(i).getInNout().compareTo("수입") == 0) {
+					lastMonthSumIn += filteredList2.get(i).getAmount();
+				} else {
+					lastMonthSumOut += filteredList2.get(i).getAmount();
+				}
+			}
+		}
+		// 다음 부분을 위한 부분
+		lastDate = getPrevious(modifiedDate);// 지난달 예)2
+		String lastdateyearmonth;
+		if (Integer.parseInt(lastDate) != 12) {
+			lastdateyearmonth = date.substring(0, 4);
+			if (lastDate.length() == 1) {
+				lastdateyearmonth += " 0";
+				lastdateyearmonth += lastDate;
+			} else {
+				lastdateyearmonth += " " + lastDate;
+			}
+
+		} else {
+			lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0, 4)) - 1);
+			lastdateyearmonth += " 12";
+		}
+
+		String print;
+		if (lastdateyearmonth.substring(5, 6).equals("0")) {
+			print = " " + lastdateyearmonth.substring(6, 7);
+		} else {
+			print = lastdateyearmonth.substring(5, 7);
+		}
+		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", lastMonthSumIn)
+				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
+		System.out.println("------------------------------------------------------------");
+
+	}
+
+	
 	public int numberOfSpaces(int number) {
 		// 정수를 문자열로 변환
 		String numberStr = Integer.toString(number);
