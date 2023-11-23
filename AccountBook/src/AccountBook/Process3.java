@@ -722,22 +722,21 @@ public class Process3 {
 								}
 								
 							}
+						}
 							else {// ㅁ And Not ㄹ
 								if (arr2n.get(indexOfAnd+1).equals("Not")) {
 									if (categoryList.contains(arr2n.get(indexOfAnd+2))) 
+									{	
+										System.out.println("remove " + e.getCategory());
 										filteredList.remove(e);
+									}
 									if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd +2)))
-										filteredList.add(e);
-									
-
+									{	filteredList.add(e);
+										System.out.println(e.getCategory());
+									}
 								}
-								
 							}
-						
 						}
-						
-					}
-					
 					
 					for (AccountBookVO e : LASTaccountList)//저번달
 					{
