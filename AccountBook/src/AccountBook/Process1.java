@@ -121,7 +121,11 @@ public class Process1 {
 				ArrayList<String> categoryArray = dao.getCategories1();
 				boolean isIn = false;
 				for(int i=0; i<categoryArray.size();i++) {
-					if(categoryArray.get(i).compareTo(category)==0) {
+					if(category.compareTo("수입")==0||category.compareTo("지출")==0) {
+						isIn = true;
+						break;
+					}
+					else if(categoryArray.get(i).compareTo(category)==0) {
 						isIn = true;
 						break;
 					}
@@ -166,13 +170,25 @@ public class Process1 {
 			printAccountBook(thisMonthArray, lastMonthArray);
 		}
 		else if(checkDate == 2) {
-			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountCategoryList(date, category);
-			temp = thisMonthArray;
-			ArrayList<AccountBookVO> lastMonthArray = null;
-			String last = lastMonth(date);
-			if (last != "")
-				lastMonthArray = dao.getAccountCategoryList(lastDate, category);
-			printAccountBook(thisMonthArray, lastMonthArray);
+			if(category.compareTo("수입")==0||category.compareTo("지출")==0) {
+				String sql = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND ( inNout = '"+category+"')";
+				ArrayList<AccountBookVO> thisMonthArray = dao.getAccountLogicalCategoryList(date, sql);
+				temp = thisMonthArray;
+				ArrayList<AccountBookVO> lastMonthArray = null;
+				String last = lastMonth(date);
+				if (last != "")
+					lastMonthArray = dao.getAccountLogicalCategoryList(lastDate, sql);
+				printAccountBook(thisMonthArray, lastMonthArray);
+			}
+			else {
+				ArrayList<AccountBookVO> thisMonthArray = dao.getAccountCategoryList(date, category);
+				temp = thisMonthArray;
+				ArrayList<AccountBookVO> lastMonthArray = null;
+				String last = lastMonth(date);
+				if (last != "")
+					lastMonthArray = dao.getAccountCategoryList(lastDate, category);
+				printAccountBook(thisMonthArray, lastMonthArray);
+			}
 		}
 		else if(checkDate == 5) {
 			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountLogicalCategoryList(date, sqlString);
@@ -180,7 +196,7 @@ public class Process1 {
 			ArrayList<AccountBookVO> lastMonthArray = null;
 			String last = lastMonth(date);
 			if (last != "")
-				lastMonthArray = dao.getAccountCategoryList(lastDate, category);
+				lastMonthArray = dao.getAccountLogicalCategoryList(lastDate, sqlString);
 			printAccountBook(thisMonthArray, lastMonthArray);
 		}
 	}
@@ -350,7 +366,6 @@ public class Process1 {
 					return 3;
 			}
 			sqlString = sqlString + ")";
-//			System.out.println(sqlString);
 			return 5;
 		}
 	}
@@ -358,24 +373,10 @@ public class Process1 {
 	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
 	    long thisMonthSumIn = 0;
 	    long thisMonthSumOut = 0;
-	    
-//	    카테고리 출력 길이에 따른 출력 열 공백 계산 (공백 길이 카운트)
-	    String categorySpace = ""; // 카테고리 출력 길이에 해당하는 공백
-	    int NumofLongest = 0;	// 카테고리 갯수가 가장 많은 내역의 출력 순서 번호를 저장하는 변수
-	    ArrayList<String> over6 = new ArrayList<String>(); //카테고리 이름이 6을 넘을 떄마다 기록
-	    for (int i = 0; i < array.size(); i++) {
-	        String category[] = array.get(i).getCategory().split(" "); // 한 내역의 모든 카테고리를 저장한 배열
-	        if (category.length > NumofLongest)
-	        	NumofLongest = i; // 내역마다 카테고리 갯수를 비교해 가장 많은 카테고리를 가진 내역의 출력 순서 번호를 저장
-	        for (String c : category)
-	        	if (c.length() >= 6 && !over6.contains(c))
-	        		over6.add(c);
-	    }
-	    categorySpace += "\t".repeat(array.get(NumofLongest).getCategory().split(" ").length);
-	    
+
 		System.out.println("------------------------------------------------------------");
 	    try {
-	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + categorySpace + "\t\t수입\t\t지출\t\t내용\t인덱스");
+	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t수입\t\t지출\t\t내용\t인덱스\t카테고리");
 		}
 		catch(NumberFormatException e){
 							
@@ -422,7 +423,7 @@ public class Process1 {
         }
         // Comparator를 사용하여 ArrayList 정렬
         Collections.sort(array, dateComparator);
-	    System.out.println("총계\t\t" + categorySpace + String.format("%,-10d\t",(long)(thisMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut)) + "\t--");
+	    System.out.println("총계\t" +  String.format("%,-10d\t",(long)(thisMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut)) + "\t--");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	    	try {
@@ -432,34 +433,6 @@ public class Process1 {
 			catch(NumberFormatException e){
 				break;				
 			}
-	        
-//	    	카테고리 출력
-	    	boolean hasOver6 = false;
-	        System.out.print("\t");
-	        String category[] = array.get(i).getCategory().split(" ");
-	        String printCategory = "";
-	        printCategory += category[0];
-	        for (String c : category) {
-	        	if (over6.contains(c))	hasOver6 = true;
-	        	if (c.equals(category[0])) continue;
-	        	printCategory += "|" + c;
-	        }
-	        System.out.print(printCategory);
-	        if (hasOver6 && category.length == 1)
-	        	System.out.print("\t".repeat(categorySpace.length()-1));
-	        else if (printCategory.length() % 6 == 1) {
-	        	if (category.length < 4)
-	        		System.out.print("\t".repeat(categorySpace.length()-1));
-	        	else
-	        		System.out.print("\t".repeat(categorySpace.length()-category.length+2));
-	        	}
-	        else {
-	        	if (category.length < 4)
-	        		System.out.print(categorySpace);
-	        	else
-	        		System.out.print("\t".repeat(categorySpace.length()-category.length+3));
-	        }
-	        
 //	        금액(수입 또는 지출) 출력
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
 	            System.out.print("\t" +String.format("%,-10d\t\t\t",array.get(i).getAmount()));
@@ -468,11 +441,12 @@ public class Process1 {
 	        }
 	        System.out.print(array.get(i).getDetails());
 	        System.out.print("\t" + array.get(i).getIndexNumber());
+	        System.out.print("\t" + array.get(i).getCategory().replaceAll(" ", "|"));
 	        System.out.println();
 	    }
 	    if(lastArray != null) {
 	    	try {
-	    		System.out.println(String.format("%2d",Integer.parseInt(lastDate.substring(5,7))) + "월 이월분\t" + categorySpace + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
+	    		System.out.println(String.format("%2d",Integer.parseInt(lastDate.substring(5,7))) + "월 이월분" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
 	    		}
 			catch(NumberFormatException e){
 							
