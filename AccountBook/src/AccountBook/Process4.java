@@ -64,7 +64,7 @@ public class Process4 {
             String input = scanner.nextLine();
             String stringWithoutSpaces = input.trim().replace(" ", "");
 
-            if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !income.contains(input.trim()) && !consumption.contains(input.trim())) {
+            if (!input.trim().isEmpty() && input.length() <= 10 && stringWithoutSpaces.equals(input.trim()) && !income.contains(input.trim()) && !consumption.contains(input.trim()) && !input.trim().equals("수입") && !input.trim().equals("지출")) {
                 CategoryVO categoryVO = new CategoryVO(inNout, input.trim());
 
                 dao.InsertCategoryInCategorytable(categoryVO);
