@@ -34,9 +34,9 @@ public class MainProgram {
 
 			try {
 				process_input = sc.nextLine();
+				if (Is_valid(process_input)) {
 				if (Integer.parseInt(process_input)!= 5)
 				    System.out.println("------------------------------------------------------------");
-				if (Is_valid(process_input)) {
 					menu = Integer.parseInt(process_input);
 					if (menu == 1) 
 						process1 = new Process1();
