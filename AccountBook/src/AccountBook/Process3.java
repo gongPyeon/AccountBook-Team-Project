@@ -1339,11 +1339,6 @@ public class Process3 {
 				} catch (NumberFormatException e) {
 					break;
 				}
-				if (accountList.get(i).getCategory().contains(" "))
-					System.out.print("\t" + accountList.get(i).getCategory().replace(" ", "|"));
-				else
-					System.out.print("\t" + accountList.get(i).getCategory());
-
 
 				if (accountList.get(i).getInNout().compareTo("수입") == 0) {
 					System.out.print("\t" + String.format("%,-10d\t\t\t", accountList.get(i).getAmount()));
@@ -1587,7 +1582,7 @@ public class Process3 {
 		} else {
 			print = lastdateyearmonth.substring(5, 7);
 		}
-		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", lastMonthSumIn)
+		System.out.println(print + "월 이월분" + String.format("%,-10d\t", lastMonthSumIn)
 				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
 		System.out.println("------------------------------------------------------------");
 
