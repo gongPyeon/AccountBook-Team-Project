@@ -1311,7 +1311,7 @@ public class Process3 {
 		}
 
 //	    카테고리 출력 길이에 따른 출력 열 공백 계산 (공백 길이 카운트)
-		String categorySpace = ""; // 카테고리 출력 길이에 해당하는 공백
+//		String categorySpace = ""; // 카테고리 출력 길이에 해당하는 공백
 		int NumofLongest = 0; // 카테고리 갯수가 가장 많은 내역의 출력 순서 번호를 저장하는 변수
 		ArrayList<String> over6 = new ArrayList<String>(); // 카테고리 이름이 6을 넘을 떄마다 기록
 		for (int i = 0; i < accountList.size(); i++) {
@@ -1322,12 +1322,11 @@ public class Process3 {
 				if (c.length() >= 6 && !over6.contains(c))
 					over6.add(c);
 		}
-		categorySpace += "\t".repeat(accountList.get(NumofLongest).getCategory().split(" ").length);
 
-		System.out.println(date + categorySpace + "\t\t수입\t\t지출\t\t내용\t인덱스");
+		System.out.println(date + "\t\t수입\t\t지출\t\t내용\t\t인덱스\t카테고리");
+		System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
 
-		System.out.println("총계\t\t" + categorySpace + String.format("%,-10d\t", +(long) totalIncome)
-				+ String.format("%,-10d\t", (long) totalOutflow) + "\t--");
+				+ String.format("%,-10d\t", (long) totalOutflow) + "--");
 
 		Comparator<AccountBookVO> dateComparator = new Comparator<AccountBookVO>() {
 			@Override
@@ -1352,12 +1351,7 @@ public class Process3 {
 				} catch (NumberFormatException e) {
 					break;
 				}
-				if (accountList.get(i).getCategory().contains(" "))
-					System.out.print("\t" + accountList.get(i).getCategory().replace(" ", "|"));
-				else
-					System.out.print("\t" + accountList.get(i).getCategory());
-
-//		    	카테고리 출력 + 공백 계산
+				
 				boolean hasOver6 = false;
 				String category[] = accountList.get(i).getCategory().split(" ");
 				String printCategory = "";
@@ -1369,27 +1363,26 @@ public class Process3 {
 						continue;
 					printCategory += "|" + c;
 				}
-				if (hasOver6 && category.length == 1)
-					System.out.print("\t".repeat(categorySpace.length() - 1));
-				else if (printCategory.length() % 6 == 1) {
-					if (category.length < 4)
-						System.out.print("\t".repeat(categorySpace.length() - 1));
-					else
-						System.out.print("\t".repeat(categorySpace.length() - category.length + 2));
-				} else {
-					if (category.length < 4)
-						System.out.print(categorySpace);
-					else
-						System.out.print("\t".repeat(categorySpace.length() - category.length + 3));
-				}
+
 
 				if (accountList.get(i).getInNout().compareTo("수입") == 0) {
-					System.out.print("\t" + String.format("%,-10d\t\t\t", accountList.get(i).getAmount()));
+					System.out.print("\t\t" + String.format("%,-10d\t\t", accountList.get(i).getAmount()));
 				} else {
-					System.out.print("\t\t\t" + String.format("%,-10d\t", accountList.get(i).getAmount()));
+					System.out.print("\t\t\t\t" + String.format("%,-10d", accountList.get(i).getAmount()));
 				}
-				System.out.print(accountList.get(i).getDetails());
-				System.out.print("\t" + accountList.get(i).getIndexNumber());
+				System.out.print("\t"+accountList.get(i).getDetails()+"\t");
+				if(accountList.get(i).getDetails().length()>6) {
+					System.out.print(accountList.get(i).getIndexNumber());
+				}else {
+					System.out.print("\t" + accountList.get(i).getIndexNumber());
+				}
+				
+				if (accountList.get(i).getCategory().contains(" "))
+					System.out.print("\t" + accountList.get(i).getCategory().replace(" ", "|"));
+				else
+					System.out.print("\t" + accountList.get(i).getCategory());
+
+//		    	카테고리 출력 + 공백 계산
 				System.out.println();
 			}
 		}
@@ -1413,14 +1406,14 @@ public class Process3 {
 		} else {
 			print = lastdateyearmonth.substring(5, 7);
 		}
-		System.out.println(print + "월 이월분\t" + categorySpace + String.format("%,-10d\t", (long) lastMonthSumIn)
-				+ String.format("%,-10d\t", (long) lastMonthSumOut) + "\t--");
+
+		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", (long) lastMonthSumIn)
+		+ String.format("%,-10d\t", (long) lastMonthSumOut) + "\t--");
 		System.out.println("------------------------------------------------------------");
 	}
 
 	public void showCurrentAccount2(String date, String category) {
-		// System.out.println(date);
-		// System.out.println(category);
+
 		accountList = dao.getAccountForMonth(date);
 		filteredList = new ArrayList<>();
 		long totalIncome = 0;
@@ -1453,10 +1446,7 @@ public class Process3 {
 			lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0, 4)) - 1);
 			lastdateyearmonth += " 12";
 		}
-		// System.out.println(lastdateyearmonth);
-//		System.out.println(totalIncome);
-//	    카테고리 출력 길이에 따른 출력 열 공백 계산 (공백 길이 카운트)
-	    String categorySpace = ""; // 카테고리 출력 길이에 해당하는 공백
+
 	    int NumofLongest = 0;	// 카테고리 갯수가 가장 많은 내역의 출력 순서 번호를 저장하는 변수
 	    ArrayList<String> over6 = new ArrayList<String>(); //카테고리 이름이 6을 넘을 떄마다 기록
 	    for (int i = 0; i < filteredList.size(); i++) {
@@ -1467,11 +1457,11 @@ public class Process3 {
 	        	if (c.length() >= 6 && !over6.contains(c))
 	        		over6.add(c);
 	    }
-	    categorySpace += "\t".repeat(filteredList.get(NumofLongest).getCategory().split(" ").length);
 
-		System.out.println(date + categorySpace + "\t\t수입\t\t지출\t\t내용\t인덱스");
-		System.out.println("총계\t\t" + categorySpace + String.format("%,-10d\t", +(long) totalIncome)
-				+ String.format("%,-10d\t", (long) totalOutflow) + "\t--");
+	    System.out.println(date + "\t\t수입\t\t지출\t\t내용\t\t인덱스\t카테고리");
+		System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
+
+				+ String.format("%,-10d\t", (long) totalOutflow) + "--");
 
 		if (filteredList != null) {
 			Collections.sort(filteredList, new Comparator<AccountBookVO>() {
@@ -1499,28 +1489,24 @@ public class Process3 {
 		        	if (c.equals(categories[0])) continue;
 		        	printCategory += "|" + c;
 		        }
-		        if (hasOver6 && categories.length == 1)
-		        	System.out.print("\t".repeat(categorySpace.length()-1));
-		        else if (printCategory.length() % 6 == 1) {
-		        	if (categories.length < 4)
-		        		System.out.print("\t".repeat(categorySpace.length()-1));
-		        	else
-		        		System.out.print("\t".repeat(categorySpace.length()-categories.length+2));
-		        	}
-		        else {
-		        	if (categories.length < 4)
-		        		System.out.print(categorySpace);
-		        	else
-		        		System.out.print("\t".repeat(categorySpace.length()-categories.length+3));
-		        }
+		        
 				
-				if (filteredList.get(i).getInNout().compareTo("수입") == 0) {
-					System.out.print("\t" + String.format("%,-10d\t\t\t", filteredList.get(i).getAmount()));
+		        if (accountList.get(i).getInNout().compareTo("수입") == 0) {
+					System.out.print("\t\t" + String.format("%,-10d\t\t", accountList.get(i).getAmount()));
 				} else {
-					System.out.print("\t\t\t" + String.format("%,-10d\t", filteredList.get(i).getAmount()));
+					System.out.print("\t\t\t\t" + String.format("%,-10d", accountList.get(i).getAmount()));
 				}
-				System.out.print(filteredList.get(i).getDetails());
-				System.out.print("\t" + filteredList.get(i).getIndexNumber());
+		        System.out.print("\t"+accountList.get(i).getDetails()+"\t");
+		        if(accountList.get(i).getDetails().length()>6) {
+					System.out.print(accountList.get(i).getIndexNumber());
+				}else {
+					System.out.print("\t" + accountList.get(i).getIndexNumber());
+				}
+		        
+		        if (accountList.get(i).getCategory().contains(" "))
+					System.out.print("\t" + accountList.get(i).getCategory().replace(" ", "|"));
+				else
+					System.out.print("\t" + accountList.get(i).getCategory());
 				System.out.println();
 			}
 		}
@@ -1552,8 +1538,8 @@ public class Process3 {
 		} else {
 			print = lastdateyearmonth.substring(5, 7);
 		}
-		System.out.println(print + "월 이월분\t" + categorySpace + String.format("%,-10d\t", lastMonthSumIn)
-				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
+		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", (long) lastMonthSumIn)
+		+ String.format("%,-10d\t", (long) lastMonthSumOut) + "\t--");
 		System.out.println("------------------------------------------------------------");
 
 	}
@@ -1575,9 +1561,10 @@ public class Process3 {
 
 		}
 
-		System.out.println(modifiedDate + "\t\t수입\t\t지출\t\t내용\t인덱스");
+		System.out.println(modifiedDate + "\t\t수입\t\t지출\t\t내용\t\t인덱스\t카테고리");
 		System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
-				+ String.format("%,-10d\t", (long) totalOutflow) + "\t--");
+
+		+ String.format("%,-10d\t", (long) totalOutflow) + "--");
 
 		if (filteredList != null) {
 			Collections.sort(filteredList, new Comparator<AccountBookVO>() {
@@ -1593,15 +1580,22 @@ public class Process3 {
 			});
 			for (int i = 0; i < filteredList.size(); i++) {
 				System.out.print(filteredList.get(i).getDate().substring(5));
-				System.out.print("\t" + filteredList.get(i).getCategory().replace(" ", "|"));
 
 				if (filteredList.get(i).getInNout().compareTo("수입") == 0) {
-					System.out.print("\t" + String.format("%,-10d\t\t\t", filteredList.get(i).getAmount()));
+					System.out.print("\t\t" + String.format("%,-10d\t\t", filteredList.get(i).getAmount()));
 				} else {
-					System.out.print("\t\t\t" + String.format("%,-10d\t", filteredList.get(i).getAmount()));
+					System.out.print("\t\t\t\t" + String.format("%,-10d", filteredList.get(i).getAmount()));
 				}
-				System.out.print(filteredList.get(i).getDetails());
-				System.out.print("\t" + filteredList.get(i).getIndexNumber());
+				System.out.print("\t"+filteredList.get(i).getDetails()+"\t");
+				if(filteredList.get(i).getDetails().length()>6) {
+					System.out.print(filteredList.get(i).getIndexNumber());
+				}else {
+					System.out.print("\t" + filteredList.get(i).getIndexNumber());
+				}
+				if (filteredList.get(i).getCategory().contains(" "))
+					System.out.print("\t" + filteredList.get(i).getCategory().replace(" ", "|"));
+				else
+					System.out.print("\t" + filteredList.get(i).getCategory());
 				System.out.println();
 			}
 		}
@@ -1651,8 +1645,8 @@ public class Process3 {
 		} else {
 			print = lastdateyearmonth.substring(5, 7);
 		}
-		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", lastMonthSumIn)
-				+ String.format("%,-10d\t", lastMonthSumOut) + "\t--");
+		System.out.println(print + "월 이월분\t" + String.format("%,-10d\t", (long) lastMonthSumIn)
+		+ String.format("%,-10d\t", (long) lastMonthSumOut) + "--");
 		System.out.println("------------------------------------------------------------");
 
 	}
