@@ -99,7 +99,7 @@ public class Process3 {
 					System.out.println("------------------------------------------------------------");
 					System.out.println("삭제가 완료되었습니다");
 					System.out.println("------------------------------------------------------------");
-
+					
 					int temp = 0;
 					String tempInput;
 					if (accountList.size() != 0) {
@@ -141,7 +141,7 @@ public class Process3 {
 					while (true) {
 						while (true) {
 							// System.out.println("---------------------------------------------------");
-							System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
+							System.out.println("1) “년+월” 또는 “년+월+카테고리”를 입력하세요");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							input = sc.nextLine();
@@ -233,12 +233,16 @@ public class Process3 {
 					System.out.println("------------------------------------------------------------");
 					System.out.println("삭제가 완료되었습니다");
 					System.out.println("------------------------------------------------------------");
-
+					for(AccountBookVO e : filteredList) {
+						if(e.getIndexNumber()==input)
+							filteredList.remove(e);
+					}
 					int temp = 0;
 					String tempInput;
 					categorysize = 0;
-					for (AccountBookVO e : accountList) {
-						if (e.getCategory().equals(category)) {
+					for (AccountBookVO e : filteredList) {
+						if (e.getCategory().equals(category) || e.getCategory().contains(category)
+								|| e.getInNout().equals(category)) {
 							categorysize++;
 						}
 					}
@@ -280,7 +284,7 @@ public class Process3 {
 					}
 
 				} else if (categorysize == 0 && a) {
-					showCurrentAccount(modifiedDate);
+					showCurrentAccount2(modifiedDate,category);
 					System.out.println("삭제 가능한 항목이 없습니다.");
 					System.out.println("------------------------------------------------------------");
 
@@ -289,7 +293,7 @@ public class Process3 {
 					while (true) {
 						while (true) {
 							// System.out.println("---------------------------------------------------");
-							System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
+							System.out.println("1) “년+월” 또는 “년+월+카테고리”를 입력하세요");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							input1 = sc.nextLine();
@@ -406,7 +410,7 @@ public class Process3 {
 					while (true) {
 						while (true) {
 							// System.out.println("---------------------------------------------------");
-							System.out.println("1) “년+월” 또는 “년+월+카테고리” 다시 입력하기");
+							System.out.println("1) “년+월” 또는 “년+월+카테고리”를 입력하세요");
 							System.out.println("2) 메인화면으로 돌아가기");
 							System.out.print("입력> ");
 							input3 = sc.nextLine();
@@ -489,6 +493,10 @@ public class Process3 {
 			arr2n.remove(arr2n.size() - 1);
 
 		}
+		if(arr2n.get(arr2n.size()-1).equals("And")
+				||arr2n.get(arr2n.size()-1).equals("Or")
+				||arr2n.get(arr2n.size()-1).equals("Not"))
+			arr2n.remove(arr2n.size() - 1);
 
 		lastDate = getPrevious(modifiedDate);// 지난달 예)2
 		String lastdateyearmonth;
@@ -760,22 +768,24 @@ public class Process3 {
 									else if(arr2n.get(indexOfOr + 1).equals(e.getInNout()))
 										filteredList.add(e);
 								}
-
-							} else {
+							}
+							}
+							else {
 								if (arr2n.get(indexOfOr + 1).equals("Not")) {// ㅁ Or Not ㄹ
-									if (categoryList.contains(arr2n.get(indexOfOr + 2)))
-										filteredList.remove(e);
-									else if(arr2n.get(indexOfOr + 2).equals(e.getInNout()))
-										filteredList.remove(e);
 									if (categoryList.contains(arr2n.get(indexOfOr - 1)))
 										filteredList.add(e);
 									else if(arr2n.get(indexOfOr - 1).equals(e.getInNout()))
 										filteredList.add(e);
+									if (categoryList.contains(arr2n.get(indexOfOr + 2)))
+										filteredList.remove(e);
+									else if(arr2n.get(indexOfOr + 2).equals(e.getInNout()))
+										filteredList.remove(e);
+									
 								}
 
 							}
 
-						}
+						
 
 					}
 
@@ -870,10 +880,13 @@ public class Process3 {
 							{
 								ArrayList<String> categoryList = new ArrayList<>(
 										Arrays.asList(e.getCategory().split(" ")));
-								if (categoryList.contains(arr2n.get(0)))
-									filteredList.add(e);
-								else if(arr2n.get(0).equals(e.getInNout()))
-									filteredList.add(e);
+								if(!arr2n.isEmpty()) {
+									if (categoryList.contains(arr2n.get(0)))
+										filteredList.add(e);
+									else if(arr2n.get(0).equals(e.getInNout()))
+										filteredList.add(e);
+								}
+		
 							}
 
 						}
@@ -897,12 +910,16 @@ public class Process3 {
 							{
 								ArrayList<String> categoryList = new ArrayList<>(
 										Arrays.asList(e.getCategory().split(" ")));
-								if (categoryList.contains(arr2n.get(0)))
-									filteredList2.add(e);
-								else if(arr2n.get(0).equals(e.getInNout()))
-									filteredList2.add(e);
+								if(!arr2n.isEmpty()) {
+									if (categoryList.contains(arr2n.get(0)))
+										filteredList2.add(e);
+									else if(arr2n.get(0).equals(e.getInNout()))
+										filteredList2.add(e);
+								}
+								
 							}
-							arr2n.remove(0);
+							if(!arr2n.isEmpty())
+								arr2n.remove(0);
 						}
 
 					}
