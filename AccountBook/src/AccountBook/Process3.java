@@ -1163,6 +1163,14 @@ public class Process3 {
 	private boolean isValidCategory(String category) {
 		return availableCategories.contains(category);
 	}
+	private boolean containsAlphabet(String str) {
+        for (char c : str.toCharArray()) {
+            if (Character.isLetter(c)) {
+                return true; // 알파벳이 하나라도 발견되면 true 반환
+            }
+        }
+        return false; // 문자열에 알파벳이 없으면 false 반환
+    }
 
 	private boolean AndOrNot(ArrayList<String> dateList) {
 		dateList.remove(0);
@@ -1175,7 +1183,10 @@ public class Process3 {
 			} else if (isValidCategory(element)) {
 				// Valid category
 				continue;
-			} else {
+			}else if(!isValidOperator(element) && containsAlphabet(element)) {
+				System.out.println("올바른 논리연산자가 아닙니다. 알맞은 And, Or, Not을 사용해주세요.");
+				return false;
+			}else {
 				// Invalid category
 				System.out.println("해당 카테고리가 존재하지 않습니다. 등록된 카테고리명을 입력해주세요.");
 				return false;
