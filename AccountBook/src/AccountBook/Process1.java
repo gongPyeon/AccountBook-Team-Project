@@ -31,7 +31,7 @@ public class Process1 {
 			System.out.print("입력> ");
 			String str = scanner.nextLine();
 			str = str.trim().replaceAll("\\s+", " ");
-			str=isValidFor123(str);
+//			str=isValidFor123(str);
 			if(str.equals("1")) {
 				System.out.println("------------------------------------------------------------");
 				inputDate();
@@ -46,6 +46,8 @@ public class Process1 {
 				process2 = new Process2();
 				dao.deleteAccount(deleteAccount);
 				break;
+			}else {
+				System.out.println("------------------------------------------------------------");
 			}
 		}
 	}
