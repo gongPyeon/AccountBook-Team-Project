@@ -69,7 +69,7 @@ public class Process1 {
 	   private void isValidInDex(int input) {
 	      int flag=0;
 	      int tempNum = input;
-	      
+	      Scanner tempScan = new Scanner(System.in);
 	      while(true) {
 	         for(AccountBookVO vo : temp) {
 	            if(vo.getIndexNumber()==tempNum) {
@@ -81,8 +81,13 @@ public class Process1 {
 	            break;
 				System.out.println("------------------------------------------------------------");
 	          System.out.print("> ");
-	          scanner = new Scanner(System.in);
-	          tempNum = scanner.nextInt();
+	          	try {
+	          		tempNum = tempScan.nextInt();
+				} catch (Exception e) {
+					System.out.println("------------------------------------------------------------");
+				    System.out.print("> ");
+				    scanner.nextLine();
+				}
 	      }
 	   }
 	   
@@ -91,16 +96,16 @@ public class Process1 {
 	       System.out.println("------------------------------------------------------------");
 	       System.out.print("> ");
 	       int temp=0;
+		   Scanner scanner = new Scanner(System.in);
 	       while(true) {
 	    	   try {
-	    		   Scanner scanner = new Scanner(System.in);
 	    		   temp = scanner.nextInt();
 	    		   break;
 			} catch (Exception e) {
 				System.out.println("------------------------------------------------------------");
 			    System.out.print("> ");
+			    scanner.nextLine();
 			}
-	    	   
 	       }
 	       isValidInDex(temp);
 	       deleteAccount = temp;
