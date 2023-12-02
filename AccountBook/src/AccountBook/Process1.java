@@ -14,6 +14,8 @@ public class Process1 {
 	private String date = "";
 	private String lastDate = "";
 	private String category = "";
+	private String sqlString = "";
+	private ArrayList<String> categoryList = new ArrayList<String>();
 	public Process1() {
 		run();
 	}
@@ -29,7 +31,7 @@ public class Process1 {
 			System.out.print("입력> ");
 			String str = scanner.nextLine();
 			str = str.trim().replaceAll("\\s+", " ");
-			str=isValidFor123(str);
+//			str=isValidFor123(str);
 			if(str.equals("1")) {
 				System.out.println("------------------------------------------------------------");
 				inputDate();
@@ -44,6 +46,8 @@ public class Process1 {
 				process2 = new Process2();
 				dao.deleteAccount(deleteAccount);
 				break;
+			}else {
+				System.out.println("------------------------------------------------------------");
 			}
 		}
 	}
@@ -65,7 +69,7 @@ public class Process1 {
 	   private void isValidInDex(int input) {
 	      int flag=0;
 	      int tempNum = input;
-	      
+	      Scanner tempScan = new Scanner(System.in);
 	      while(true) {
 	         for(AccountBookVO vo : temp) {
 	            if(vo.getIndexNumber()==tempNum) {
@@ -77,8 +81,13 @@ public class Process1 {
 	            break;
 				System.out.println("------------------------------------------------------------");
 	          System.out.print("> ");
-	          scanner = new Scanner(System.in);
-	          tempNum = scanner.nextInt();
+	          	try {
+	          		tempNum = tempScan.nextInt();
+				} catch (Exception e) {
+					System.out.println("------------------------------------------------------------");
+				    System.out.print("> ");
+				    scanner.nextLine();
+				}
 	      }
 	   }
 	   
@@ -87,16 +96,16 @@ public class Process1 {
 	       System.out.println("------------------------------------------------------------");
 	       System.out.print("> ");
 	       int temp=0;
+		   Scanner scanner = new Scanner(System.in);
 	       while(true) {
 	    	   try {
-	    		   Scanner scanner = new Scanner(System.in);
 	    		   temp = scanner.nextInt();
 	    		   break;
 			} catch (Exception e) {
 				System.out.println("------------------------------------------------------------");
 			    System.out.print("> ");
+			    scanner.nextLine();
 			}
-	    	   
 	       }
 	       isValidInDex(temp);
 	       deleteAccount = temp;
@@ -119,11 +128,33 @@ public class Process1 {
 				ArrayList<String> categoryArray = dao.getCategories1();
 				boolean isIn = false;
 				for(int i=0; i<categoryArray.size();i++) {
-					if(categoryArray.get(i).compareTo(category)==0) {
+					if(category.compareTo("수입")==0||category.compareTo("지출")==0) {
+						isIn = true;
+						break;
+					}
+					else if(categoryArray.get(i).compareTo(category)==0) {
 						isIn = true;
 						break;
 					}
 				}
+				if(isIn == true)
+					break;
+				else {
+					System.out.println("해당 카테고리가 존재하지 않습니다. 카테고리 목록을 확인해주세요.");
+					System.out.println("------------------------------------------------------------");
+				}
+			}
+			else if(checkDate == 3) {
+				System.out.println("올바른 논리연산자가 아닙니다. 알맞은 And, Or, Not을 사용해주세요.");
+				System.out.println("------------------------------------------------------------");
+			}
+			else if(checkDate == 4) {
+				System.out.println("해당 카테고리가 존재하지 않습니다. 카테고리 목록을 확인해주세요.");
+				System.out.println("------------------------------------------------------------");
+			}
+			else if(checkDate == 5) {
+				ArrayList<String> categoryArray = dao.getCategories1();
+				boolean isIn = categoryArray.containsAll(categoryList);
 				if(isIn == true)
 					break;
 				else {
@@ -146,12 +177,33 @@ public class Process1 {
 			printAccountBook(thisMonthArray, lastMonthArray);
 		}
 		else if(checkDate == 2) {
-			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountCategoryList(date, category);
+			if(category.compareTo("수입")==0||category.compareTo("지출")==0) {
+				String sql = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND ( inNout = '"+category+"')";
+				ArrayList<AccountBookVO> thisMonthArray = dao.getAccountLogicalCategoryList(date, sql);
+				temp = thisMonthArray;
+				ArrayList<AccountBookVO> lastMonthArray = null;
+				String last = lastMonth(date);
+				if (last != "")
+					lastMonthArray = dao.getAccountLogicalCategoryList(lastDate, sql);
+				printAccountBook(thisMonthArray, lastMonthArray);
+			}
+			else {
+				ArrayList<AccountBookVO> thisMonthArray = dao.getAccountCategoryList(date, category);
+				temp = thisMonthArray;
+				ArrayList<AccountBookVO> lastMonthArray = null;
+				String last = lastMonth(date);
+				if (last != "")
+					lastMonthArray = dao.getAccountCategoryList(lastDate, category);
+				printAccountBook(thisMonthArray, lastMonthArray);
+			}
+		}
+		else if(checkDate == 5) {
+			ArrayList<AccountBookVO> thisMonthArray = dao.getAccountLogicalCategoryList(date, sqlString);
 			temp = thisMonthArray;
 			ArrayList<AccountBookVO> lastMonthArray = null;
 			String last = lastMonth(date);
 			if (last != "")
-				lastMonthArray = dao.getAccountCategoryList(lastDate, category);
+				lastMonthArray = dao.getAccountLogicalCategoryList(lastDate, sqlString);
 			printAccountBook(thisMonthArray, lastMonthArray);
 		}
 	}
@@ -197,30 +249,26 @@ public class Process1 {
 		String[] parts = date.split(" ");
 		int num1 = 0;
 		int num2 = 0;
-		if (parts.length == 2 || parts.length == 3) {
-			try {
-				num1 = Integer.parseInt(parts[0]);
+		categoryList.clear();
+		try {
+			num1 = Integer.parseInt(parts[0]);
 
-				if(parts[0].length() != 2&&parts[0].length() != 4) {
-					return 0;
-				}
-				if(parts[1].length() > 2)
-					return 0;
-				num2 = Integer.parseInt(parts[1]);
-				
-				if((num1 > 37&&num1 < 1902)||(num1 < 0)||(num1 > 2037))
-					return 0;
-				if(num1<37)
-					num1 = num1+2000;
-				if(num2 < 1||num2 > 12)
-					return 0;
+			if(parts[0].length() != 2&&parts[0].length() != 4) {
+				return 0;
 			}
-			catch(NumberFormatException e){
-				return 0;				
-			}
+			if(parts[1].length() > 2)
+				return 0;
+			num2 = Integer.parseInt(parts[1]);
+			
+			if((num1 > 37&&num1 < 1902)||(num1 < 0)||(num1 > 2037))
+				return 0;
+			if(num1<37)
+				num1 = num1+2000;
+			if(num2 < 1||num2 > 12)
+				return 0;
 		}
-		else {
-			return 0;
+		catch(NumberFormatException e){
+			return 0;				
 		}
 		if(num2<10)
 			this.date = String.valueOf(num1) + " 0" + String.valueOf(num2);
@@ -233,16 +281,109 @@ public class Process1 {
 			category = parts[2];
 			return 2;
 		}
-		else
-			return 0;
+		else {
+			sqlString = "SELECT * FROM AccountBook WHERE SUBSTRING(date, 1, 7) = ? AND ( ";
+			int index = 2;
+			if(parts[index].equals("Not")) {
+				if(parts.length<index+1)
+					return 4;
+				if(parts[index+1].equals("수입")||parts[index+1].equals("지출")) {
+					sqlString = sqlString + "inNout " + "<> '"+ parts[index+1] + "'";
+					index = index + 2;
+				}
+				else {
+					sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Not Like '% "+ parts[index+1] + " %'";
+					categoryList.add(parts[index+1]);
+					index = index + 2;
+				}
+			}
+			else {
+				if(parts[index].equals("수입")||parts[index].equals("지출")) {
+					sqlString = sqlString + "inNout " + "= '"+ parts[index] + "'";
+					index = index + 1;
+				}
+				else {
+					sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Like '% "+ parts[index] + " %'";
+					categoryList.add(parts[index]);
+					index = index + 1;
+				}
+			}
+			while(parts.length>index) {
+				if(parts[index].equals("And")) {
+					sqlString = sqlString + " And ";
+					index = index + 1;
+					if(parts.length<index+1)
+						return 4;
+					if(parts[index].equals("Not")) {
+						if(parts.length<index+1)
+							return 4;
+						if(parts[index+1].equals("수입")||parts[index+1].equals("지출")) {
+							sqlString = sqlString + "inNout " + "<> '"+ parts[index+1] + "'";
+							index = index + 2;
+						}
+						else {
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Not Like '% "+ parts[index+1] + " %'";
+							categoryList.add(parts[index+1]);
+							index = index + 2;
+						}
+					}
+					else {
+						if(parts[index].equals("수입")||parts[index].equals("지출")) {
+							sqlString = sqlString + "inNout " + "= '"+ parts[index] + "'";
+							index = index + 1;
+						}
+						else {
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Like '% "+ parts[index] + " %'";
+							categoryList.add(parts[index]);
+							index = index + 1;
+						}
+					}
+				}
+				else if(parts[index].equals("Or")) {
+					sqlString = sqlString + " Or ";
+					index = index + 1;
+					if(parts.length<index+1)
+						return 4;
+					if(parts[index].equals("Not")) {
+						if(parts.length<index+1)
+							return 4;
+						if(parts[index+1].equals("수입")||parts[index+1].equals("지출")) {
+							sqlString = sqlString + "inNout " + "<> '"+ parts[index+1] + "'";
+							index = index + 2;
+						}
+						else {
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Not Like '% "+ parts[index+1] + " %'";
+							categoryList.add(parts[index+1]);
+							index = index + 2;
+						}
+					}
+					else {
+						if(parts[index].equals("수입")||parts[index].equals("지출")) {
+							sqlString = sqlString + "inNout " + "= '"+ parts[index] + "'";
+							index = index + 1;
+						}
+						else {
+							sqlString = sqlString + "CONCAT(' ', category, ' ') " + "Like '% "+ parts[index] + " %'";
+							categoryList.add(parts[index]);
+							index = index + 1;
+						}
+					}
+				}
+				else
+					return 3;
+			}
+			sqlString = sqlString + ")";
+			return 5;
+		}
 	}
+	
 	private void printAccountBook(ArrayList<AccountBookVO> array, ArrayList<AccountBookVO> lastArray) {
 	    long thisMonthSumIn = 0;
 	    long thisMonthSumOut = 0;
 
 		System.out.println("------------------------------------------------------------");
 	    try {
-	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t\t수입\t\t지출\t\t내용\t인덱스");
+	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t수입\t\t지출\t\t내용\t인덱스\t카테고리");
 		}
 		catch(NumberFormatException e){
 							
@@ -289,7 +430,7 @@ public class Process1 {
         }
         // Comparator를 사용하여 ArrayList 정렬
         Collections.sort(array, dateComparator);
-	    System.out.println("총계\t\t" + String.format("%,-10d\t",(long)(thisMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut)) + "\t--");
+	    System.out.println("총계\t" +  String.format("%,-10d\t",(long)(thisMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut)) + "\t--");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	    	try {
@@ -299,9 +440,7 @@ public class Process1 {
 			catch(NumberFormatException e){
 				break;				
 			}
-	        
-	        System.out.print("\t" + array.get(i).getCategory());
-
+//	        금액(수입 또는 지출) 출력
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
 	            System.out.print("\t" +String.format("%,-10d\t\t\t",array.get(i).getAmount()));
 	        } else {
@@ -309,12 +448,13 @@ public class Process1 {
 	        }
 	        System.out.print(array.get(i).getDetails());
 	        System.out.print("\t" + array.get(i).getIndexNumber());
+	        System.out.print("\t" + array.get(i).getCategory().replaceAll(" ", "|"));
 	        System.out.println();
 	    }
 	    if(lastArray != null) {
 	    	try {
-	    		System.out.println(String.format("%2d",Integer.parseInt(lastDate.substring(5,7)))+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
-			}
+	    		System.out.println(String.format("%2d",Integer.parseInt(lastDate.substring(5,7))) + "월 이월분" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
+	    		}
 			catch(NumberFormatException e){
 							
 			}

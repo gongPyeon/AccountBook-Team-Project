@@ -62,7 +62,7 @@ public class Process2 {
                     break;
                 } else {
                     System.out.println("입력 가능한 문자열이 아닙니다.");
-    				System.out.println("------------------------------------------------------------");
+    				System.out.println("---------------------------------------                 ---------------------");
                 }
             }
         }
@@ -261,7 +261,7 @@ public class Process2 {
         for(int i = 0; i < num; i++) {
             parts[i] = parts[i].trim();
             //System.out.println(parts[i] + " | ");
-        }
+        }                                                                      
 
         if (inNout.equals("수입")) {
             for(String cate : parts) {
