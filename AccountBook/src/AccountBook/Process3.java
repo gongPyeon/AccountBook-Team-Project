@@ -342,7 +342,7 @@ public class Process3 {
 
 					input3 = Integer.parseInt(inputToString);
 					dao.deleteAccount(input3);
-					// System.out.println("------------------------------------------------------------");
+					System.out.println("------------------------------------------------------------");
 					System.out.println("삭제가 완료되었습니다");
 					System.out.println("------------------------------------------------------------");
 
@@ -450,10 +450,10 @@ public class Process3 {
 
 				if (!arr2n.get(i).equals("Or") && arr2n.get(i).equals("And")) {
 
-					// arr2n.add(i, arr2n.get(i));
+					//arr2n.add(i, arr2n.get(i));
 					i += 1;
 				} else if (!arr2n.get(i).equals("And") && arr2n.get(i).equals("Or")) {
-					// arr2n.add(i, arr2n.get(i));
+					//arr2n.add(i, arr2n.get(i));
 					i += 1;
 				} else if (!arr2n.get(i).equals("And") && !arr2n.get(i).equals("Or")) {
 					arr2n.add(i, arr2n.get(i));
@@ -501,7 +501,7 @@ public class Process3 {
 		lastDate = getPrevious(modifiedDate);// 지난달 예)2
 		String lastdateyearmonth;
 		if (Integer.parseInt(lastDate) != 12) {
-			lastdateyearmonth = date.substring(0, 4);
+			lastdateyearmonth = modifiedDate.substring(0, 4);
 			if (lastDate.length() == 1) {
 				lastdateyearmonth += " 0";
 				lastdateyearmonth += lastDate;
@@ -510,7 +510,7 @@ public class Process3 {
 			}
 
 		} else {
-			lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0, 4)) - 1);
+			lastdateyearmonth = Integer.toString(Integer.parseInt(modifiedDate.substring(0, 4)) - 1);
 			lastdateyearmonth += " 12";
 		}
 		accountList = dao.getAccountForMonth(modifiedDate);// 요번달 모든 항목들
@@ -520,46 +520,59 @@ public class Process3 {
 		
 
 		if (!arr2n.contains("Not")) {// Not이 포함되지 않은 arr2n일때
-			while (arr2n.contains("And")) {// and가 있을때만
+			while (arr2n.contains("And") && !arr2n.contains("Or")) {// and가 있을때만
+				//And 개수 알아내기
+				// "And"의 개수 세기
+		        int andCount = 0;
+				for (String item : arr2n) {
+		            if (item.equals("And")) {
+		                andCount++;
+		            }
+			    }
+		        // "And"가 아닌 인덱스를 저장할 배열의 크기 계산
+		        int nonAndIndexesSize = arr2n.size() - andCount;
+
+		        // "And"가 아닌 인덱스를 저장할 배열
+		        int[] nonAndIndexes = new int[nonAndIndexesSize];
+		        
 				if (arr2n.contains("And")) {
-					int indexOfAnd = arr2n.indexOf("And");
 
 					for (AccountBookVO e : accountList)// 요번달
 					{
 						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
-						if (categoryList.contains(arr2n.get(indexOfAnd - 1))) {
-							if (categoryList.contains(arr2n.get(indexOfAnd + 1)))
-								filteredList.add(e);
-							else if(arr2n.get(indexOfAnd + 1).equals(e.getInNout()))
-								filteredList.add(e);
-						}else if(arr2n.get(indexOfAnd - 1).equals(e.getInNout())) {
-							if (categoryList.contains(arr2n.get(indexOfAnd + 1)))
-								filteredList.add(e);
+					
+						int putIn = 0;
+						for (int i = 0 ; i < arr2n.size(); i++)
+						{
+							if (categoryList.contains(arr2n.get(i)))
+								putIn += 1;
 						}
+						if (putIn == nonAndIndexesSize)
+							filteredList.add(e);
+
 					}
 
 					for (AccountBookVO e : LASTaccountList)// 저번달
 					{
 						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
-						if (categoryList.contains(arr2n.get(indexOfAnd - 1))) {
-							if (categoryList.contains(arr2n.get(indexOfAnd + 1))) {
-								filteredList2.add(e);
-							}else if(arr2n.get(indexOfAnd+1).equals(e.getInNout()))
-								filteredList2.add(e);
-						}else if(arr2n.get(indexOfAnd - 1).equals(e.getInNout())) {
-							if (categoryList.contains(arr2n.get(indexOfAnd + 1)))
-								filteredList2.add(e);
-						}		
+						
+						int putIn = 0;
+						for (int i = 0 ; i < arr2n.size(); i++)
+						{
+							if (categoryList.contains(arr2n.get(i)))
+								putIn += 1;
+						}
+						if (putIn == nonAndIndexesSize)
+							filteredList2.add(e);
 					}
-					arr2n.remove(indexOfAnd - 1);
-					arr2n.remove(indexOfAnd - 1);
-					arr2n.remove(indexOfAnd - 1);
-
+					
+					// "And"에 해당하는 문자열 제거
+			        removeAndStrings(arr2n);
 				}
 
 			}
 
-			while (arr2n.contains("Or")) {// ㅁ Or ㄹ
+			while (arr2n.contains("Or") && !arr2n.contains("And")) {// Or 가 있을때만
 				if (arr2n.contains("Or")) {
 					int indexOfOr = arr2n.indexOf("Or");
 
@@ -568,16 +581,21 @@ public class Process3 {
 						{
 							ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
 							
-							if (categoryList.contains(arr2n.get(indexOfOr - 1))
+							if (categoryList.contains(arr2n.get(indexOfOr - 1))//하위 카테고리 Or 하위 카테고리
 									|| categoryList.contains(arr2n.get(indexOfOr + 1))) {
 								filteredList.add(e);
-							}else if(arr2n.get(indexOfOr - 1).equals(e.getInNout())
+							}else if(arr2n.get(indexOfOr - 1).equals(e.getInNout())//상위 카테고리 Or 하위 카테고리
 									|| categoryList.contains(arr2n.get(indexOfOr + 1))) {
 								filteredList.add(e);
-							}else if(categoryList.contains(arr2n.get(indexOfOr - 1))
+							}else if(categoryList.contains(arr2n.get(indexOfOr - 1))//하위 카테고리 Or 상위 카테고리
 									|| arr2n.get(indexOfOr + 1).equals(e.getInNout())) {
 								filteredList.add(e);
+							}else if (arr2n.get(indexOfOr-1).equals(e.getInNout()) || //상위 카테고리 Or 상위 카테고리
+									arr2n.get(indexOfOr-1).equals(e.getInNout()) ) {
+								filteredList.add(e);
+
 							}
+								
 						}
 						for (AccountBookVO e : LASTaccountList)// 저번달
 						{
@@ -601,6 +619,151 @@ public class Process3 {
 
 				}
 			}
+			
+			while(arr2n.contains("Or") && arr2n.contains("And")) {//Or 와 And 모두 있을때---------------------
+				// "And"의 개수 세기
+		        int andCount = 0;
+		        for (String item : arr2n) {
+		            if (item.equals("And")) {
+		                andCount++;
+		            }
+		        }
+
+		        // "And"가 존재하는 위치 저장
+		        ArrayList<int[]> andExist = new ArrayList<>();
+		        for (int i = 0; i < arr2n.size(); i++) {
+		            if (arr2n.get(i).equals("And")) {
+		                andExist.add(new int[]{i - 1, i + 1});
+		            }
+		        }
+		       
+		        // And 연속된 부분의 수를 합치기
+		        ArrayList<int[]> mergedList = mergeConsecutiveParts(andExist);
+		        
+		      
+	        	for (AccountBookVO e : accountList)// 요번달 And 처리
+				{
+					ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+					
+					for (int k = 0; k <mergedList.size(); k++)
+					{
+						int[] here = mergedList.get(k);
+			        	int SIZE = ((here[1] - here[0] + 1) / 3)*2; 
+			        	
+			        	int putIn = 0;
+						for (int i = here[0] ; i <= here[1]; i++)
+						{	
+							
+							if (categoryList.contains(arr2n.get(i)))
+							{
+								putIn += 1;
+							}
+								
+						}
+						if ( putIn == SIZE )
+							filteredList.add(e);
+					}
+				}
+	        	for (AccountBookVO e : LASTaccountList)// 지난달 And 처리
+				{
+					ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
+					
+					for (int k = 0; k <mergedList.size(); k++)
+					{
+						int[] here = mergedList.get(k);
+			        	int SIZE = ((here[1] - here[0] + 1) / 3)*2; 
+			        	
+			        	int putIn = 0;
+						for (int i = here[0] ; i <= here[1]; i++)
+						{	
+							
+							if (categoryList.contains(arr2n.get(i)))
+							{
+								putIn += 1;
+							}
+								
+						}
+						if ( putIn == SIZE )
+							filteredList2.add(e);
+					}
+				}
+	        	// "And"에 해당하는 문자열 제거
+		        removeAndStrings(arr2n);
+		        
+					// "Or"의 개수 세기
+			        int orCount = 0;
+			        for (String item : arr2n) {
+			            if (item.equals("Or")) {
+			                andCount++;
+			            }
+			        }
+
+			        // "Or"가 존재하는 위치 저장
+			        ArrayList<int[]> orExist = new ArrayList<>();
+			        for (int i = 0; i < arr2n.size(); i++) {
+			            if (arr2n.get(i).equals("Or")) {
+			            	orExist.add(new int[]{i - 1, i + 1});
+			            }
+			        }
+			       
+			        // Or 연속된 부분의 수를 합치기
+			       mergedList = mergeConsecutiveParts(orExist);
+			        
+					for (AccountBookVO t : accountList)// 요번달 Or 처리
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(t.getCategory().split(" ")));
+						
+						for (int k = 0; k <mergedList.size(); k++)
+						{
+							int[] here = mergedList.get(k); 
+				        	
+				        	//int putIn = 0;
+							for (int i = here[0] ; i <= here[1]; i++)
+							{	
+								
+								if (categoryList.contains(arr2n.get(i)))
+								{
+									filteredList.add(t);
+								}
+									
+							}
+					
+						}
+					
+						
+					}
+					for (AccountBookVO t : LASTaccountList)// 지난달 Or 처리
+					{
+						ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(t.getCategory().split(" ")));
+						
+						for (int k = 0; k <mergedList.size(); k++)
+						{
+							int[] here = mergedList.get(k);
+				        	
+				        	//int putIn = 0;
+							for (int i = here[0] ; i <= here[1]; i++)
+							{	
+								
+								if (categoryList.contains(arr2n.get(i)))
+								{
+									filteredList2.add(t);
+								}
+									
+							}
+					
+						}
+					
+						
+					}
+					// "Or"에 해당하는 문자열 제거
+			        removeAndStrings2(arr2n);
+						
+
+					
+		        }//--------------------------
+			
+		      
+			
 		} else // Not이 포함될때.
 		{
 			while (arr2n.contains("And")) {// and가 있을때만
@@ -951,6 +1114,59 @@ public class Process3 {
 		}
 
 	}
+
+	private static ArrayList<int[]> mergeConsecutiveParts(ArrayList<int[]> andExist) {
+	    ArrayList<int[]> mergedList = new ArrayList<>();
+	    if (andExist.size() == 0) {
+	        return mergedList; // 빈 리스트일 경우 빈 리스트 반환
+	    }
+
+	 
+	    int size = andExist.size()-1;
+	    
+	    for (int i = 0; i < size; i++) {
+	        int currentStart = andExist.get(i)[0];
+	        int currentEnd = andExist.get(i)[1];
+
+	        while (andExist.get(i+1)[0] - currentEnd == 1) {
+	        	currentEnd = andExist.get(i+1)[1];
+	        	i++;
+	        	if (i == size)
+	        		break;
+	            
+	        } 
+	        mergedList.add(new int[]{currentStart, currentEnd});
+	        if (i == size)
+        		break;
+	        
+	    }
+
+
+	    return mergedList;
+	}
+
+
+	private void removeAndStrings(ArrayList<String> arr2n) {
+		Iterator<String> iterator = arr2n.iterator();
+        while (iterator.hasNext()) {
+            String item = iterator.next();
+            if (item.equals("And")) {
+                iterator.remove();
+            }
+        }	
+	}
+	private void removeAndStrings2(ArrayList<String> arr2n) {
+		Iterator<String> iterator = arr2n.iterator();
+        while (iterator.hasNext()) {
+            String item = iterator.next();
+            if (item.equals("Or")) {
+                iterator.remove();
+            }
+        }	
+	}
+
+
+	
 
 	public boolean isDateValid(String date) {
 		int spaceCount = 0;
@@ -1686,9 +1902,22 @@ public class Process3 {
 
 		long totalIncome = 0;
 		long totalOutflow = 0;
+		long lastMonthSumIn = 0;
+		long lastMonthSumOut = 0;
 		// arr2n "AND / NOT / OR"고려해서 filteredList,filteredList2 채우기
 		ConsiderCategoryAndOrNot(arr2n, modifiedDate);
 
+		if (filteredList2 != null) {
+
+			for (int i = 0; i < filteredList2.size(); i++) {
+				if (filteredList2.get(i).getInNout().compareTo("수입") == 0) {
+					lastMonthSumIn += filteredList2.get(i).getAmount();
+				} else {
+					lastMonthSumOut += filteredList2.get(i).getAmount();
+				}
+			}
+		}
+		
 		for (AccountBookVO e : filteredList) {
 
 			if (e.getInNout().equals("수입")) {
@@ -1698,6 +1927,9 @@ public class Process3 {
 			}
 
 		}
+		totalIncome += lastMonthSumIn;
+		totalOutflow += lastMonthSumOut;
+		
 		if(filteredList.size()!=0) {
 			System.out.println(modifiedDate + "\t\t수입\t\t지출\t\t내용\t\t인덱스\t카테고리");
 			System.out.println("총계\t\t" + String.format("%,-10d\t", +(long) totalIncome)
@@ -1745,33 +1977,12 @@ public class Process3 {
 			}
 		}
 
-		long lastMonthSumIn = 0;
-		long lastMonthSumOut = 0;
-		for (AccountBookVO e : filteredList2) {
-
-			if (e.getInNout().equals("수입")) {
-				lastMonthSumIn += e.getAmount();
-			} else {
-				lastMonthSumOut += e.getAmount();
-			}
-
-		}
-
-		if (filteredList2 != null) {
-
-			for (int i = 0; i < filteredList2.size(); i++) {
-				if (filteredList2.get(i).getInNout().compareTo("수입") == 0) {
-					lastMonthSumIn += filteredList2.get(i).getAmount();
-				} else {
-					lastMonthSumOut += filteredList2.get(i).getAmount();
-				}
-			}
-		}
+		
 		// 다음 부분을 위한 부분
 		lastDate = getPrevious(modifiedDate);// 지난달 예)2
 		String lastdateyearmonth;
 		if (Integer.parseInt(lastDate) != 12) {
-			lastdateyearmonth = date.substring(0, 4);
+			lastdateyearmonth = modifiedDate.substring(0, 4);
 			if (lastDate.length() == 1) {
 				lastdateyearmonth += " 0";
 				lastdateyearmonth += lastDate;
@@ -1780,7 +1991,7 @@ public class Process3 {
 			}
 
 		} else {
-			lastdateyearmonth = Integer.toString(Integer.parseInt(date.substring(0, 4)) - 1);
+			lastdateyearmonth = Integer.toString(Integer.parseInt(modifiedDate.substring(0, 4)) - 1);
 			lastdateyearmonth += " 12";
 		}
 
