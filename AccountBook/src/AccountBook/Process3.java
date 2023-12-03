@@ -558,7 +558,7 @@ public class Process3 {
 						int putIn = 0;
 						for (int i = 0 ; i < arr2n.size(); i++)
 						{
-							if (categoryList.contains(arr2n.get(i)))
+							if (categoryList.contains(arr2n.get(i)) && arr2n.get(i).equals(e.getInNout()))
 								putIn += 1;
 						}
 						if (putIn == nonAndIndexesSize)
@@ -574,7 +574,7 @@ public class Process3 {
 						int putIn = 0;
 						for (int i = 0 ; i < arr2n.size(); i++)
 						{
-							if (categoryList.contains(arr2n.get(i)))
+							if (categoryList.contains(arr2n.get(i)) && arr2n.get(i).equals(e.getInNout()))
 								putIn += 1;
 						}
 						if (putIn == nonAndIndexesSize)
@@ -669,7 +669,7 @@ public class Process3 {
 						for (int i = here[0] ; i <= here[1]; i++)
 						{	
 							
-							if (categoryList.contains(arr2n.get(i)))
+							if (categoryList.contains(arr2n.get(i)) && arr2n.get(i).equals(e.getInNout()))
 							{
 								putIn += 1;
 							}
@@ -692,7 +692,7 @@ public class Process3 {
 						for (int i = here[0] ; i <= here[1]; i++)
 						{	
 							
-							if (categoryList.contains(arr2n.get(i)))
+							if (categoryList.contains(arr2n.get(i)) && arr2n.get(i).equals(e.getInNout()))
 							{
 								putIn += 1;
 							}
@@ -736,7 +736,7 @@ public class Process3 {
 							for (int i = here[0] ; i <= here[1]; i++)
 							{	
 								
-								if (categoryList.contains(arr2n.get(i)))
+								if (categoryList.contains(arr2n.get(i)) || arr2n.get(i).equals(t.getInNout()))
 								{
 									filteredList.add(t);
 								}
@@ -759,7 +759,7 @@ public class Process3 {
 							for (int i = here[0] ; i <= here[1]; i++)
 							{	
 								
-								if (categoryList.contains(arr2n.get(i)))
+								if (categoryList.contains(arr2n.get(i)) || arr2n.get(i).equals(t.getInNout()))
 								{
 									filteredList2.add(t);
 								}
@@ -792,7 +792,7 @@ public class Process3 {
 			    	   
 			    	   for (int i = 0 ; i < 1; i++)
 			    	   {
-			    		   if (categoryList.contains(arr2n.get(1)))
+			    		   if (categoryList.contains(arr2n.get(1)) || arr2n.get(1).equals(e.getInNout()))
 			    		   {
 			    			   removing.add(e);
 			    		   }
@@ -811,7 +811,7 @@ public class Process3 {
 			    	   
 			    	   for (int i = 0 ; i < 1; i++)
 			    	   {
-			    		   if (categoryList.contains(arr2n.get(1)))
+			    		   if (categoryList.contains(arr2n.get(1))|| arr2n.get(1).equals(e.getInNout()))
 			    		   {
 			    			   removing2.add(e);
 			    		   }
@@ -822,7 +822,7 @@ public class Process3 {
 				filteredList2.addAll(LASTaccountList);
 				filteredList2.removeAll(removing2);
 			}
-			//Or만 있을때 + Not 있음--------------------------------------(시작)
+			//Or만 있을때 + Not 있음--------------------------------------(시작)----------------------!!!
 			while (arr2n.contains("Or") && !arr2n.contains("And")) {// Or 가 있을때만
 				if (arr2n.contains("Or")) {
 					// "Not"의 개수 세기
@@ -879,50 +879,91 @@ public class Process3 {
 			       for (AccountBookVO e :  accountList)//요번달 Not + Or 만 존재
 			       {
 			    	   ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
-			    	   //Not 카테고리 먼저 연산 (하위 카테고리)
+			    	   //Not 카테고리 먼저 연산 
 			    	   for (int i = 0 ; i < notExist.size(); i++)
 			    	   {
-			    		   if (!categoryList.contains(arr2n.get(notExist.get(i)+1)))
+			    		   if (!categoryList.contains(arr2n.get(notExist.get(i)+1)) )
 			    		   {
 			    			   filteredList.add(e);
 			    		   }
+			    		   else if (arr2n.get(notExist.get(i)+1).equals(e.getInNout()))
+			    		   {
+			    			   String name = e.getInNout();
+			    			   for (AccountBookVO s : accountList)
+			    			   {
+			    				   if (!s.getInNout().equals(name))
+			    					   filteredList.add(e);
+			    			   }
+			    		   }
+			    		  
+			    		   
 			    	   }
-			    	   //Not 아닌 카테고리 연산 (하위 카테고리)
+			    	   //Not 아닌 카테고리 연산 
 			    	   for (int i = 0 ; i < notnotExist.size(); i++)
 			    	   {
 			    		   if (categoryList.contains(arr2n.get(notnotExist.get(i))))
 			    		   {
 			    			   filteredList.add(e);
 			    		   }
+			    		   else if (arr2n.get(notnotExist.get(i)).equals(e.getInNout()))
+			    		   {
+			    			   String name = e.getInNout();
+			    			   for (AccountBookVO s : accountList)
+			    			   {
+			    				   if (s.getInNout().equals(name))
+			    					   filteredList.add(e);
+			    			   }
+			    		   }
 			    	   }
+			    	  
 			    	   
 			       }
 			       
 			       for (AccountBookVO e :  LASTaccountList)//지난달 Not + Or 만 존재
 			       {
 			    	   ArrayList<String> categoryList = new ArrayList<>(Arrays.asList(e.getCategory().split(" ")));
-			    	   //Not 카테고리 먼저 연산 (하위 카테고리)
+			    	   //Not 카테고리 먼저 연산 
 			    	   for (int i = 0 ; i < notExist.size(); i++)
 			    	   {
-			    		   if (!categoryList.contains(arr2n.get(notExist.get(i+1))))
+			    		   if (!categoryList.contains(arr2n.get(notExist.get(i)+1)) )
 			    		   {
 			    			   filteredList2.add(e);
 			    		   }
+			    		   else if (arr2n.get(notExist.get(i)+1).equals(e.getInNout()))
+			    		   {
+			    			   String name = e.getInNout();
+			    			   for (AccountBookVO s : accountList)
+			    			   {
+			    				   if (!s.getInNout().equals(name))
+			    					   filteredList2.add(e);
+			    			   }
+			    		   }
+			    		  
+			    		   
 			    	   }
-			    	   //Not 아닌 카테고리 연산 (하위 카테고리)
+			    	   //Not 아닌 카테고리 연산 
 			    	   for (int i = 0 ; i < notnotExist.size(); i++)
 			    	   {
 			    		   if (categoryList.contains(arr2n.get(notnotExist.get(i))))
 			    		   {
 			    			   filteredList2.add(e);
 			    		   }
+			    		   else if (arr2n.get(notnotExist.get(i)).equals(e.getInNout()))
+			    		   {
+			    			   String name = e.getInNout();
+			    			   for (AccountBookVO s : accountList)
+			    			   {
+			    				   if (s.getInNout().equals(name))
+			    					   filteredList2.add(e);
+			    			   }
+			    		   }
 			    	   }
-			    	   
-			       }
-			       // "Or"에 해당하는 문자열 제거
-			       removeAndStrings2(arr2n);
 			      
+			       }
 				}
+				// "Or"에 해당하는 문자열 제거
+			       removeAndStrings2(arr2n);
+				
 			}//Or만 있을때 + Not 있음 -----------------------------------------------(끝)
 			
 			//And만 있을때 + Not 있음--------------------------------------(시작)
