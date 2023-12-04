@@ -882,7 +882,7 @@ public class Process3 {
 			    	   //Not 카테고리 먼저 연산 
 			    	   for (int i = 0 ; i < notExist.size(); i++)
 			    	   {
-			    		   if (!categoryList.contains(arr2n.get(notExist.get(i)+1)) )
+			    		   if (!categoryList.contains(arr2n.get(notExist.get(i)+1)))
 			    		   {
 			    			   filteredList.add(e);
 			    		   }
@@ -894,7 +894,7 @@ public class Process3 {
 			    				   if (!s.getInNout().equals(name))
 			    					   filteredList.add(e);
 			    			   }
-			    		   }
+			    		   }    
 			    		  
 			    		   
 			    	   }
@@ -1173,23 +1173,50 @@ public class Process3 {
 							//ㅁ And Not ㄹ
 							else if ((indexOfAnd - 2 < 0 || !arr2n.get(indexOfAnd-2).equals("Not")
 									&& arr2n.get(indexOfAnd+1).equals("Not")))
-							{
-								if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd+2)))
-									filteredList.add(e);
+							{	
+								if(!arr2n.get(indexOfAnd+2).equals("수입")&&!arr2n.get(indexOfAnd+2).equals("지출")) {
+									if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd+2)))
+										filteredList.add(e);
+								}else {
+									if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !arr2n.get(indexOfAnd+2).equals(e.getInNout()))
+										filteredList.add(e);
+								}
+								
 							}
 							//Not ㅁ And ㄹ
 							else if (arr2n.get(indexOfAnd-2).equals("Not")
 									&& !arr2n.get(indexOfAnd+1).equals("Not"))
 							{
-								if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && categoryList.contains(arr2n.get(indexOfAnd+1)))
-									filteredList.add(e);
+								if(!arr2n.get(indexOfAnd-1).equals("수입")&&!arr2n.get(indexOfAnd-1).equals("지출")) {
+									if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && categoryList.contains(arr2n.get(indexOfAnd+1)))
+										filteredList.add(e);
+								}else {
+									if (!arr2n.get(indexOfAnd-1).equals(e.getInNout()) && categoryList.contains(arr2n.get(indexOfAnd+1)))
+										filteredList.add(e);
+								}
 							}
 							//Not ㅁ And Not ㄹ
 							else if (arr2n.get(indexOfAnd-2).equals("Not")
 									&& arr2n.get(indexOfAnd+1).equals("Not"))
 							{
-								if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd+1)))
-									filteredList.add(e);
+								if(!arr2n.get(indexOfAnd-1).equals("수입")&&!arr2n.get(indexOfAnd-1).equals("지출")
+									&&!arr2n.get(indexOfAnd+2).equals("수입")&&!arr2n.get(indexOfAnd+2).equals("지출")) {
+									if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd+2)))
+										filteredList.add(e);
+								}else if((arr2n.get(indexOfAnd-1).equals("수입") || arr2n.get(indexOfAnd-1).equals("지출"))
+										&&(!arr2n.get(indexOfAnd+2).equals("수입")&&!arr2n.get(indexOfAnd+2).equals("지출"))) {
+									if (!arr2n.get(indexOfAnd-1).equals(e.getInNout()) && !categoryList.contains(arr2n.get(indexOfAnd+2)))
+										filteredList.add(e); // 앞부분이 수입 지출이고 뒷부분이 수입 지출이 아닐 때
+								}else if((arr2n.get(indexOfAnd+2).equals("수입") || arr2n.get(indexOfAnd+2).equals("지출"))
+										&&(!arr2n.get(indexOfAnd-1).equals("수입")&&!arr2n.get(indexOfAnd-1).equals("지출"))) {
+									if (!arr2n.get(indexOfAnd+2).equals(e.getInNout()) && !categoryList.contains(arr2n.get(indexOfAnd-1)))
+										filteredList.add(e);	// 뒷부분이 수입지출이고 앞부분이 수입지출이 아닐 때
+								}else {
+									if (!arr2n.get(indexOfAnd+2).equals(e.getInNout()) && !arr2n.get(indexOfAnd-1).equals(e.getInNout()))
+										filteredList.add(e);	//둘다 수입지출일때
+								}
+
+								
 							}
 							
 						
@@ -1210,37 +1237,62 @@ public class Process3 {
 			        			indexOfAnd = i;
 			        	}
 			        	
-							
-							// ㅁ And ㄹ 
-							if ((indexOfAnd - 2 < 0 || !arr2n.get(indexOfAnd-2).equals("Not") )
-									&& ! arr2n.get(indexOfAnd+1).equals("Not"))
-							{
-								if (categoryList.contains(arr2n.get(indexOfAnd-1)) && categoryList.contains(arr2n.get(indexOfAnd+1)))
-									filteredList2.add(e);
-							}
-							//ㅁ And Not ㄹ
-							else if ((indexOfAnd - 2 < 0 || !arr2n.get(indexOfAnd-2).equals("Not")
-									&& arr2n.get(indexOfAnd+1).equals("Not")))
-							{
+						// ㅁ And ㄹ 
+						if ((indexOfAnd - 2 < 0 || !arr2n.get(indexOfAnd-2).equals("Not") )
+								&& ! arr2n.get(indexOfAnd+1).equals("Not"))
+						{
+							if (categoryList.contains(arr2n.get(indexOfAnd-1)) && categoryList.contains(arr2n.get(indexOfAnd+1)))
+								filteredList2.add(e);
+						}
+						//ㅁ And Not ㄹ
+						else if ((indexOfAnd - 2 < 0 || !arr2n.get(indexOfAnd-2).equals("Not")
+								&& arr2n.get(indexOfAnd+1).equals("Not")))
+						{	
+							if(!arr2n.get(indexOfAnd+2).equals("수입")&&!arr2n.get(indexOfAnd+2).equals("지출")) {
 								if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd+2)))
 									filteredList2.add(e);
-							}
-							//Not ㅁ And ㄹ
-							else if (arr2n.get(indexOfAnd-2).equals("Not")
-									&& !arr2n.get(indexOfAnd+1).equals("Not"))
-							{
-								if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && categoryList.contains(arr2n.get(indexOfAnd+1)))
-									filteredList2.add(e);
-							}
-							//Not ㅁ And Not ㄹ
-							else if (arr2n.get(indexOfAnd-2).equals("Not")
-									&& arr2n.get(indexOfAnd+1).equals("Not"))
-							{
-								if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd+1)))
+							}else {
+								if (categoryList.contains(arr2n.get(indexOfAnd-1)) && !arr2n.get(indexOfAnd+2).equals(e.getInNout()))
 									filteredList2.add(e);
 							}
 							
-						
+						}
+						//Not ㅁ And ㄹ
+						else if (arr2n.get(indexOfAnd-2).equals("Not")
+								&& !arr2n.get(indexOfAnd+1).equals("Not"))
+						{
+							if(!arr2n.get(indexOfAnd-1).equals("수입")&&!arr2n.get(indexOfAnd-1).equals("지출")) {
+								if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && categoryList.contains(arr2n.get(indexOfAnd+1)))
+									filteredList2.add(e);
+							}else {
+								if (!arr2n.get(indexOfAnd-1).equals(e.getInNout()) && categoryList.contains(arr2n.get(indexOfAnd+1)))
+									filteredList2.add(e);
+							}
+						}
+						//Not ㅁ And Not ㄹ
+						else if (arr2n.get(indexOfAnd-2).equals("Not")
+								&& arr2n.get(indexOfAnd+1).equals("Not"))
+						{
+							if(!arr2n.get(indexOfAnd-1).equals("수입")&&!arr2n.get(indexOfAnd-1).equals("지출")
+								&&!arr2n.get(indexOfAnd+2).equals("수입")&&!arr2n.get(indexOfAnd+2).equals("지출")) {
+								if (!categoryList.contains(arr2n.get(indexOfAnd-1)) && !categoryList.contains(arr2n.get(indexOfAnd+2)))
+									filteredList2.add(e);
+							}else if((arr2n.get(indexOfAnd-1).equals("수입") || arr2n.get(indexOfAnd-1).equals("지출"))
+									&&(!arr2n.get(indexOfAnd+2).equals("수입")&&!arr2n.get(indexOfAnd+2).equals("지출"))) {
+								if (!arr2n.get(indexOfAnd-1).equals(e.getInNout()) && !categoryList.contains(arr2n.get(indexOfAnd+2)))
+									filteredList2.add(e); // 앞부분이 수입 지출이고 뒷부분이 수입 지출이 아닐 때
+							}else if((arr2n.get(indexOfAnd+2).equals("수입") || arr2n.get(indexOfAnd+2).equals("지출"))
+									&&(!arr2n.get(indexOfAnd-1).equals("수입")&&!arr2n.get(indexOfAnd-1).equals("지출"))) {
+								if (!arr2n.get(indexOfAnd+2).equals(e.getInNout()) && !categoryList.contains(arr2n.get(indexOfAnd-1)))
+									filteredList2.add(e);	// 뒷부분이 수입지출이고 앞부분이 수입지출이 아닐 때
+							}else {
+								if (!arr2n.get(indexOfAnd+2).equals(e.getInNout()) && !arr2n.get(indexOfAnd-1).equals(e.getInNout()))
+									filteredList2.add(e);	//둘다 수입지출일때
+							}
+
+							
+						}
+							
 						
 					}
 				}
@@ -1324,22 +1376,50 @@ public class Process3 {
 								else if ((indexOfOr - 2 < 0 || !arr2n.get(indexOfOr-2).equals("Not")
 										&& arr2n.get(indexOfOr+1).equals("Not")))
 								{
-									if (categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+2)))
-										filteredList.add(t);
+									if(!arr2n.get(indexOfOr+2).equals("수입")&&!arr2n.get(indexOfOr+2).equals("지출")) {
+										if (categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+2)))
+											filteredList.add(t);
+									}else {
+										if (categoryList.contains(arr2n.get(indexOfOr-1)) || ! arr2n.get(indexOfOr+2).equals(t.getInNout()))
+											filteredList.add(t);
+									}
+
+									
 								}
 								//Not ㅁ Or ㄹ
 								else if (arr2n.get(indexOfOr-2).equals("Not")
 										&& !arr2n.get(indexOfOr+1).equals("Not"))
 								{
-									if (!categoryList.contains(arr2n.get(indexOfOr-1)) || categoryList.contains(arr2n.get(indexOfOr+1)))
-										filteredList.add(t);
+									if(!arr2n.get(indexOfOr-1).equals("수입")&&!arr2n.get(indexOfOr-1).equals("지출")) {
+										if (!categoryList.contains(arr2n.get(indexOfOr-1)) || categoryList.contains(arr2n.get(indexOfOr+1)))
+											filteredList.add(t);
+									}else {
+										if (categoryList.contains(arr2n.get(indexOfOr+1)) || ! arr2n.get(indexOfOr-1).equals(t.getInNout()))
+											filteredList.add(t);
+									}
+				
 								}
 								//Not ㅁ Or Not ㄹ
 								else if (arr2n.get(indexOfOr-2).equals("Not")
 										&& arr2n.get(indexOfOr+1).equals("Not"))
-								{
-									if (!categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+1)))
-										filteredList.add(t);
+								{	
+										if(!arr2n.get(indexOfOr-1).equals("수입")&&!arr2n.get(indexOfOr-1).equals("지출")
+											&&!arr2n.get(indexOfOr+2).equals("수입")&&!arr2n.get(indexOfOr+2).equals("지출")) {
+											if (!categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+2)))
+												filteredList.add(t);
+										}else if((arr2n.get(indexOfOr-1).equals("수입") || arr2n.get(indexOfOr-1).equals("지출"))
+												&&(!arr2n.get(indexOfOr+2).equals("수입")&&!arr2n.get(indexOfOr+2).equals("지출"))) {
+											if (!arr2n.get(indexOfOr-1).equals(t.getInNout()) || !categoryList.contains(arr2n.get(indexOfOr+2)))
+												filteredList.add(t); // 앞부분이 수입 지출이고 뒷부분이 수입 지출이 아닐 때
+										}else if((arr2n.get(indexOfOr+2).equals("수입") || arr2n.get(indexOfOr+2).equals("지출"))
+												&&(!arr2n.get(indexOfOr-1).equals("수입")&&!arr2n.get(indexOfOr-1).equals("지출"))) {
+											if (!arr2n.get(indexOfOr+2).equals(t.getInNout()) || !categoryList.contains(arr2n.get(indexOfOr-1)))
+												filteredList.add(t);	// 뒷부분이 수입지출이고 앞부분이 수입지출이 아닐 때
+										}else {
+											if (!arr2n.get(indexOfOr+2).equals(t.getInNout()) || !arr2n.get(indexOfOr-1).equals(t.getInNout()))
+												filteredList.add(t);	//둘다 수입지출일때
+										}
+									
 								}
 								
 							
@@ -1374,22 +1454,46 @@ public class Process3 {
 								else if ((indexOfOr - 2 < 0 || !arr2n.get(indexOfOr-2).equals("Not")
 										&& arr2n.get(indexOfOr+1).equals("Not")))
 								{
-									if (categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+2)))
-										filteredList2.add(t);
+									if(!arr2n.get(indexOfOr+2).equals("수입")&&!arr2n.get(indexOfOr+2).equals("지출")) {
+										if (categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+2)))
+											filteredList2.add(t);
+									}else {
+										if (categoryList.contains(arr2n.get(indexOfOr-1)) || ! arr2n.get(indexOfOr+2).equals(t.getInNout()))
+											filteredList2.add(t);
+									}
 								}
 								//Not ㅁ Or ㄹ
 								else if (arr2n.get(indexOfOr-2).equals("Not")
 										&& !arr2n.get(indexOfOr+1).equals("Not"))
 								{
-									if (!categoryList.contains(arr2n.get(indexOfOr-1)) || categoryList.contains(arr2n.get(indexOfOr+1)))
-										filteredList2.add(t);
+									if(!arr2n.get(indexOfOr-1).equals("수입")&&!arr2n.get(indexOfOr-1).equals("지출")) {
+										if (!categoryList.contains(arr2n.get(indexOfOr-1)) || categoryList.contains(arr2n.get(indexOfOr+1)))
+											filteredList2.add(t);
+									}else {
+										if (categoryList.contains(arr2n.get(indexOfOr+1)) || ! arr2n.get(indexOfOr-1).equals(t.getInNout()))
+											filteredList2.add(t);
+									}
 								}
 								//Not ㅁ Or Not ㄹ
 								else if (arr2n.get(indexOfOr-2).equals("Not")
 										&& arr2n.get(indexOfOr+1).equals("Not"))
 								{
-									if (!categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+1)))
-										filteredList2.add(t);
+									if(!arr2n.get(indexOfOr-1).equals("수입")&&!arr2n.get(indexOfOr-1).equals("지출")
+											&&!arr2n.get(indexOfOr+2).equals("수입")&&!arr2n.get(indexOfOr+2).equals("지출")) {
+											if (!categoryList.contains(arr2n.get(indexOfOr-1)) || !categoryList.contains(arr2n.get(indexOfOr+2)))
+												filteredList2.add(t);
+										}else if((arr2n.get(indexOfOr-1).equals("수입") || arr2n.get(indexOfOr-1).equals("지출"))
+												&&(!arr2n.get(indexOfOr+2).equals("수입")&&!arr2n.get(indexOfOr+2).equals("지출"))) {
+											if (!arr2n.get(indexOfOr-1).equals(t.getInNout()) || !categoryList.contains(arr2n.get(indexOfOr+2)))
+												filteredList2.add(t); // 앞부분이 수입 지출이고 뒷부분이 수입 지출이 아닐 때
+										}else if((arr2n.get(indexOfOr+2).equals("수입") || arr2n.get(indexOfOr+2).equals("지출"))
+												&&(!arr2n.get(indexOfOr-1).equals("수입")&&!arr2n.get(indexOfOr-1).equals("지출"))) {
+											if (!arr2n.get(indexOfOr+2).equals(t.getInNout()) || !categoryList.contains(arr2n.get(indexOfOr-1)))
+												filteredList2.add(t);	// 뒷부분이 수입지출이고 앞부분이 수입지출이 아닐 때
+										}else {
+											if (!arr2n.get(indexOfOr+2).equals(t.getInNout()) || !arr2n.get(indexOfOr-1).equals(t.getInNout()))
+												filteredList2.add(t);	//둘다 수입지출일때
+										}
 								}
 								
 							
