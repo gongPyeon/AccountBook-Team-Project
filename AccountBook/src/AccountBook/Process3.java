@@ -13,7 +13,6 @@ public class Process3 {
 	AccountBookDao dao = new AccountBookDao();
 	ArrayList<String> availableCategories = dao.getCategories1();// 저장된 카테고리 항목들
 	ArrayList<AccountBookVO> accountList;
-	ArrayList<AccountBookVO> accountList2;
 	ArrayList<AccountBookVO> LASTaccountList;
 	ArrayList<AccountBookVO> filteredList;
 	ArrayList<AccountBookVO> filteredList2;
