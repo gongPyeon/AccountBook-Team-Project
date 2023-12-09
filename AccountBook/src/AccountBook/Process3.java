@@ -882,19 +882,26 @@ public class Process3 {
 			    	   //Not 카테고리 먼저 연산 
 			    	   for (int i = 0 ; i < notExist.size(); i++)
 			    	   {
-			    		   if (!categoryList.contains(arr2n.get(notExist.get(i)+1)))
-			    		   {
-			    			   filteredList.add(e);
-			    		   }
-			    		   else if (arr2n.get(notExist.get(i)+1).equals(e.getInNout()))
-			    		   {
-			    			   String name = e.getInNout();
-			    			   for (AccountBookVO s : accountList)
-			    			   {
-			    				   if (!s.getInNout().equals(name))
-			    					   filteredList.add(e);
+			    		   if(!arr2n.get(notExist.get(i)+1).equals("수입") && !arr2n.get(notExist.get(i)+1).equals("지출")) {
+			    			   if (!categoryList.contains(arr2n.get(notExist.get(i)+1)))
+				    		   {
+				    			   filteredList.add(e);
+				    		   }else if (arr2n.get(notExist.get(i)+1).equals(e.getInNout()))
+				    		   {
+				    			   String name = e.getInNout();
+				    			   for (AccountBookVO s : accountList)
+				    			   {
+				    				   if (!s.getInNout().equals(name))
+				    					   filteredList.add(e);
+				    			   }
+				    		   }   
+			    		   }else {
+			    			   if(!e.getInNout().equals(arr2n.get(notExist.get(i)+1))) {
+			    				   filteredList.add(e);
 			    			   }
-			    		   }    
+			    		   }
+			    		   
+			    		    
 			    		  
 			    		   
 			    	   }
