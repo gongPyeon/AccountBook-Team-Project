@@ -465,5 +465,44 @@ public class AccountBookDao {// DB를 다루는 클래스
 		}
 		return result;
 	}
-
+	public int getTotalAmount(String date, String sqlStr) {
+	    String sql = "SELECT SUM(amount) AS total_amount\n"
+	    		+ "FROM AccountBook\n"
+	    		+ "WHERE inNout = ?\n"
+	    		+ sqlStr+"\n"
+	    		+ "AND STR_TO_DATE(date, '%Y %m %d') < ?;";
+	    PreparedStatement pstmt = null;
+	    int totalAmount = 0;
+	    
+	    try {
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, "수입");
+	        pstmt.setString(2, date);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            totalAmount = rs.getInt("total_amount");
+	        }
+	        
+	        rs.close();
+	    } catch (SQLException e) {
+	        System.out.println("데이터베이스 작업 중 에러 발생");
+	        e.printStackTrace();
+	    }
+	    
+	    try {
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, "지출");
+	        pstmt.setString(2, date);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            totalAmount -= rs.getInt("total_amount");
+	        }
+	        
+	        rs.close();
+	    } catch (SQLException e) {
+	        System.out.println("데이터베이스 작업 중 에러 발생");
+	        e.printStackTrace();
+	    }
+	    return totalAmount;
+	}
 }
