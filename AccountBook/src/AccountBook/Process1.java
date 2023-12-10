@@ -384,7 +384,7 @@ public class Process1 {
 
 		System.out.println("------------------------------------------------------------");
 	    try {
-	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t\t수입\t\t지출\t\t내용\t인덱스");
+	    	System.out.println(date.substring(0,5)+Integer.parseInt(date.substring(5,7)) + "\t\t수입\t\t지출\t\t내용\t인덱스\t카테고리");
 		}
 		catch(NumberFormatException e){
 							
@@ -438,7 +438,7 @@ public class Process1 {
         }
         // Comparator를 사용하여 ArrayList 정렬
         Collections.sort(array, dateComparator);
-	    System.out.println("총계\t\t" + String.format("%,-10d\t",(long)(thisMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut)) + "\t--");
+        System.out.println("총계\t\t" +  String.format("%,-10d\t",(long)(thisMonthSumIn))+ String.format("%,-10d\t",(long) (thisMonthSumOut)) + "\t--");
 	    
 	    for (int i = 0; i < array.size(); i++) {
 	    	try {
@@ -448,22 +448,20 @@ public class Process1 {
 			catch(NumberFormatException e){
 				break;				
 			}
-	        
-	        System.out.print("\t" + array.get(i).getCategory());
-
 	        if (array.get(i).getInNout().compareTo("수입") == 0) {
-	            System.out.print("\t" +String.format("%,-10d\t\t\t",array.get(i).getAmount()));
+	            System.out.print("\t\t" +String.format("%,-10d\t\t\t",array.get(i).getAmount()));
 	        } else {
-	        	System.out.print("\t\t\t" +String.format("%,-10d\t",array.get(i).getAmount()));
+	        	System.out.print("\t\t\t\t" +String.format("%,-10d\t",array.get(i).getAmount()));
 	        }
 	        System.out.print(array.get(i).getDetails());
 	        System.out.print("\t" + array.get(i).getIndexNumber());
+	        System.out.print("\t" + array.get(i).getCategory().replaceAll(" ", "|"));
 	        System.out.println();
 	    }
 	    if(lastArray != null) {
 	    	try {
-	    		System.out.println(String.format("%2d",Integer.parseInt(lastDate.substring(5,7)))+"월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
-			}
+	    		System.out.println(String.format("%2d",Integer.parseInt(lastDate.substring(5,7))) + "월 이월분\t" + String.format("%,-10d\t",lastMonthSumIn)+ String.format("%,-10d\t",lastMonthSumOut) + "\t--");
+	    	}
 			catch(NumberFormatException e){
 							
 			}
